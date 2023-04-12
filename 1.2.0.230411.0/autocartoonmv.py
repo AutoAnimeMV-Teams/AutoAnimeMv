@@ -60,14 +60,9 @@ def AutoMv(SavePath,VideoName,Season,Episodes,VideoTrueName,FileType):
 def Test(test):
     TitleMatch(test)
 
-test = ' [桜都字幕组] 因为太怕痛就全点防御力了。第2季/ Itai No Wa Iya Nano De Bougyoryoku Ni Kyokufuri Shitai To Omoimasu. S2 [10][ 1080P@60FPS ][简繁内封].mp4'
-
-if test != '':
-    Test(test)
-
-elif __name__ == "__main__":
+if __name__ == "__main__":
    #sleep(15)
    SavePath,VideoName = GetArgv()
    Season,Episodes,VideoTrueName,FileType = TitleMatch(VideoName)
-   AutoMv(SavePath,VideoName,Season,Episodes,VideoTrueName,FileType)
+  AutoMv(SavePath,VideoName,Season,Episodes,VideoTrueName,FileType)
 
