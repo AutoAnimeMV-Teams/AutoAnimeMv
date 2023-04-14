@@ -1,4 +1,4 @@
-# AutoCartoonMv
+# AutoAnimeMv
 
 [![ GitHub 许可证](https://badgen.net/github/license/Abcuders/AutoCartoonMv)](https://github.com/Abcuders/AutoCartoonMv/LICENSE)
 
