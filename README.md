@@ -46,4 +46,4 @@
 # 💡提醒
 * 在群晖NAS中，套件中心安装的🐍python3环境可能出现奇奇怪怪的问题，请使用第三方套件源(第三方源需要手动为🐍python3创建软连接至/usr/local/bin/python3)
 
-*如果你使用的是群晖NAS 🐳Docker版的QBitTorrent,你可以在容器日志中直接看到`AutoCartoonMv.py`输出的日志信息
+* 如果你使用的是群晖NAS 🐳Docker版的QBitTorrent,你可以在容器日志中直接看到`AutoCartoonMv.py`输出的日志信息
