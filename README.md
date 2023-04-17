@@ -32,7 +32,7 @@
   ```
   python3 AutoCartoonMv.py放置路径 "%D" "%N" "%L"
   ```
-  * 4.取消做种，修改qb配置: 将BitTorrent 的`做种限制`改成`当分享率达到0当做种时间达到0分钟然后暂停torrent`
+  * 4.取消做种，修改qb配置: 将QBitTorrent 的`做种限制`改成`当分享率达到0当做种时间达到0分钟然后暂停torrent`
 
   * 5.现在你就可以下载一个番剧测试效果啦
   > 🚩举例，下面的文件名字都可以被识别`[Comicat][Jigokuraku][01][1080P][GB&JP][MP4].mp4` 
@@ -45,3 +45,5 @@
   
 # 💡提醒
 * 在群晖NAS中，套件中心安装的🐍python3环境可能出现奇奇怪怪的问题，请使用第三方套件源(第三方源需要手动为🐍python3创建软连接至/usr/local/bin/python3)
+
+*如果你使用的是群晖NAS 🐳Docker版的QBitTorrent,你可以在容器日志中直接看到`AutoCartoonMv.py`输出的日志信息
