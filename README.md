@@ -19,28 +19,67 @@
 # 💡 帮助&提醒
  ***
  * **`🐍Python3环境`**:您可以在[🐍Python官网](https://www.python.org/downloads/windows/)下载合适的版本进行安装,我们建议安装3.9及以上的版本
-   >  🐍Python使用的依赖库:`sys` `os` `time` `re`
+   >  🐍Python使用的依赖库:`sys` `os` `time` `re` `ast`(Test.py用)
    以上依赖应该不需要您进行安装
  * 如果您直接使用pip进行install遇到 `❗Fatal error in launcher: Unable to create process using pip问题` ,请使用`python3 -m pip install`
  * <img style="vertical-align:sub;" src="https://github.com/Abcuders/AutoAnimeMV/blob/main/Image/rss.png" height="15" width="35" > **`番剧网站`**:如果您需要RSS或BT或番剧支持，您可以访问以下网站
    > [动漫花园资源网](https://dmhy.b168.net/) [动漫花园镜像站(无RSS)](http://dongmanhuayuan.com/) [末日动漫资源库](https://share.acgnx.se/) [蜜柑计划](https://mikanani.me/) [萌番组](https://bangumi.moe/) 
-   [爱恋动漫](https://www.kisssub.org/) [＊MioBT＊](https://www.miobt.com/) [漫猫动漫](https://www.comicat.org/) [2DFan](https://2dfan.org/) 
-   [動漫國字幕組(无RSS)](https://dmguo.org/) [零度动漫下载站(无RSS)](https://bt.acgzero.com/) [ACG23(无RSS)](https://www.acg23.com/) [嘀哩嘀哩(无RSS)](https://www.dilidm.com/) [Anime Tosho(EN)](https://animetosho.org/) [Nyaa(EN/资源和字幕都很杂)](https://nyaa.si/) 
-   [巴哈姆特動畫瘋(无RSS/在线Tv)](https://ani.gamer.com.tw/) 
+
+   > [爱恋动漫](https://www.kisssub.org/) [＊MioBT＊](https://www.miobt.com/) [漫猫动漫](https://www.comicat.org/) [2DFan](https://2dfan.org/) 
+
+   > [動漫國字幕組(无RSS)](https://dmguo.org/) [零度动漫下载站(无RSS)](https://bt.acgzero.com/) [ACG23(无RSS)](https://www.acg23.com/) [嘀哩嘀哩(无RSS)](https://www.dilidm.com/) [Anime Tosho(EN)](https://animetosho.org/) [Nyaa(EN/资源和字幕都很杂)](https://nyaa.si/) 
+   
+   > [巴哈姆特動畫瘋(无RSS/在线Tv)](https://ani.gamer.com.tw/) 
 ## 🕹️ 工具的处理逻辑
 ***
-开始Run之后会进行自动识别视频文件格式、番剧剧集、截断文件名、去除无效文字、剔除字幕组、保留剧名剧季，并将视频文件重命名为`S01E剧集.文件格式`再移至`下载路径` 下的`剧名\Season_剧季`文件夹（如果没有则会自动创建）就像下面一样:
-```
-[ANi] 无神世界的神明活动（仅限港澳台地区） - 01 [1080P][Bilibili][WEB-DL][AAC AVC][CHT CHS][MP4].MP4
->>无神世界的神明活动/Season_01/S01E01.mp4
-```
-> *我们将 判断是否属于`动漫`分类功能注释了，现在它是一个可选功能，您可以根据不同的类型设置不同的Video保存路径*
+  * 开始Run之后会进行自动识别视频文件格式、番剧剧集、截断文件名、去除无效文字、剔除字幕组、保留剧名剧季，并将视频文件重命名为`S01E剧集.文件格式`再移至`下载路径` 下的`剧名\Season_剧季`文件夹（如果没有则会自动创建）就像下面一样:
+    ```
+    [ANi] 无神世界的神明活动（仅限港澳台地区） - 01 [1080P][Bilibili][WEB-DL]  [AAC AVC][CHT CHS][MP4].MP4
+    >>无神世界的神明活动/Season_01/S01E01.mp4
+    ```
+    > *我们将 判断是否属于`动漫`分类功能注释了，现在它是一个可选功能，您可以根据不同的类型设置不同的Video保存路径*
 
+     🍟同时，在脚本目录会生成以时间命名的Log文件,其内容为
+     
+     > Sun_May_28_02-16-36_2023.log
+
+    > LOG开始记录，完整log条目为8条
+1.接受到['.\\AutoAnimeMv.py', 'E:\\D\\Test', '[DMG&LoliHouse] Kono Subarashil Sekai ni Bakuen wo! - 01 [WebRip 1080p HEVC-10bit AAC ASSx2].mkv']参数
+2.匹配剧集为01
+3.通过剧集截断文件名为=DMG&LoliHouse=-Kono-Subarashil-Sekai-ni-Bakuen-wo=---
+4.番剧Name为Kono-Subarashil-Sekai-ni-Bakuen-wo
+5-4.TrueVideoName=Kono-Subarashil-Sekai-ni-Bakuen-wo,Season=01
+6.当前操作系统识别码为nt,posix/nt/java对应linux/windows/java虚拟机
+7.创建Kono-Subarashil-Sekai-ni-Bakuen-wo\Season_01完成
+8.创建E:\D\Test\Kono-Subarashil-Sekai-ni-Bakuen-wo\Season_01\S01E01.mkv完成 
+## 🧰 测试工具 
+* 自🍞`v1.5.0`以后，您可以使用`Test.py`对`AutoCartoonMv.py`进行Bt识别测试，以下是`Test.py`的使用方法
+  > `Test.py` 不需要任何参数，但是需要`tese`文件，其内容为
+
+  > {"Bt":"","Name":"","Season":"","Episodes":"","FileType":""}
+  > `Bt`参数为种子名称 `Name`参数为番剧名称 `Season`为剧季数 `Episodes`为剧集数 `FileType`为视频文件格式
+
+* 🍚举例,以下是规范的Test格式,您也可以写入多行Tests数据
+  > {"Bt":"[DMG&LoliHouse] Kono Subarashil Sekai ni Bakuen wo! - 01 [WebRip 1080p HEVC-10bit AAC ASSx2].mkv","Name":"Kono Subarashil Sekai ni Bakuen wo","Season":"01","Episodes":"01","FileType":".mkv"}
+
+* 执行以下代码即可进行测试
+  ```
+  python3 Test.py 
+  ```
+* 输出内容:
+  > 现在进入Test mode,正在read test文件
+2.匹配剧集为01
+3.通过剧集截断文件名为=DMG&LoliHouse=-Kono-Subarashil-Sekai-ni-Bakuen-wo=---
+4.番剧Name为Kono-Subarashil-Sekai-ni-Bakuen-wo
+Kono-Subarashil-Sekai-ni-Bakuen-wo 01
+5-4.TrueVideoName=Kono-Subarashil-Sekai-ni-Bakuen-wo,Season=01
+01 01 Kono-Subarashil-Sekai-ni-Bakuen-wo .mkv
+{'Bt': '[DMG&LoliHouse] Kono Subarashil Sekai ni Bakuen wo! - 01 [WebRip 1080p HEVC-10bit AAC ASSx2].mkv', 'Name': 'Kono Subarashil Sekai ni Bakuen wo', 'Season': '01', 'Episodes': '01', 'FileType': '.mkv'}....Ok
 ## 📻 常见问题建议
 ***
 * 在群晖NAS中，套件中心安装的`🐍python3`环境可能出现奇奇怪怪的问题，请使用第三方套件源(第三方源需要手动为`🐍python3`创建软连接至/usr/local/bin/python3)
 
-* 如果你使用的是群晖NAS `🐳Docker`版的`🔵QBitTorrent`,你可以在容器日志中直接看到`AutoCartoonMv.py`输出的日志信息
+* 如果你使用的是群晖NAS `🐳Docker`版的`🔵QBitTorrent`,你可以在容器日志中直接看到`AutoCartoonMv.py`输出的Log信息
   
 # 📝 使用方法 
 ***
@@ -57,7 +96,7 @@
     ```
     上面三个参数可以由`🔵Qbittorrent`传入，即
     ```
-    python3 AutoCartoonMv.py放置路径 "%D" "%N" "%L"
+    python3 AutoCartoonMv.py放置路径 "%D" "%N" "%L"(可选,您需要自己在源码里修改)
     ```
   * 4.取消做种，修改qb配置: 将`🔵QBitTorrent `的`做种限制`改成`当分享率达到0当做种时间达到0分钟然后暂停torrent`
 
