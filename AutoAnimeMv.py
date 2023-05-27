@@ -8,10 +8,10 @@ from re import findall,search,sub,I
 def TitleMatch(VideoName):
     Season = '01' #定义初始剧季为1
     #匹配待去除
-    FuzzyMatchData = ['字幕','Raws','sub','汉化','搬运','月新番','Airota','Comicat','DMHY','NC-Raws','ANi','LoliHouse','Sakurato','TSDM','LoveEcho','EMe','Sakura','SweetSub','AHU-SUB','VCB-Studio','GM-Team','MingY','cc动漫','推しの子','喵萌奶茶屋','天月搬运组','萝莉社活动室','千夏生活向上委员会','酷漫404','拨雪寻春','霜庭云花Sub','FSD炸鸽社','雪飘工作室','丸子家族','驯兽师联盟','肥猫压制','离谱','虹咲学园烤肉同好会','AQUA工作室','晨曦制作','夜莺家族','Liella!の烧烤摊']
+    #FuzzyMatchData = ['字幕','Raws','sub','汉化','搬运','月新番','Airota','Comicat','DMHY','NC-Raws','ANi','LoliHouse','Sakurato','TSDM','LoveEcho','EMe','Sakura','SweetSub','AHU-SUB','VCB-Studio','GM-Team','MingY','cc动漫','推しの子','喵萌奶茶屋','天月搬运组','萝莉社活动室','千夏生活向上委员会','酷漫404','拨雪寻春','霜庭云花Sub','FSD炸鸽社','雪飘工作室','丸子家族','驯兽师联盟','肥猫压制','离谱','虹咲学园烤肉同好会','AQUA工作室','晨曦制作','夜莺家族','Liella!の烧烤摊']
     #精准待去除
     PreciseMatchData = ['仅限港澳台地区']
-    filename, FileType = path.splitext(VideoName)
+    FileType = path.splitext(VideoName)[1]
     #FileType = search(r'(.*?\.)',VideoName[::-1],flags=I).group()[::-1] #匹配视频文件格式
     #统一意外字符
     VideoName = sub(r',|，| ','-',VideoName,flags=I) 
@@ -23,9 +23,7 @@ def TitleMatch(VideoName):
     #开始去除其他字符
     for i in range(len(PreciseMatchData)):
         VideoName = sub(r'%s'%PreciseMatchData[i],'',VideoName,flags=I)
-    for i in range(len(FuzzyMatchData)):
-        VideoName = sub(r'=.*?%s.*?='%FuzzyMatchData[i],'',VideoName,flags=I)
-    VideoName = VideoName.replace('=','').replace(' ','').strip('-')
+    VideoName = sub(r'=.*?=','',VideoName,flags=I).replace('=','').replace(' ','').strip('-')
     #匹配剧季
     if ('/' in VideoName) == True: #按'/'进行双语言分类
         VideoName = VideoName.split("/", 1)
@@ -54,7 +52,7 @@ def TitleMatch(VideoName):
     return Season,Episodes,TrueVideoName,FileType
 
 def GetArgv():#接受参数
-    SavePath,VideoName,Star = argv[1],argv[2],argv[3]
+    SavePath,VideoName = argv[1],argv[2]#,argv[3]
     #筛选分类,您可以根据不同的类型设置不同路径
     #if Star != '动漫':'
     #   pass
@@ -62,18 +60,18 @@ def GetArgv():#接受参数
 
 def AutoMv(SavePath,VideoName,Season,Episodes,VideoTrueName,FileType):#整理+重命名
     a = ['move /y','mkdir','\\'] if name == 'nt' else ['mv','mkdir -p','/']#识别操作系统
-    print(name)
+    
     NewName = f"S{Season}E{Episodes}{FileType}"
     NewVideoDir = f"{VideoTrueName}{a[2]}Season_{Season}"
     system(f'{a[1]} {SavePath}{a[2]}{NewVideoDir}')
     sleep(2)
     system(f'{a[0]} "{SavePath}{a[2]}{VideoName}"  "{SavePath}{a[2]}{NewVideoDir}{a[2]}{NewName}"')
 
-def Test(test=None):#测试TitleMatch函数
-    #return TitleMatch(test)
-    #AutoMv('E:\D\Test','1.mp4','01','01','TRUETEST','.mp4')
+def Test(test=None):#测试函数
+    #return TitleMatch("[DMG&LoliHouse] Kono Subarashil Sekai ni Bakuen wo! - 01 [WebRip 1080p HEVC-10bit AAC ASSx2].mkv")
+    #AutoMv('E:\D\Test','1.mp4','01','01','TRUETEST','.mp4') 
     pass
-if __name__ != "__main__":
+if __name__ == "__main__":
    #sleep(15)
    SavePath,VideoName = GetArgv()
    Season,Episodes,VideoTrueName,FileType = TitleMatch(VideoName)
