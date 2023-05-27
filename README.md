@@ -43,15 +43,17 @@
      
      > Sun_May_28_02-16-36_2023.log
 
-    > LOG开始记录，完整log条目为8条
-1.接受到['.\\AutoAnimeMv.py', 'E:\\D\\Test', '[DMG&LoliHouse] Kono Subarashil Sekai ni Bakuen wo! - 01 [WebRip 1080p HEVC-10bit AAC ASSx2].mkv']参数
-2.匹配剧集为01
-3.通过剧集截断文件名为=DMG&LoliHouse=-Kono-Subarashil-Sekai-ni-Bakuen-wo=---
-4.番剧Name为Kono-Subarashil-Sekai-ni-Bakuen-wo
-5-4.TrueVideoName=Kono-Subarashil-Sekai-ni-Bakuen-wo,Season=01
-6.当前操作系统识别码为nt,posix/nt/java对应linux/windows/java虚拟机
-7.创建Kono-Subarashil-Sekai-ni-Bakuen-wo\Season_01完成
-8.创建E:\D\Test\Kono-Subarashil-Sekai-ni-Bakuen-wo\Season_01\S01E01.mkv完成 
+     ```
+    LOG开始记录，完整log条目为8条
+    1.接受到['.\\AutoAnimeMv.py', 'E:\\D\\Test', '[DMG&LoliHouse] Kono Subarashil Sekai ni Bakuen wo! - 01 [WebRip 1080p HEVC-10bit AAC ASSx2].mkv']参数
+    2.匹配剧集为01
+    3.通过剧集截断文件名为=DMG&LoliHouse=-Kono-Subarashil-Sekai-ni-Bakuen-wo=---
+    4.番剧Name为Kono-Subarashil-Sekai-ni-Bakuen-wo
+    5-4.TrueVideoName=Kono-Subarashil-Sekai-ni-Bakuen-wo,Season=01
+    6.当前操作系统识别码为nt,posix/nt/java对应linux/windows/java虚拟机
+    7.创建Kono-Subarashil-Sekai-ni-Bakuen-wo\Season_01完成
+    8.创建E:\D\Test\Kono-Subarashil-Sekai-ni-Bakuen-wo\Season_01\S01E01.mkv完成 
+    ```
 ## 🧰 测试工具 
 * 自🍞`v1.5.0`以后，您可以使用`Test.py`对`AutoCartoonMv.py`进行Bt识别测试，以下是`Test.py`的使用方法
   > `Test.py` 不需要任何参数，但是需要`tese`文件，其内容为
@@ -67,14 +69,16 @@
   python3 Test.py 
   ```
 * 输出内容:
-  > 现在进入Test mode,正在read test文件
-2.匹配剧集为01
-3.通过剧集截断文件名为=DMG&LoliHouse=-Kono-Subarashil-Sekai-ni-Bakuen-wo=---
-4.番剧Name为Kono-Subarashil-Sekai-ni-Bakuen-wo
-Kono-Subarashil-Sekai-ni-Bakuen-wo 01
-5-4.TrueVideoName=Kono-Subarashil-Sekai-ni-Bakuen-wo,Season=01
-01 01 Kono-Subarashil-Sekai-ni-Bakuen-wo .mkv
-{'Bt': '[DMG&LoliHouse] Kono Subarashil Sekai ni Bakuen wo! - 01 [WebRip 1080p HEVC-10bit AAC ASSx2].mkv', 'Name': 'Kono Subarashil Sekai ni Bakuen wo', 'Season': '01', 'Episodes': '01', 'FileType': '.mkv'}....Ok
+    ```
+  现在进入Test mode,正在read test文件
+  2.匹配剧集为01
+  3.通过剧集截断文件名为=DMG&LoliHouse=-Kono-Subarashil-Sekai-ni-Bakuen-wo=---
+  4.番剧Name为Kono-Subarashil-Sekai-ni-Bakuen-wo
+  Kono-Subarashil-Sekai-ni-Bakuen-wo 01
+  5-4.TrueVideoName=Kono-Subarashil-Sekai-ni-Bakuen-wo,Season=01
+  01 01 Kono-Subarashil-Sekai-ni-Bakuen-wo .mkv
+  {'Bt': '[DMG&LoliHouse] Kono Subarashil Sekai ni Bakuen wo! - 01 [WebRip 1080p HEVC-10bit AAC ASSx2].mkv', 'Name': 'Kono Subarashil Sekai ni Bakuen wo', 'Season': '01', 'Episodes': '01', 'FileType': '.mkv'}....Ok
+    ```
 ## 📻 常见问题建议
 ***
 * 在群晖NAS中，套件中心安装的`🐍python3`环境可能出现奇奇怪怪的问题，请使用第三方套件源(第三方源需要手动为`🐍python3`创建软连接至/usr/local/bin/python3)
