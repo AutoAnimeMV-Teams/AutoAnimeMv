@@ -11,7 +11,7 @@ def AttributesMatch(VideoName):
     Season = '01' #定义初始剧季为1
     #匹配待去除
     #FuzzyMatchData = ['字幕','Raws','sub','汉化','搬运','月新番','Airota','Comicat','DMHY','NC-Raws','ANi','LoliHouse','Sakurato','TSDM','LoveEcho','EMe','Sakura','SweetSub','AHU-SUB','VCB-Studio','GM-Team','MingY','cc动漫','推しの子','喵萌奶茶屋','天月搬运组','萝莉社活动室','千夏生活向上委员会','酷漫404','拨雪寻春','霜庭云花Sub','FSD炸鸽社','雪飘工作室','丸子家族','驯兽师联盟','肥猫压制','离谱','虹咲学园烤肉同好会','AQUA工作室','晨曦制作','夜莺家族','Liella!の烧烤摊']
-    FuzzyMatchData = []
+    FuzzyMatchData = ['月新番']
     #精准待去除
     PreciseMatchData = ['仅限港澳台地区']
     FileType = path.splitext(VideoName)[1]
@@ -28,7 +28,10 @@ def AttributesMatch(VideoName):
     #开始去除其他字符
     for i in range(len(PreciseMatchData)):
         VideoName = sub(r'%s'%PreciseMatchData[i],'',VideoName,flags=I)
-    VideoName = sub(r'^=.*?=','',VideoName,flags=I).replace('=','').replace(' ','').strip('-')
+    VideoName = sub(r'^=.*?=','',VideoName,flags=I)
+    for i in range(len(FuzzyMatchData)):
+        VideoName = sub(r'=.*?%s.*?='%FuzzyMatchData[i],'',VideoName,flags=I)
+    VideoName = VideoName.replace('=','').replace(' ','').strip('-')
     Log(f"4.番剧Name为{VideoName}")
     #匹配剧季
     if ('/' in VideoName) == True: #按'/'进行双语言分类

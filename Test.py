@@ -12,10 +12,10 @@ def Test():
             if TestData != None:
                 TestData = literal_eval(TestData.strip())
                 Season,Episodes,TrueVideoName,FileType = AttributesMatch(TestData['Bt'])
-                print(Season,Episodes,TrueVideoName.replace('-',' '),FileType)
-                if TrueVideoName.replace('-',' ') == TestData["Name"] and Season == TestData['Season'] and Episodes == TestData['Episodes'] and FileType == TestData['FileType']:
-                    print(f'{TestData}....Ok')
+                print(Season,Episodes,TrueVideoName,FileType)
+                if TrueVideoName == TestData["Name"] and Season == TestData['Season'] and Episodes == TestData['Episodes'] and FileType == TestData['FileType']:
+                    print(f'{TestData}....Ok\n ')
                 else:
-                    print(f'{TestData}....No')
+                    print(f'{TestData}....No\n')
 if __name__ == '__main__':
     Test()
