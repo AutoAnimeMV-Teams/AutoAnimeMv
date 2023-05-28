@@ -20,14 +20,7 @@
  ***
  * **`🐍Python3环境`**:您可以在[🐍Python官网](https://www.python.org/downloads)选择对应的操作系统进行安装（Python Ver. 3.9+）
  * 如果您直接使用pip进行install遇到 `❗Fatal error in launcher: Unable to create process using pip问题` ,请使用`python3 -m pip install`
- * <img style="vertical-align:sub;" src="https://github.com/Abcuders/AutoAnimeMV/blob/main/Image/rss.png" height="15" width="35" > **`番剧网站`**:如果您需要RSS或BT或番剧支持，您可以访问以下网站
-   > [动漫花园资源网](https://dmhy.org) [末日动漫](https://share.acgnx.se) [蜜柑计划](https://mikanani.me) [萌番组](https://bangumi.moe) [ACG.RIP](https://acg.rip)  [Nyaa(资源繁多)](https://nyaa.si) 
 
-   > [爱恋动漫](https://www.kisssub.org) [＊MioBT＊](https://www.miobt.com) [漫猫动漫](https://www.comicat.org/) [2DFan](https://2dfan.org) 
-
-   > [動漫國字幕組](https://dmguo.org) [零度动漫下载站](https://bt.acgzero.com) [ACG23](https://www.acg23.com) [嘀哩嘀哩](https://www.dilidm.com) [Anime Tosho(EN)](https://animetosho.org)
-   
-   > [巴哈姆特動畫瘋](https://ani.gamer.com.tw) 
 ## 🕹️ 工具的处理逻辑
 ***
   * 开始Run之后会进行自动识别视频文件格式、番剧剧集、截断文件名、去除无效文字、剔除字幕组、保留剧名剧季，并将视频文件重命名为`S01E剧集.文件格式`再移至`下载路径` 下的`剧名\Season_剧季`文件夹（如果没有则会自动创建）就像下面一样:
