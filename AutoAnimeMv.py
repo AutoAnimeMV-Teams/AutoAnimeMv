@@ -8,7 +8,8 @@ from re import findall,search,sub,I
 DataLog = "LOG开始记录，完整log条目为8条"
 
 def AttributesMatch(VideoName):
-    Season = '01' #定义初始剧季为1
+    Season = '01' #定义初始剧季和剧集为1
+    Episodes = '01'
     #匹配待去除
     #FuzzyMatchData = ['字幕','Raws','sub','汉化','搬运','月新番','Airota','Comicat','DMHY','NC-Raws','ANi','LoliHouse','Sakurato','TSDM','LoveEcho','EMe','Sakura','SweetSub','AHU-SUB','VCB-Studio','GM-Team','MingY','cc动漫','推しの子','喵萌奶茶屋','天月搬运组','萝莉社活动室','千夏生活向上委员会','酷漫404','拨雪寻春','霜庭云花Sub','FSD炸鸽社','雪飘工作室','丸子家族','驯兽师联盟','肥猫压制','离谱','虹咲学园烤肉同好会','AQUA工作室','晨曦制作','夜莺家族','Liella!の烧烤摊']
     FuzzyMatchData = ['月新番']
@@ -20,7 +21,10 @@ def AttributesMatch(VideoName):
     VideoName = sub(r',|，| ','-',VideoName,flags=I) 
     VideoName = sub(r'[^A-Za-z0-9_\s&/\-\u4e00-\u9fa5]','=',VideoName,flags=I)
     #匹配剧集
-    Episodes = findall(r'[^0-9a-z\u4e00-\u9fa5][0-2]{1}[0-9]{1}[^0-9\u4e00-\u9fa5]',VideoName,flags=I)[0].strip(" =-_eE")
+    try:
+        Episodes = findall(r'[^0-9a-z\u4e00-\u9fa5][0-2]{1}[0-9]{1}[^0-9a-z\u4e00-\u9fa5]',VideoName,flags=I)[0].strip(" =-_eE")
+    except:
+       pass
     Log(f"2.匹配剧集为{Episodes}")
     #通过剧集截断文件名
     VideoName = sub(r'%s.*'%Episodes,'',VideoName,flags=I)
@@ -35,7 +39,7 @@ def AttributesMatch(VideoName):
     Log(f"4.番剧Name为{VideoName}")
     #匹配剧季
     if ('/' in VideoName) == True: #按'/'进行双语言分类
-        VideoName = VideoName.split("/", 1)
+        VideoName = VideoName.split("/", )
         #print(VideoName[1].replace('-','').isalnum())
         if VideoName[1].replace('-','').isalnum() == True: #双语言(中英)分类匹配英文Name中的剧季
             if search(r'[0-9]{0,1}[0-9]{1}S',VideoName[1][::-1],flags=I) != None :
