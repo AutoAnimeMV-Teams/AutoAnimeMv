@@ -18,18 +18,19 @@ def AttributesMatch(VideoName):
     #FileType = search(r'(.*?\.)',VideoName[::-1],flags=I).group()[::-1] #匹配视频文件格式
     #统一意外字符
     VideoName = sub(r',|，| ','-',VideoName,flags=I) 
-    VideoName = sub(r'[^A-Za-z0-9_\s&/\-: :\u4e00-\u9fa5]','=',VideoName,flags=I)
+    VideoName = sub(r'[^A-Za-z0-9_\s&/\-: :/.()（）\u4e00-\u9fa5\u0800-\u4e00]','=',VideoName,flags=I)
+    print(VideoName)
     #去除日期
     VideoName = sub(r'\d{4}.\d{2}.\d{2}','',VideoName,flags=I)
     #开始去除其他字符
     for i in range(len(PreciseMatchData)):
-        VideoName = sub(r'%s'%PreciseMatchData[i],'',VideoName,flags=I)
+        VideoName = sub(r'%s'%PreciseMatchData[i],'-',VideoName,flags=I)
     VideoName = sub(r'^=.*?=','',VideoName,flags=I)
     for i in range(len(FuzzyMatchData)):
-        VideoName = sub(r'=.*?%s.*?='%FuzzyMatchData[i],'',VideoName,flags=I)
+        VideoName = sub(r'=.*?%s.*?='%FuzzyMatchData[i],'-',VideoName,flags=I)
     #匹配剧集
     try:
-        Episodes = findall(r'[^0-9a-z\u4e00-\u9fa5][0-9]{1,4}[^0-9a-z\u4e00-\u9fa5]',VideoName,flags=I)[0].strip(" =-_eE")
+        Episodes = findall(r'[^0-9a-z\u4e00-\u9fa5\u0800-\u4e00][0-9]{1,4}[^0-9a-z\u4e00-\u9fa5\u0800-\u4e00]',VideoName,flags=I)[0].strip(" =-_eE")
         Episodes = f"0{Episodes}" if len(Episodes) == 1 else Episodes
     except:
         pass
@@ -40,17 +41,20 @@ def AttributesMatch(VideoName):
     VideoName = VideoName.replace('=','').replace(' ','').strip('-')
     Log(f"4.番剧Name为{VideoName}")
     #匹配剧季
-    if ('/' in VideoName) == True: #按'/'进行双语言分类
+    if ('/' in VideoName) == True: #按'/'进行多语言分类
         VideoName = VideoName.split("/", )
-        if VideoName[1].replace('-','').isalnum() == True: #双语言(中英)分类匹配英文Name中的剧季
-            if search(r'[0-9]{0,1}[0-9]{1}S',VideoName[1][::-1],flags=I) != None :
-                Season = search(r'[0-9]{0,1}[0-9]{1}S',VideoName[1][::-1],flags=I).group(0)[::-1]
-                TrueVideoName = VideoName[1].strip(Season)
-                Season = search(r'[0-9]{0,1}[0-9]{1}S',VideoName[1][::-1],flags=I).group(0)[::-1].strip('Ss')
-                Season = f"0{Season}" if len(Season) == 1 else Season
-                Log(f"5-1.TrueVideoName={TrueVideoName},Season={Season}")
-            else:
-                TrueVideoName = VideoName[1]
+        for i in range(len(VideoName)):
+            if VideoName[i].replace('-','').replace(':','').isalnum() == True: #多语言分类匹配英文Name中的剧季
+                if search(r'[0-9]{0,1}[0-9]{1}S',VideoName[i][::-1],flags=I) != None :
+                    Season = search(r'[0-9]{0,1}[0-9]{1}S',VideoName[i][::-1],flags=I).group(0)[::-1]
+                    TrueVideoName = VideoName[i].strip(Season)
+                    print(TrueVideoName)
+                    Season = search(r'[0-9]{0,1}[0-9]{1}S',VideoName[i][::-1],flags=I).group(0)[::-1].strip('Ss')
+                    Season = f"0{Season}" if len(Season) == 1 else Season
+                    Log(f"5-1.TrueVideoName={TrueVideoName},Season={Season}")
+                    break
+                elif i ==  len(VideoName)-1 :
+                    TrueVideoName = VideoName[1]
     elif search(r'季.*?第|[0-9]{0,1}[0-9]{1}S',VideoName[::-1],flags=I) != None :#单语言(中/英)匹配是否存在剧季
             Season = search(r'(季.*?第|[0-9]{0,1}[0-9]{1}S)',VideoName[::-1],flags=I).group(0)[::-1]
             TrueVideoName = VideoName.strip(Season)
@@ -63,8 +67,9 @@ def AttributesMatch(VideoName):
                 Season = digit[Season]
                 Log(f"5-3.TrueVideoName={TrueVideoName},Season={Season}")
     else:
-        TrueVideoName = TrueVideoName.strip('-')
+        TrueVideoName = VideoName
         Log(f"5-4.TrueVideoName={TrueVideoName},Season={Season}")
+    TrueVideoName = TrueVideoName.strip('-')
     return Season,Episodes,TrueVideoName,FileType
 
 def GetArgv():#接受参数
