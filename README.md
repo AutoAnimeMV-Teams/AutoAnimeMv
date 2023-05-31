@@ -116,11 +116,21 @@
   
     > 或者是带有干扰项的 `【喵萌奶茶屋】★01月新番★[英雄王，为了穷尽武道而转生～然后，成为世界最强的见习骑士♀～ / Eiyuuou, Bu wo Kiwameru Tame Tenseisu][10][720p][简体][招募翻译].mp4`
 
-  # 🧉 BB一下
+# 🧉 BB一下
 ***
 * 23/5/26:下周我推要播总集篇，每周的精神食粮要断粮了😭😭没有你我怎么活呀，燕子！
 * ⚠️本程序显然存在诸多问题，在此恳请各位大佬不吝赐教
 
+# ⭐ 贡献者 ✨
+***
+**感谢这些有趣又很棒的人**
+
+<a href="https://github.com/wzfdgh">
+<img src="https://avatars.githubusercontent.com/u/93830081?s=96&v=4"  width="60px" height="60px"> 
+</a>
+<a href="https://github.com/Nanako718">
+<img src="https://avatars.githubusercontent.com/u/60038246?s=96&v=4"  width="60px" height="60px">
+</a>
 
 # 🧾 声明
 ***
