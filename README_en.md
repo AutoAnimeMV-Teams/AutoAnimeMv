@@ -1,9 +1,9 @@
 <div align="center">
-  <a href="https://github.com/Abcuders/AutoAnimeMv"><img height="100px" alt="logo" src="https://github.com/Abcuders/AutoAnimeMV/blob/main/Image/logo.png"/></a>
+  <a href="https://github.com/Abcuders/AutoAnimeMv"><img height="100px" alt="logo" src="./Image/logo.png"/></a>
   
   **AutoAnimeMV is an ultra-lightweight and fast-deployment tool for automatic identification, renaming, and collation of anime series. It can be used in conjunction with QBittorrent to achieve automatic downloading of anime series and automated file collation.**
   
-  **English | [简体中文](https://github.com/Abcuders/AutoAnimeMV/blob/main/README.md)**
+  **English | [简体中文](./README.md)**
 
 [![ GitHub 许可证](https://img.shields.io/github/license/Abcuders/AutoAnimeMv)](https://github.com/Abcuders/AutoCartoonMv/LICENSE) [![GitHub release](https://img.shields.io/github/v/release/Abcuders/AutoAnimeMv)](https://github.com/Abcuders/AutoAnimeMv/releases/) [![telegram](https://img.shields.io/badge/telegram-AutoAnimeMv-blue?style=flat&logo=telegram)](https://t.me/AutoAnimeMv)
 </div>
@@ -28,7 +28,7 @@
 
 # 🚀Quick Start
 
-> <img src="https://github.com/Abcuders/AutoAnimeMV/blob/main/Image/Example/one.jpg" width="400" height="300"> <img src="https://github.com/Abcuders/AutoAnimeMV/blob/main/Image/Example/two.jpg" width="400" height="300"> <img src="https://github.com/Abcuders/AutoAnimeMV/blob/main/Image/Example/three.jpg" width="400" height="300">
+> <img src="./Image/Example/one.jpg" width="400" height="300"> <img src="./Image/Example/two.jpg" width="400" height="300"> <img src="./Image/Example/three.jpg" width="400" height="300">
 
  Scroll down to find `Run External Program`
  Run External Program and enter the following code as mentioned above.

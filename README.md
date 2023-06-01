@@ -1,7 +1,7 @@
 # | AutoAnimeMV:超轻量化快速部署看番遥遥领先！
 <p align="center">
   <a href="https://github.com/Abcuders/AutoAnimeMV">
-    <img src="https://github.com/Abcuders/AutoAnimeMV/blob/main/Image/logo.png">
+    <img src="./Image/logo.png">
   </a>
 <p>
 
@@ -12,7 +12,7 @@
  **本工具现在支持Linux🐧和Windowsℹ️了并且有了自己的项目群耶（点击上面tg小蓝标直通车）👏👏👏**
 > **🚀点击左上角打开目录，选择您要阅读的部分**
 
-**简体中文 | [English](https://github.com/Abcuders/AutoAnimeMV/blob/main/README_en.md)**
+**简体中文 | [English](./README_en.md)**
 
 # 🏕️ 环境支持
 
@@ -24,7 +24,7 @@
    >  🐍Python使用的依赖库:`sys` `os` `time` `re` `ast`(Test.py用)
    以上依赖应该不需要您进行安装
  * 如果您直接使用pip进行install遇到 `❗Fatal error in launcher: Unable to create process using pip问题` ,请使用`python3 -m pip install`
- * <img style="vertical-align:sub;" src="https://github.com/Abcuders/AutoAnimeMV/blob/main/Image/rss.png" height="15" width="35" > **`番剧网站`**:如果您需要RSS或BT或番剧支持，您可以来我们的Tg群寻找帮助
+ * <img style="vertical-align:sub;" src="./Image/rss.png" height="15" width="35" > **`番剧网站`**:如果您需要RSS或BT或番剧支持，您可以来我们的Tg群寻找帮助
    
 ## 🕹️ 工具的处理逻辑
 
