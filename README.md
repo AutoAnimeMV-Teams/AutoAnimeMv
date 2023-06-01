@@ -12,12 +12,14 @@
  **本工具现在支持Linux🐧和Windowsℹ️了并且有了自己的项目群耶（点击上面tg小蓝标直通车）👏👏👏**
 > **🚀点击左上角打开目录，选择您要阅读的部分**
 
+**简体中文 | [English](https://github.com/Abcuders/AutoAnimeMV/blob/main/README_en.md)**
+
 # 🏕️ 环境支持
-***
+
 要使用本工具您必须需要`🐍Python3环境`支持，我们建议您搭配`🔵Qbittorrent`使用
 
 # 💡 帮助&提醒
- ***
+
  * **`🐍Python3环境`**:您可以在[🐍Python官网](https://www.python.org/downloads/windows/)下载合适的版本进行安装,我们建议安装3.9及以上的版本
    >  🐍Python使用的依赖库:`sys` `os` `time` `re` `ast`(Test.py用)
    以上依赖应该不需要您进行安装
@@ -25,7 +27,7 @@
  * <img style="vertical-align:sub;" src="https://github.com/Abcuders/AutoAnimeMV/blob/main/Image/rss.png" height="15" width="35" > **`番剧网站`**:如果您需要RSS或BT或番剧支持，您可以来我们的Tg群寻找帮助
    
 ## 🕹️ 工具的处理逻辑
-***
+
   * 开始Run之后会进行自动识别视频文件格式、番剧剧集、截断文件名、去除无效文字、剔除字幕组、保留剧名剧季，并将视频文件重命名为`S01E剧集.文件格式`再移至`下载路径` 下的`剧名\Season_剧季`文件夹(如果没有则会自动创建)就像下面一样:
     ```
     [ANi] 无神世界的神明活动（仅限港澳台地区） - 01 [1080P][Bilibili][WEB-DL]  [AAC AVC][CHT CHS][MP4].MP4
@@ -51,14 +53,14 @@
 ## 🧰 测试工具 
 * 自🍞`v1.5.0`以后，您可以使用`Test.py`对`AutoCartoonMv.py`进行Bt识别测试，以下是`Test.py`的使用方法
   > `Test.py` 不需要任何参数，但是需要`tese`文件，其内容为
-    ```
+    ```json
    {"Bt":"","Name":"","Season":"","Episodes":"","FileType":""}
     ```
   > `Bt`参数为种子名称 `Name`参数为番剧名称(可选) `Season`为剧季数(可选) `Episodes`为剧集数(可选) `FileType`为视频文件格式(可选)
 
  
 * 🍚举例,以下是规范的Test格式,您也可以写入多行Tests数据
-  ```
+  ```json
    {"Bt":"[DMG&LoliHouse] Kono Subarashil Sekai ni Bakuen wo! - 01 [WebRip 1080p HEVC-10bit AAC ASSx2].mkv","Name":"Kono Subarashil Sekai ni Bakuen wo","Season":"01","Episodes":"01","FileType":".mkv"}
   ```
   > 这些test测试数据可以用来在未来更新了匹配机制的情况下快速测试这个算法
@@ -79,17 +81,17 @@
     ```
   
 * 如果您想在`Test`文件中屏蔽某一条test测试数据,直接在开头添加`#`即可
-  ```
+  ```json
   #{"Bt":"[DMG&LoliHouse] Kono Subarashil Sekai ni Bakuen wo! - 01 [WebRip 1080p HEVC-10bit AAC ASSx2].mkv","Name":"Kono Subarashil Sekai ni Bakuen wo","Season":"01","Episodes":"01","FileType":".mkv"}
   ```
 ## 📻 常见问题建议
-***
+
 * 在群晖NAS中，套件中心安装的`🐍python3`环境可能出现奇奇怪怪的问题，请使用第三方套件源(第三方源需要手动为`🐍python3`创建软连接至/usr/local/bin/python3)
 
 * 如果你使用的是群晖NAS `🐳Docker`版的`🔵QBitTorrent`,你可以在容器日志中直接看到`AutoCartoonMv.py`输出的Log信息
   
 # 📝 使用方法 
-***
+
  > `AutoCartoonMv.py`需要三个参数,`下载路径` `下载文件名` `文件分类`(可选) 
 ## 使用场景1-配合NAS Qbittorrent进行使用
   * 1.将`AutoCartoonMv.py`上传至`🔵QBittorrent`能访问的路径下
@@ -117,13 +119,15 @@
     > 或者是带有干扰项的 `【喵萌奶茶屋】★01月新番★[英雄王，为了穷尽武道而转生～然后，成为世界最强的见习骑士♀～ / Eiyuuou, Bu wo Kiwameru Tame Tenseisu][10][720p][简体][招募翻译].mp4`
 
 # 🧉 BB一下
-***
-* 23/5/26:下周我推要播总集篇，每周的精神食粮要断粮了😭😭没有你我怎么活呀，燕子！
+
 * ⚠️本程序显然存在诸多问题，在此恳请各位大佬不吝赐教
+* 23/5/26:下周我推要播总集篇，每周的精神食粮要断粮了😭😭没有你我怎么活呀，燕子！
+* 23/6/1:嘿嘿嘿，无神真好看🤤
 
 # ⭐ 贡献者 ✨
-***
-**感谢这些有趣又很棒的人**
+
+**感谢这些有趣又很棒的人！！！**
+> 如果您也想要为这个项目添砖加瓦,可以直接来[Issues](https://github.com/Abcuders/AutoAnimeMv/issues)提出您宝贵的建议或者@我问一下能做些什么
 
 <a href="https://github.com/wzfdgh">
 <img src="https://avatars.githubusercontent.com/u/93830081?s=96&v=4"  width="60px" height="60px"> 
@@ -133,5 +137,5 @@
 </a>
 
 # 🧾 声明
-***
+
 **该仅供个人合法用途,任何使用该工具进行直接或者间接非法盈利活动的行为,均不属于授权范围,也不受到任何支持和认可**

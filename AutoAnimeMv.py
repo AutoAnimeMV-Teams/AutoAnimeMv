@@ -5,7 +5,7 @@ from os import system,path,name
 from time import sleep,ctime
 from re import findall,search,sub,I
 
-DataLog = "LOG开始记录，完整log条目为8条"
+DataLog = "LOG开始记录,完整log条目为8条"
 
 def AttributesMatch(VideoName):
     Season = '01' #定义初始剧季和剧集为1
