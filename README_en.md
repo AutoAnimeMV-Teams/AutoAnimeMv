@@ -28,13 +28,17 @@
 
 # 🚀Quick Start
 
-> <img src="./Image/Example/one.jpg" width="400" height="300"> <img src="./Image/Example/two.jpg" width="400" height="300"> <img src="./Image/Example/three.jpg" width="400" height="300">
+> <img src="./Image/Example/one.jpg" width="400" height="300">
+
+> <img src="./Image/Example/two.jpg" width="400" height="300">
+
+> <img src="./Image/Example/three.jpg" width="400" height="300">
 
  Scroll down to find `Run External Program`
  Run External Program and enter the following code as mentioned above.
-> #/volume1/Download/py/AutoAnimeMv.py is the path where AutoAnimeMv.py is located
+> /to/your/dir/AutoAnimeMv.py is the path where AutoAnimeMv.py is located
 ``` bash
-python3 /volume1/Download/py/AutoAnimeMv.py "%D" "%N" "%L"(Optional)
+python3 /to/your/dir/AutoAnimeMv.py "%D" "%N" "%L"(Optional)
 ```
 > # Common Questions && Help
 * In Synology NAS, the `python3` environment installed through Package Center may encounter various issues. Please use a third-party package source (Note: For the third-party source, you need to manually create a symbolic link for `python3` to /usr/local/bin/python3).
@@ -83,7 +87,7 @@ python3 /volume1/Download/py/AutoAnimeMv.py "%D" "%N" "%L"(Optional)
   ```
   python3 Test.py 
   ```
-* 输出内容:
+* OUTPUT:
     ```
   现在进入Test mode,正在read test文件
   2.匹配剧集为01
