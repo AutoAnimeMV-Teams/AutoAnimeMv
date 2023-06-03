@@ -21,8 +21,9 @@
 # 💡 帮助&提醒
 
  * **`🐍Python3环境`**:您可以在[🐍Python官网](https://www.python.org/downloads/windows/)下载合适的版本进行安装,我们建议安装3.9及以上的版本
-   >  🐍Python使用的依赖库:`sys` `os` `time` `re` `ast`(Test.py用)
-   以上依赖应该不需要您进行安装
+   >  🐍Python使用的依赖库:`sys` `os` `time` `re` `ast`(Test.py用) `shutil` `win10toast`
+   
+   >以上依赖应该只有`win10toast`(Win通知-可选)需要您进行安装,Linux(NAS)用户不需要安装
  * 如果您直接使用pip进行install遇到 `❗Fatal error in launcher: Unable to create process using pip问题` ,请使用`python3 -m pip install`
  * <img style="vertical-align:sub;" src="./Image/rss.png" height="15" width="35" > **`番剧网站`**:如果您需要RSS或BT或番剧支持，您可以来我们的Tg群寻找帮助
    
@@ -37,18 +38,19 @@
 
      🍟同时，在脚本目录会生成以时间命名的Log文件,其内容为
      
-     > Sun_May_28_02-16-36_2023.log
+     > 2023-06-03.log
 
      ```
-    LOG开始记录，完整log条目为8条
-    1.接受到['.\\AutoAnimeMv.py', 'E:\\D\\Test', '[DMG&LoliHouse] Kono Subarashil Sekai ni Bakuen wo! - 01 [WebRip 1080p HEVC-10bit AAC ASSx2].mkv']参数
-    2.匹配剧集为01
-    3.通过剧集截断文件名为=DMG&LoliHouse=-Kono-Subarashil-Sekai-ni-Bakuen-wo=---
-    4.番剧Name为Kono-Subarashil-Sekai-ni-Bakuen-wo
-    5-4.TrueVideoName=Kono-Subarashil-Sekai-ni-Bakuen-wo,Season=01
-    6.当前操作系统识别码为nt,posix/nt/java对应linux/windows/java虚拟机
-    7.创建Kono-Subarashil-Sekai-ni-Bakuen-wo\Season_01完成
-    8.创建E:\D\Test\Kono-Subarashil-Sekai-ni-Bakuen-wo\Season_01\S01E01.mkv完成 
+    [2023-06-03 04:40:21] INFO Running....
+    [2023-06-03 04:40:21] INFO: 当前操作系统识别码为posix,posix/nt/java对应linux/windows/java虚拟机
+    [2023-06-03 04:40:21] INFO: 接受到['/downloads/AutoRmPY/AutoAnimeMv.py', '/downloads/动漫', '[ANi] 勇者死了！ - 01 [1080P][Baha][WEB-DL][AAC AVC][CHT].mp4']参数
+    [2023-06-03 04:40:21] INFO: 匹配剧集为01
+    [2023-06-03 04:40:21] INFO: 通过剧集截断文件名为-勇者死了=---
+    [2023-06-03 04:40:21] INFO: 番剧Name为勇者死了
+    [2023-06-03 04:40:21] INFO: id 4 TrueVideoName=勇者死了,Season=01
+    [2023-06-03 04:40:21] INFO: 勇者死了 01 01 .mp4 << [ANi] 勇者死了！ - 01 [1080P][Baha][WEB-DL][AAC AVC][CHT].mp4
+    [2023-06-03 04:40:21] INFO: 创建 勇者死了/Season_01 完成
+    [2023-06-03 04:40:23] INFO: 创建 /downloads/动漫/勇者死了/Season_01/S01E01.mp4 完成...一切已经准备就绪
     ```
 ## 🧰 测试工具 
 * 自🍞`v1.5.0`以后，您可以使用`Test.py`对`AutoCartoonMv.py`进行Bt识别测试，以下是`Test.py`的使用方法
@@ -69,16 +71,14 @@
   python3 Test.py 
   ```
 * 输出内容(debug用):
-    ```
-  现在进入Test mode,正在read test文件
-  2.匹配剧集为01
-  3.通过剧集截断文件名为=DMG&LoliHouse=-Kono-Subarashil-Sekai-ni-Bakuen-wo=---
-  4.番剧Name为Kono-Subarashil-Sekai-ni-Bakuen-wo
-  Kono-Subarashil-Sekai-ni-Bakuen-wo 01
-  5-4.TrueVideoName=Kono-Subarashil-Sekai-ni-Bakuen-wo,Season=01
-  01 01 Kono-Subarashil-Sekai-ni-Bakuen-wo .mkv
-  {'Bt': '[DMG&LoliHouse] Kono Subarashil Sekai ni Bakuen wo! - 01 [WebRip 1080p HEVC-10bit AAC ASSx2].mkv', 'Name': 'Kono Subarashil Sekai ni Bakuen wo', 'Season': '01', 'Episodes': '01', 'FileType': '.mkv'}....Ok
-    ```
+  ```
+  [2023-06-03 12:49:12] INFO: 匹配剧集为01
+  [2023-06-03 12:49:12] INFO: 通过剧集截断文件名为-Kono-Subarashil-Sekai-ni-Bakuen-wo=---
+  [2023-06-03 12:49:12] INFO: 番剧Name为Kono-Subarashil-Sekai-ni-Bakuen-wo
+  [2023-06-03 12:49:12] INFO: id 4 TrueVideoName=Kono-Subarashil-Sekai-ni-Bakuen-wo,Season=01
+  [2023-06-03 12:49:12] INFO: Kono-Subarashil-Sekai-ni-Bakuen-wo 01 01 .mkv << [DMG&LoliHouse] Kono Subarashil Sekai ni Bakuen wo! - 01 [WebRip 1080p HEVC-10bit AAC ASSx2].mkv
+  {'Bt': '[DMG&LoliHouse] Kono Subarashil Sekai ni Bakuen wo! - 01 [WebRip 1080p HEVC-10bit AAC ASSx2].mkv', 'Name': 'Kono-Subarashil-Sekai-ni-Bakuen-wo', 'Season': '01', 'Episodes': '01', 'FileType': '.mkv'}....Ok
+  ```
   
 * 如果您想在`Test`文件中屏蔽某一条test测试数据,直接在开头添加`#`即可
   ```json
@@ -93,7 +93,7 @@
 # 📝 使用方法 
 
  > `AutoCartoonMv.py`需要三个参数,`下载路径` `下载文件名` `文件分类`(可选) 
-## 使用场景1-配合NAS Qbittorrent进行使用
+## 使用场景1-配合NAS 🔵Qbittorrent进行使用
   * 1.将`AutoCartoonMv.py`上传至`🔵QBittorrent`能访问的路径下
   
   * 2.在`🔵Qbittorrent`中创建`动漫`分类(非必须，你想要用什么名字都可以，去修改`AutoCartoonMv.py`中的判断即可，当然不要分类也可以)
@@ -107,6 +107,7 @@
     ```
     python3 AutoCartoonMv.py放置路径 "%D" "%N" "%L"(可选,您需要自己在源码里修改)
     ```
+     > <img src="./Image/Example/two.jpg" width="400" height="300"> <img src="./Image/Example/three.jpg" width="400" height="300">
   * 4.取消做种，修改qb配置: 将`🔵QBitTorrent `的`做种限制`改成`当分享率达到0当做种时间达到0分钟然后暂停torrent`
 
   * 5.现在你就可以下载一个番剧测试效果啦
@@ -117,6 +118,24 @@
     >` [桜都字幕组] 因为太怕痛就全点防御力了。第2季/ Itai No Wa Iya Nano De Bougyoryoku Ni Kyokufuri Shitai To Omoimasu. S2 [10][ 1080P@60FPS ][简繁内封].mp4`
   
     > 或者是带有干扰项的 `【喵萌奶茶屋】★01月新番★[英雄王，为了穷尽武道而转生～然后，成为世界最强的见习骑士♀～ / Eiyuuou, Bu wo Kiwameru Tame Tenseisu][10][720p][简体][招募翻译].mp4`
+## 使用场景2-配合Windows 🔵Qbittorrent进行使用
+
+## 开启下载并整理完成进行通知功能(可选)
+
+### Windows下使用WinAPI进行通知
+* 安装`win10toast` `🐍Python依赖库`
+* 检查`AutoAnimeMv.py`第11行的`WINTOASTFLAGS`开关为`True`
+  ```python
+  #config
+  WINTOASTFLAGS = True
+  ```
+* 一切准备就绪后,当番剧下载并整理完成Win将弹窗提醒您
+
+ ### 使用`🔵Qbittorrent`的Mail提醒功能
+* 进行`🔵Qbittorrent`设置>>`下载`选项
+* 启用`下载完成时发送电子邮件通知`功能,填好相关配置
+* 一切准备就绪后,当番剧下载并整理完成`qb`将发送Mail提醒您
+> <img src="./Image/Example/four.jpg">
 
 # 🧉 BB一下
 

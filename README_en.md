@@ -4,6 +4,8 @@
   **AutoAnimeMV is an ultra-lightweight and fast-deployment tool for automatic identification, renaming, and collation of anime series. It can be used in conjunction with QBittorrent to achieve automatic downloading of anime series and automated file collation.**
   
   **English | [简体中文](./README.md)**
+  
+  ! En-README.md Maybe the version is older because of the author's lack of energy
 
 [![ GitHub 许可证](https://img.shields.io/github/license/Abcuders/AutoAnimeMv)](https://github.com/Abcuders/AutoCartoonMv/LICENSE) [![GitHub release](https://img.shields.io/github/v/release/Abcuders/AutoAnimeMv)](https://github.com/Abcuders/AutoAnimeMv/releases/) [![telegram](https://img.shields.io/badge/telegram-AutoAnimeMv-blue?style=flat&logo=telegram)](https://t.me/AutoAnimeMv)
 </div>
@@ -22,8 +24,8 @@
 # Environment Configuration
 * ### Python 3 Environment
   * You can download the appropriate version from the [Python official website](https://www.python.org/downloads/windows/) and install it. We recommend installing version 3.9 or above.
-  * Python dependencies used: `sys`, `os`, `time`, `re`, `ast` (used in Test.py).
-    The above dependencies should not require separate installation.
+  * Python dependencies used: `sys`, `os`, `time`, `re`, `ast` (used in Test.py) and `win10toast`(winToast).
+    The above dependencies should not require separate installation apart from `win10toast`.
   * If you encounter the `Fatal error in launcher: Unable to create process using pip` issue when using `pip install` directly, please use `python3 -m pip install`.
 
 # 🚀Quick Start
@@ -56,20 +58,21 @@ python3 /to/your/dir/AutoAnimeMv.py "%D" "%N" "%L"(Optional)
 * We have commented out the functionality to determine whether it belongs to the "anime" category. Now it is an optional feature, and you can set different video saving paths based on different types.
 
 * At the same time, a log file named with the current timestamp will be generated in the script directory. Its content includes:
+     > 2023-06-03.log
      ```
-     Sun_May_28_02-16-36_2023.log
-     ```
-     ```
-    LOG开始记录，完整log条目为8条
-    1.接受到['.\\AutoAnimeMv.py', 'E:\\D\\Test', '[DMG&LoliHouse] Kono Subarashil Sekai ni Bakuen wo! - 01 [WebRip 1080p HEVC-10bit AAC ASSx2].mkv']参数
-    2.匹配剧集为01
-    3.通过剧集截断文件名为=DMG&LoliHouse=-Kono-Subarashil-Sekai-ni-Bakuen-wo=---
-    4.番剧Name为Kono-Subarashil-Sekai-ni-Bakuen-wo
-    5-4.TrueVideoName=Kono-Subarashil-Sekai-ni-Bakuen-wo,Season=01
-    6.当前操作系统识别码为nt,posix/nt/java对应linux/windows/java虚拟机
-    7.创建Kono-Subarashil-Sekai-ni-Bakuen-wo\Season_01完成
-    8.创建E:\D\Test\Kono-Subarashil-Sekai-ni-Bakuen-wo\Season_01\S01E01.mkv完成 
+    [2023-06-03 04:40:21] INFO Running....
+  [2023-06-03 04:40:21] INFO: 当前操作系统识别码为posix,posix/nt/java对应linux/windows/java虚拟机
+  [2023-06-03 04:40:21] INFO: 接受到['/downloads/AutoRmPY/AutoAnimeMv.py', '/downloads/动漫', '[ANi] 勇者死了！ - 01 [1080P][Baha][WEB-DL][AAC AVC][CHT].mp4']参数
+  [2023-06-03 04:40:21] INFO: 匹配剧集为01
+  [2023-06-03 04:40:21] INFO: 通过剧集截断文件名为-勇者死了=---
+  [2023-06-03 04:40:21] INFO: 番剧Name为勇者死了
+  [2023-06-03 04:40:21] INFO: id 4 TrueVideoName=勇者死了,Season=01
+  [2023-06-03 04:40:21] INFO: 勇者死了 01 01 .mp4 << [ANi] 勇者死了！ - 01 [1080P][Baha][WEB-DL][AAC AVC][CHT].mp4
+  [2023-06-03 04:40:21] INFO: 创建 勇者死了/Season_01 完成
+  [2023-06-03 04:40:23] INFO: 创建 /downloads/动漫/勇者死了/Season_01/S01E01.mp4 完成...一切已经准备就绪
     ```
+
+
 > # Testing Tool
 * Starting from `v1.5.0`, you can use `Test.py` to perform BT recognition testing on `AutoCartoonMv.py`. Here are the instructions for using `Test.py`:
 * `Test.py` doesn't require any parameters, but it needs a `tese` file with the following content:
@@ -89,14 +92,12 @@ python3 /to/your/dir/AutoAnimeMv.py "%D" "%N" "%L"(Optional)
   ```
 * OUTPUT:
     ```
-  现在进入Test mode,正在read test文件
-  2.匹配剧集为01
-  3.通过剧集截断文件名为=DMG&LoliHouse=-Kono-Subarashil-Sekai-ni-Bakuen-wo=---
-  4.番剧Name为Kono-Subarashil-Sekai-ni-Bakuen-wo
-  Kono-Subarashil-Sekai-ni-Bakuen-wo 01
-  5-4.TrueVideoName=Kono-Subarashil-Sekai-ni-Bakuen-wo,Season=01
-  01 01 Kono-Subarashil-Sekai-ni-Bakuen-wo .mkv
-  {'Bt': '[DMG&LoliHouse] Kono Subarashil Sekai ni Bakuen wo! - 01 [WebRip 1080p HEVC-10bit AAC ASSx2].mkv', 'Name': 'Kono Subarashil Sekai ni Bakuen wo', 'Season': '01', 'Episodes': '01', 'FileType': '.mkv'}....Ok
+  [2023-06-03 12:49:12] INFO: 匹配剧集为01
+  [2023-06-03 12:49:12] INFO: 通过剧集截断文件名为-Kono-Subarashil-Sekai-ni-Bakuen-wo=---
+  [2023-06-03 12:49:12] INFO: 番剧Name为Kono-Subarashil-Sekai-ni-Bakuen-wo
+  [2023-06-03 12:49:12] INFO: id 4 TrueVideoName=Kono-Subarashil-Sekai-ni-Bakuen-wo,Season=01
+  [2023-06-03 12:49:12] INFO: Kono-Subarashil-Sekai-ni-Bakuen-wo 01 01 .mkv << [DMG&LoliHouse] Kono Subarashil Sekai ni Bakuen wo! - 01 [WebRip 1080p HEVC-10bit AAC ASSx2].mkv
+  {'Bt': '[DMG&LoliHouse] Kono Subarashil Sekai ni Bakuen wo! - 01 [WebRip 1080p HEVC-10bit AAC ASSx2].mkv', 'Name': 'Kono-Subarashil-Sekai-ni-Bakuen-wo', 'Season': '01', 'Episodes': '01', 'FileType': '.mkv'}....Ok
     ```
 # Contributors✨
 **Thank you to these fun and awesome people!!!**
