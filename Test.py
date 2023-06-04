@@ -10,10 +10,11 @@ def Test():
             TestData = TestData.strip()
             if TestData != '' and TestData[0] != '#':
                 TestData = literal_eval(TestData.strip())
-                Season,Episodes,TrueVideoName,FileType = AttributesMatch(TestData['Bt'],FLAGS = 'PRINT')
-                if TrueVideoName == TestData["Name"] and Season == TestData['Season'] and Episodes == TestData['Episodes'] and FileType == TestData['FileType']:
-                    print(f'{TestData}....Ok\n ')
-                else:
-                    print(f'{TestData}....No\n')
+                if TestData['Bt'] != '':
+                    Season,Episodes,TrueVideoName,FileType = AttributesMatch(TestData['Bt'],FLAGS = 'PRINT')
+                    if TrueVideoName == TestData["Name"] and Season == TestData['Season'] and Episodes == TestData['Episodes'] and FileType == TestData['FileType']:
+                        print(f'{TestData}....Ok\n ')
+                    else:
+                        print(f'{TestData}....No\n')
 if __name__ == '__main__':
     Test()
