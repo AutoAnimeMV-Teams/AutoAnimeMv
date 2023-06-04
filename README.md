@@ -9,12 +9,12 @@
 
 **简体中文 | [English](./README_en.md)**
 
-! En-README.md 由于我精力不够所以有太多落后未更新的地方,如果您感兴趣并且有时间的希望您能帮助一下我✊
+*! En-README.md 由于我精力不够所以有太多落后未更新的地方,如果您感兴趣并且有时间的希望您能帮助一下我✊*
 
 [![ GitHub 许可证](https://img.shields.io/github/license/Abcuders/AutoAnimeMv)](https://github.com/Abcuders/AutoCartoonMv/LICENSE) [![GitHub release](https://img.shields.io/github/v/release/Abcuders/AutoAnimeMv)](https://github.com/Abcuders/AutoAnimeMv/releases/) [![telegram](https://img.shields.io/badge/telegram-AutoAnimeMv-blue?style=flat&logo=telegram)](https://t.me/AutoAnimeMv)
 
 ***
-> 😊这是一个**番剧自动识别**`剧名剧集+自动重命名+自动整理工具,还可以帮你把ASS/SRT外挂字幕也一起整理了哟`,具有部署方便,开箱即用的特点**,用来配合QBittorrent实现Rss订阅下载全自动刮削一条龙到家式爽歪歪服务!
+> 😊这是一个**番剧自动识别**`剧名剧集+自动重命名+自动整理的工具,还可以帮你把ASS/SRT外挂字幕也一起整理了哟`,**具有部署方便,开箱即用的特点**,用来配合QBittorrent实现Rss订阅下载Emby全自动刮削一条龙到家式爽歪歪服务!
  
 </div>
 
@@ -31,7 +31,7 @@
 
 # 💡 帮助&提醒
 
- * **`🐍Python3环境`**:您可以在[🐍Python官网](https://www.python.org/downloads/windows/)下载合适的版本进行安装,我们建议安装3.9及以上的版本
+ * **`🐍Python3环境`**:您可以在[🐍Python官网](https://www.python.org/downloads/windows/)下载合适的版本进行安装,我们建议安装3.9及以上的版本,最低的版本要求是3.6版本
    >  🐍Python使用的依赖库:`sys` `os` `time` `re` `ast`(Test.py用) `shutil` `win10toast`
    
    >以上依赖应该只有`win10toast`(Win通知-可选)需要您进行安装,Linux(NAS)用户不需要安装
@@ -57,7 +57,7 @@
      > 2023-06-03.log
 
      ```
-    [2023-06-03 04:40:21] INFO Running....
+    [2023-06-03 04:40:21] INFO: Running....
     [2023-06-03 04:40:21] INFO: 当前操作系统识别码为posix,posix/nt/java对应linux/windows/java虚拟机
     [2023-06-03 04:40:21] INFO: 接受到['/downloads/AutoRmPY/AutoAnimeMv.py', '/downloads/动漫', '[ANi] 勇者死了！ - 01 [1080P][Baha][WEB-DL][AAC AVC][CHT].mp4']参数
     [2023-06-03 04:40:21] INFO: 匹配剧集为01
@@ -71,7 +71,7 @@
     > 这个是处理带有外挂字幕的番剧识别Log
     
     ```
-    [2023-06-04 17:15:06] INFO Running....
+    [2023-06-04 17:15:06] INFO: Running....
     [2023-06-04 17:15:07] INFO: 当前操作系统识别码为nt,posix/nt/java对应linux/windows/java虚拟机
     [2023-06-04 17:15:07] INFO: 接受到['.\\AutoAnimeMv.py', 'E:\\\\D\\\\Test', '[BeanSub&FZSD&LoliHouse] Jigokuraku - 09', '2']参数
     [2023-06-04 17:15:07] INFO: 发现1个字幕文件
@@ -84,6 +84,58 @@
     [2023-06-04 17:15:07] INFO: 字幕文件[BeanSub&FZSD&LoliHouse] Jigokuraku - 09 [WebRip 1080p HEVC-10bit AAC ASSx2].简体中文.ass已导入
     [2023-06-04 17:15:09] INFO: 创建 E:\\D\\Test\Jigokuraku\Season_01\S01E09.mkv 完成...一切已经准备就绪
     ```
+### ❓什么样的番剧能够被识别?
+* 工具目前能够识别的类型要求为:
+> 存在番剧剧集,且剧集处于剧名后(支持的剧集格式为`1-4位纯数字/XXXX集/第XXXX集`),若存在`字幕组信息`,`字幕组信息`应在第一个位置,如果不在,则第一个位置应存在`《》`或者是其他情况(后文)
+```
+[DMG&LoliHouse] Kono Subarashil Sekai ni Bakuen wo! - 01 [WebRip 1080p HEVC-10bit AAC ASSx2].mkv
+```
+
+```
+[漫游字幕组]散华礼弥/僵尸哪有那么萌 第1集 720P MKV（外挂字幕） [274.7MB].mkv
+```
+
+```
+[织梦字幕组][间谍教室 スパイ教室][11集][1080P][AVC][简日双语] [337.62 MB].mp4
+```
+
+```
+《江戶前精靈》#9 (日語原聲)【Ani-One Asia】.mp4
+```
+
+> torrent中包含`[]` `【】`也可以识别,包含`04月新番` `（僅限港澳台地區）` `2023.04.02`之类的信息也可以剔除干净
+```
+[Comicat][Jigokuraku][01][1080P][GB&JP][MP4].mp4
+```
+
+```
+[ANi] 無神世界的神明活動（僅限港澳台地區） - 08 [1080P][Bilibili][WEB-DL][AAC AVC][CHT CHS].mp4
+```
+
+```
+[c.c動漫][4月新番][無神世界的神明活動][07][BIG5][1080P][MP4][網盤下載]296.9MB.mkv
+```
+
+```
+[Marukazoku][Sazae-san][2694][2023.04.02][BIG5][1080P][MP4].mp4
+```
+
+> torrent中包含`/`的将被工具认为是多语种译名番剧,若存在全英文译名将优先采用,不管哪个译名中存在`S2` `第二季`之类的剧季信息也可以识别(支持的剧集格式为`SXX/第XX季`)(如果有需要,后面会开发`シーズン2`之类的剧季识别)
+```
+【喵萌奶茶屋】★01月新番★[英雄王，为了穷尽武道而转生～然后，成为世界最强的见习骑士♀～ / Eiyuuou, Bu wo Kiwameru Tame Tenseisu][10][720p][简体][招募翻译].mp4
+```
+
+```
+[桜都字幕组] 因为太怕痛就全点防御力了。第2季/ Itai No Wa Iya Nano De Bougyoryoku Ni Kyokufuri Shitai To Omoimasu. S2 [10][ 1080P@60FPS ][简繁内封].mp4
+```
+> torrent中包含`v2`之类信息的重修版也是可以识别的(在开头的`v2`信息则会被剔除,字幕组信息还是在第一位)
+```
+[喵萌Production&LoliHouse] 偶像大师 灰姑娘女孩 U149 / THE IDOLM@STER CINDERELLA GIRLS U149 - 07v2 [WebRip 1080p HEVC-10bit AAC][简繁日内封字幕]675.6MB.mkv
+```
+
+```
+[V2][织梦字幕组][鬼灭之刃 锻刀村篇 鬼灭の刃 刀锻冶の里编][01集][720P][AVC][繁日双语] [614.11 MB].mp4
+```
 
 ## 🧰 测试工具 
 * 自🍞`v1.5.0`以后，您可以使用`Test.py`对`AutoCartoonMv.py`进行Bt识别测试，以下是`Test.py`的使用方法

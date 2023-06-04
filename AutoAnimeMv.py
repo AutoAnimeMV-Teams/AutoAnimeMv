@@ -40,29 +40,35 @@ def AttributesMatch(VideoName,FLAGS=None):
     Episodes = '01'
     RAWVideoName = VideoName
     #匹配待去除
-    FuzzyMatchData = [r'=.*?月新番.*?=',r'\d{4}.\d{2}.\d{2}',r'v\d{1}',r'\d{4}年\d{1,2}月番']
+    FuzzyMatchData = [r'=.*?月新番.*?=',r'\d{4}.\d{2}.\d{2}','v\d{1}',r'\d{4}年\d{1,2}月番']
     #精准待去除
     PreciseMatchData = ['仅限港澳台地区','僅限港澳台地區','日語原聲','TVアニメ','1080p','720p','4k','\(-\)','（-）']
+    OtEpisodesMatchData = ['第(\d{1,4})集','(\d{1,4})集']
     FileType = path.splitext(VideoName)[1]
     #FileType = search(r'(.*?\.)',VideoName[::-1],flags=I).group()[::-1] #匹配视频文件格式
     #统一意外字符
     VideoName = sub(r',|，| ','-',VideoName,flags=I) 
     VideoName = sub('[^a-z0-9_\s&/\-:：.\(\)（）《》\u4e00-\u9fa5\u3040-\u309F\u30A0-\u30FF\u31F0-\u31FF]','=',VideoName,flags=I)
-    #print(VideoName)
-    #去除日期(作废)
-    #VideoName = sub(r'','',VideoName,flags=I)
+    #异种剧集统一
+    for i in OtEpisodesMatchData:
+        if search(i,VideoName,flags=I) != None:
+            a = search(i,VideoName,flags=I)
+            print(a.group())
+            print(a.group(1).strip('\u4e00-\u9fa5'))
+            VideoName = VideoName.replace(a.group(),a.group(1).strip('\u4e00-\u9fa5'))
     #开始去除其他字符
-    for i in range(len(PreciseMatchData)):
-        VideoName = sub(r'%s'%PreciseMatchData[i],'-',VideoName,flags=I)
-    if VideoName[0] == '《':#判断有无字幕组
-        VideoName = sub(r'《|》','',VideoName,flags=I) 
-    else:
-        VideoName = sub(r'^=.*?=','',VideoName,flags=I)
-    for i in range(len(FuzzyMatchData)):
-        VideoName = sub(r'=.*?%s.*?='%FuzzyMatchData[i],'-',VideoName,flags=I)
+    for i in PreciseMatchData:
+        VideoName = sub(r'%s'%i,'-',VideoName,flags=I)
+    for i in FuzzyMatchData:
+        VideoName = sub(r'=.*?%s.*?='%i,'-',VideoName,flags=I)
     #匹配剧集
     try:
-        Episodes = findall(r'[^0-9a-z.\u4e00-\u9fa5\u0800-\u4e00][0-9]{1,4}[^0-9a-z.\u4e00-\u9fa5\u0800-\u4e00]',VideoName,flags=I)[0].strip(" =-_eE")
+        Episodes = findall(r'[^0-9a-z.\u4e00-\u9fa5\u0800-\u4e00][0-9]{1,4}[^0-9a-uw-z.\u4e00-\u9fa5\u0800-\u4e00]',VideoName,flags=I)[0].strip(" =-_eEv")
+        VideoName = VideoName.strip('-')
+        if VideoName[0] == '《':#判断有无字幕组
+            VideoName = sub(r'《|》','',VideoName,flags=I) 
+        else:
+            VideoName = sub(r'^=.*?=','',VideoName,flags=I)
     except IndexError:
         Log('ERROR: 未匹配出剧集,请检查(程序目前不支持特典和电影)...EXIT',FLAGS='PRINT')
         #Log('WARNING: 未匹配出剧集,可能是特典番剧',FLAGS='PRINT')
@@ -92,7 +98,7 @@ def AttributesMatch(VideoName,FLAGS=None):
                         Log(f"INFO: id 1 TrueVideoName={TrueVideoName},Season={Season}",FLAGS)
                         break
                     elif i ==  len(VideoName)-1 :
-                        TrueVideoName = VideoName[1]
+                        TrueVideoName = VideoName[0]
         elif search(r'季.*?第|[0-9]{0,1}[0-9]{1}S',VideoName[::-1],flags=I) != None :#单语言(中/英)匹配是否存在剧季
                 Season = search(r'(季.*?第|[0-9]{0,1}[0-9]{1}S)',VideoName[::-1],flags=I).group(0)[::-1]
                 TrueVideoName = VideoName.strip(Season)
@@ -127,9 +133,6 @@ def GetArgv():#接受参数
             FileList = listdir(SavePath)
             VDFileList = []
             for i in range(len(FileList)):
-                #print(path.isfile(f'{SavePath}{a}{FileList[i]}'))
-                #print( VideoName in FileList[i])
-                #if path.isfile(f'{SavePath}{a}{FileList[i]}') == True and VideoName in FileList[i] == True:
                 if VideoName in FileList[i] :
                    VDFileList.append(FileList[i])
         if  VDFileList == []:
@@ -180,7 +183,7 @@ def Log(message,FLAGS=None):
     #print(message)  
     DataLog = DataLog + '\n' + message
 
-DataLog = f'\n[{strftime("%Y-%m-%d %H:%M:%S",localtime(time()))}] INFO Running....'
+DataLog = f'\n[{strftime("%Y-%m-%d %H:%M:%S",localtime(time()))}] INFO: Running....'
 a = '\\' if name == 'nt' else '/'
 if name == 'nt': from win10toast import ToastNotifier
 
