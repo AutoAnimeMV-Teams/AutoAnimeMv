@@ -25,7 +25,7 @@ def AttributesMatch(VideoName,FLAGS=None):
     #FileType = search(r'(.*?\.)',VideoName[::-1],flags=I).group()[::-1] #匹配视频文件格式
     #统一意外字符
     VideoName = sub(r',|，| ','-',VideoName,flags=I) 
-    VideoName = sub('[^a-z0-9_\s&/\-:：.\(\)（）《》\u4e00-\u9fa5]','=',VideoName,flags=I)
+    VideoName = sub('[^a-z0-9_\s&/\-:：.\(\)（）《》\u4e00-\u9fa5\u3040-\u309F\u30A0-\u30FF\u31F0-\u31FF]','=',VideoName,flags=I)
     #print(VideoName)
     #去除日期
     VideoName = sub(r'\d{4}.\d{2}.\d{2}','',VideoName,flags=I)
