@@ -1,0 +1,16 @@
+name: 对本工具的建议
+description: 提出好点子
+labels: [enhancement]
+body:
+  - type: textarea
+    attributes:
+      label: 请尽可能详细描述你的想法
+      placeholder: 如：这个功能可实现的功能，你的想法等
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: 如可以，欢迎提供部分或全部实现上述功能的代码
+      placeholder: 提供部分或全部代码 供参考
+    validations:
+      required: false
