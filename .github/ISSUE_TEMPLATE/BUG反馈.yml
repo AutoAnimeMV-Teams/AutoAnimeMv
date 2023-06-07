@@ -1,0 +1,24 @@
+name: Bug反馈
+description: 在使用中遇到的任何Bug都可以来反馈捏~
+labels: [bug]
+body:
+  - type: input
+    attributes:
+      label: 所用版本&操作系统
+      description: >
+        请按照 VER-OS 格式书写
+        e.g. 1.12.0-Windows 1.10.0-Linux
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: 遇到的问题
+      placeholder: 详细描述你所遇到的问题有助于我们更快定位bug，如有必要可附图
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: 运行日志
+      placeholder: 运行日志，直接粘贴到此即可
+    validations:
+      required: true
