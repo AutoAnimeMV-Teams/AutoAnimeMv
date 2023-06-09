@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 #coding:utf-8
 from sys import argv
-from os import path,name,makedirs,listdir
+from os import path,name,makedirs,listdir,getcwd
 from time import sleep,strftime,localtime,time
 from re import findall,match,search,sub,I
 from shutil import move
@@ -9,7 +9,7 @@ from shutil import move
 
 #config
 WINTOASTFLAGS = False
-OPDETAILEDLOGFLAGS = False
+OPDETAILEDLOGFLAGS = True
 
 
 def WinTaoast(title,msg):
@@ -40,9 +40,9 @@ def AttributesMatch(VideoName,FLAGS=None):
     Episodes = '01'
     RAWVideoName = VideoName
     #匹配待去除
-    FuzzyMatchData = [r'=.*?月新番.*?=',r'\d{4}.\d{2}.\d{2}','v\d{1}',r'\d{4}年\d{1,2}月番']
+    FuzzyMatchData = [r'=.*?月新番.*?=',r'\d{4}.\d{2}.\d{2}',r'20\d{2}',r'v\d{1}',r'\d{4}年\d{1,2}月番']
     #精准待去除
-    PreciseMatchData = ['仅限港澳台地区','僅限港澳台地區','日語原聲','TVアニメ','1080p','720p','4k','\(-\)','（-）']
+    PreciseMatchData = ['仅限港澳台地区','僅限港澳台地區','日語原聲','国漫','TVアニメ','x264','1080p','720p','4k','\(-\)','（-）']
     OtEpisodesMatchData = ['第(\d{1,4})集','(\d{1,4})集']
     FileType = path.splitext(VideoName)[1]
     #FileType = search(r'(.*?\.)',VideoName[::-1],flags=I).group()[::-1] #匹配视频文件格式
@@ -60,10 +60,11 @@ def AttributesMatch(VideoName,FLAGS=None):
     for i in PreciseMatchData:
         VideoName = sub(r'%s'%i,'-',VideoName,flags=I)
     for i in FuzzyMatchData:
-        VideoName = sub(r'=.*?%s.*?='%i,'-',VideoName,flags=I)
+        VideoName = sub(i,'-',VideoName,flags=I)
     #匹配剧集
     try:
-        Episodes = findall(r'[^0-9a-z.\u4e00-\u9fa5\u0800-\u4e00][0-9]{1,4}[^0-9a-uw-z.\u4e00-\u9fa5\u0800-\u4e00]',VideoName,flags=I)[0].strip(" =-_eEv")
+        print(VideoName[::-1])
+        Episodes = findall(r'[^0-9a-z.\u4e00-\u9fa5\u0800-\u4e00][0-9]{1,4}[^0-9a-uw-z.\u4e00-\u9fa5\u0800-\u4e00]',VideoName[::-1],flags=I)[0][::-1].strip(" =-_eEv")
         VideoName = VideoName.strip('-')
         if VideoName[0] == '《':#判断有无字幕组
             VideoName = sub(r'《|》','',VideoName,flags=I) 
@@ -85,30 +86,32 @@ def AttributesMatch(VideoName,FLAGS=None):
         VideoName = VideoName.replace('=','').replace(' ','').strip('-')
         Log(f"INFO: 番剧Name为{VideoName}",FLAGS)
         #匹配剧季
+        SeasonMatchData1 = r'[0-9]{0,1}[0-9]{1}S|([0-9]{0,1}[0-9])nosaeS|([0-9]{0,1}[0-9]{1})-nosaeS|nosaeS-dn([0-9]{1})'
+        SeasonMatchData2 = r'(季.*?第|[0-9]{0,1}[0-9]{1}S)|([0-9]{0,1}[0-9]{1})nosaeS|([0-9]{0,1}[0-9]{1})-nosaeS|nosaeS-dn([0-9]{1})'
         if ('/' in VideoName) == True: #按'/'进行多语言分类
             VideoName = VideoName.split("/", )
             for i in range(len(VideoName)):
                 if VideoName[i].replace('-','').replace(':','').isalnum() == True: #多语言分类匹配英文Name中的剧季
-                    if search(r'[0-9]{0,1}[0-9]{1}S',VideoName[i][::-1],flags=I) != None :
-                        Season = search(r'[0-9]{0,1}[0-9]{1}S',VideoName[i][::-1],flags=I).group(0)[::-1]
-                        TrueVideoName = VideoName[i].strip(Season)
-                        VideoName = sub(r'%s.*'%Season,'',VideoName,flags=I) #通过剧季截断文件名
-                        Season = search(r'[0-9]{0,1}[0-9]{1}S',VideoName[i][::-1],flags=I).group(0)[::-1].strip('Ss')
+                    if search(SeasonMatchData1,VideoName[i][::-1],flags=I) != None :
+                        Season = search(SeasonMatchData1,VideoName[i][::-1],flags=I).group(0)[::-1]
+                        TrueVideoName = sub(r'%s.*'%Season,'',VideoName[i],flags=I).strip('-') #通过剧季截断文件名
+                        Season = search(SeasonMatchData1,VideoName[i][::-1],flags=I).group(0)[::-1].strip('SeasonndSSs-')
                         Season = f"0{Season}" if len(Season) == 1 else Season
                         Log(f"INFO: id 1 TrueVideoName={TrueVideoName},Season={Season}",FLAGS)
                         break
                     elif i ==  len(VideoName)-1 :
                         TrueVideoName = VideoName[0]
-        elif search(r'季.*?第|[0-9]{0,1}[0-9]{1}S',VideoName[::-1],flags=I) != None :#单语言(中/英)匹配是否存在剧季
-                Season = search(r'(季.*?第|[0-9]{0,1}[0-9]{1}S)',VideoName[::-1],flags=I).group(0)[::-1]
-                TrueVideoName = VideoName.strip(Season)
-                VideoName = sub(r'%s.*'%Season,'',VideoName,flags=I) #通过剧季截断文件名
-                Season = search(r'(季.*?第|[0-9]{0,1}[0-9]{1}S)',VideoName[::-1],flags=I).group(0)[::-1].strip('第季Ss')
+        elif search(SeasonMatchData2,VideoName[::-1],flags=I) != None :#单语言(中/英)匹配是否存在剧季
+                print(search(SeasonMatchData2,VideoName[::-1],flags=I).group(0)[::-1])
+                Season = search(SeasonMatchData2,VideoName[::-1],flags=I).group(0)[::-1]
+                #TrueVideoName = VideoName.strip(Season)
+                TrueVideoName = sub(r'%s.*'%Season,'',VideoName,flags=I) #通过剧季截断文件名
+                Season = search(SeasonMatchData2,VideoName[::-1],flags=I).group(0)[::-1].strip('第季SeasonndSs-')
                 if Season.isdigit() == True :
                     Season = f"0{Season}" if len(Season) == 1 else Season
                     Log(f"INFO: id 2 TrueVideoName={TrueVideoName},Season={Season}",FLAGS)
                 else:#中文剧季转化
-                    digit = {'一':'01', '二':'02', '三':'03', '四':'04', '五':'05', '六':'06', '七':'07', '八':'08', '九':'09'}
+                    digit = {'一':'01', '二':'02', '三':'03', '四':'04', '五':'05', '六':'06', '七':'07', '八':'08', '九':'09','壹':'01','贰':'02','叁':'03','肆':'04','伍':'05','陆':'06','柒':'07','捌':'08','玖':'09'}
                     Season = digit[Season]
                     Log(f"INFO: id 3 TrueVideoName={TrueVideoName},Season={Season}",FLAGS)
         else:
@@ -183,13 +186,14 @@ def Log(message,FLAGS=None):
     #print(message)  
     DataLog = DataLog + '\n' + message
 
+V = '1.13.1'
 DataLog = f'\n[{strftime("%Y-%m-%d %H:%M:%S",localtime(time()))}] INFO: Running....'
 a = '\\' if name == 'nt' else '/'
 if name == 'nt': from win10toast import ToastNotifier
 
 if __name__ == "__main__":
    #sleep(15)
-    Log(f"INFO: 当前操作系统识别码为{name},posix/nt/java对应linux/windows/java虚拟机")
+    Log(f"INFO: 当前工具版本为{V} \nINFO: 当前操作系统识别码为{name},posix/nt/java对应linux/windows/java虚拟机")
     try:
         SavePath,VideoName,AssList = GetArgv()
     except:
@@ -198,7 +202,7 @@ if __name__ == "__main__":
         Season,Episodes,VideoTrueName,FileType = AttributesMatch(VideoName)
         AutoMv(SavePath,VideoName,Season,Episodes,VideoTrueName,FileType,AssList)
     except :
-        pass
+       SavePath = getcwd()
     finally:
         with open(f"{SavePath}{a}{strftime('%Y-%m-%d',localtime(time()))}.log","a+",encoding='utf-8') as ff:
             ff.write(DataLog)
