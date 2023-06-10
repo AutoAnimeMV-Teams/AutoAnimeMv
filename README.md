@@ -190,7 +190,7 @@ OPDETAILEDLOGFLAGS = True
  > `AutoCartoonMv.py`需要三到四个参数,`下载路径` `下载文件名` `下载文件数` `文件分类`(可选) 
  
  > 批处理模式下 `AutoCartoonMv.py`需要一到俩个参数，`下载路径` `文件分类`(可选) 
-## 使用场景1-配合NAS 🔵Qbittorrent进行使用
+## 使用场景1-配合NAS(linux)/Windows 🔵Qbittorrent进行使用
   * 1.将`AutoCartoonMv.py`上传至`🔵QBittorrent`能访问的路径下
   
   * 2.在`🔵Qbittorrent`中创建`动漫`分类(非必须，你想要用什么名字都可以，去修改`AutoCartoonMv.py`中的判断即可，当然不要分类也可以)
@@ -215,10 +215,8 @@ OPDETAILEDLOGFLAGS = True
     >` [桜都字幕组] 因为太怕痛就全点防御力了。第2季/ Itai No Wa Iya Nano De Bougyoryoku Ni Kyokufuri Shitai To Omoimasu. S2 [10][ 1080P@60FPS ][简繁内封].mp4`
   
     > 或者是带有干扰项的 `【喵萌奶茶屋】★01月新番★[英雄王，为了穷尽武道而转生～然后，成为世界最强的见习骑士♀～ / Eiyuuou, Bu wo Kiwameru Tame Tenseisu][10][720p][简体][招募翻译].mp4`
-## 使用场景2-配合Windows 🔵Qbittorrent进行使用
-* 不必多说,见上文
 
-## 使用场景3-批处理本地已下载番剧
+## 使用场景2-批处理本地已下载番剧
 * 在Shell中执行以下代码,工具即可自动处理`下载路径`下的所有番剧和字幕文件
 ```
 python3 AutoCartoonMv.py放置路径 下载路径 文件分类(可选) 
