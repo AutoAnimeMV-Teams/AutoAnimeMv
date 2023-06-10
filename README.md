@@ -22,8 +22,13 @@
  > `工具更新较快,用法和功能都会更新,建议多来看看`
 
 > **🚀点击左上角打开目录，选择您要阅读的部分**
-
-
+<div align="center">
+ 
+ ## **New功能！**
+ </div>
+ 
+ > * 可以批处理刮削已下载番剧啦！(包括字幕文件)
+ > * 番剧文件分类
 
 # 🏕️ 环境支持
 
@@ -59,11 +64,11 @@
      ```
     [2023-06-03 04:40:21] INFO: Running....
     [2023-06-03 04:40:21] INFO: 当前操作系统识别码为posix,posix/nt/java对应linux/windows/java虚拟机
-    [2023-06-03 04:40:21] INFO: 接受到['/downloads/AutoRmPY/AutoAnimeMv.py', '/downloads/动漫', '[ANi] 勇者死了！ - 01 [1080P][Baha][WEB-DL][AAC AVC][CHT].mp4']参数
-    [2023-06-03 04:40:21] INFO: 匹配剧集为01
-    [2023-06-03 04:40:21] INFO: 通过剧集截断文件名为-勇者死了=---
-    [2023-06-03 04:40:21] INFO: 番剧Name为勇者死了
-    [2023-06-03 04:40:21] INFO: id 4 TrueVideoName=勇者死了,Season=01
+    [2023-06-03 04:40:21] INFO: 接受到参数 ==> ['/downloads/AutoRmPY/AutoAnimeMv.py', '/downloads/动漫', '[ANi] 勇者死了！ - 01 [1080P][Baha][WEB-DL][AAC AVC][CHT].mp4']
+    [2023-06-03 04:40:21] INFO: 匹配剧集 ==> 01
+    [2023-06-03 04:40:21] INFO: 通过剧集截断文件名 ==> -勇者死了=---
+    [2023-06-03 04:40:21] INFO: 番剧Name ==> 勇者死了
+    [2023-06-03 04:40:21] INFO: id 4 TrueVideoName ==> 勇者死了,Season ==> 01
     [2023-06-03 04:40:21] INFO: 勇者死了 01 01 .mp4 << [ANi] 勇者死了！ - 01 [1080P][Baha][WEB-DL][AAC AVC][CHT].mp4
     [2023-06-03 04:40:21] INFO: 创建 勇者死了/Season_01 完成
     [2023-06-03 04:40:23] INFO: 创建 /downloads/动漫/勇者死了/Season_01/S01E01.mp4 完成...一切已经准备就绪
@@ -73,12 +78,12 @@
     ```
     [2023-06-04 17:15:06] INFO: Running....
     [2023-06-04 17:15:07] INFO: 当前操作系统识别码为nt,posix/nt/java对应linux/windows/java虚拟机
-    [2023-06-04 17:15:07] INFO: 接受到['.\\AutoAnimeMv.py', 'E:\\\\D\\\\Test', '[BeanSub&FZSD&LoliHouse] Jigokuraku - 09', '2']参数
-    [2023-06-04 17:15:07] INFO: 发现1个字幕文件
-    [2023-06-04 17:15:07] INFO: 匹配剧集为09
-    [2023-06-04 17:15:07] INFO: 通过剧集截断文件名为-Jigokuraku---
-    [2023-06-04 17:15:07] INFO: 番剧Name为Jigokuraku
-    [2023-06-04 17:15:07] INFO: id 4 TrueVideoName=Jigokuraku,Season=01
+    [2023-06-04 17:15:07] INFO: 接受到参数 ==> ['.\\AutoAnimeMv.py', 'E:\\\\D\\\\Test', '[BeanSub&FZSD&LoliHouse] Jigokuraku - 09', '2']参数
+    [2023-06-04 17:15:07] INFO: 发现1个字幕文件 ==> ['BeanSub&FZSD&LoliHouse] Jigokuraku - 09 [WebRip 1080p HEVC-10bit AAC ASSx2].简体中文.ass']
+    [2023-06-04 17:15:07] INFO: 匹配剧集 ==> 09
+    [2023-06-04 17:15:07] INFO: 通过剧集截断文件名 ==> -Jigokuraku---
+    [2023-06-04 17:15:07] INFO: 番剧Name ==> Jigokuraku
+    [2023-06-04 17:15:07] INFO: id 4 TrueVideoName ==> Jigokuraku,Season ==> 01
     [2023-06-04 17:15:07] INFO: Jigokuraku 01 09 .mkv <<  [BeanSub&FZSD&LoliHouse] Jigokuraku - 09 [WebRip 1080p HEVC-10bit AAC ASSx2].mkv
     [2023-06-04 17:15:07] INFO: 创建 Jigokuraku\Season_01 完成
     [2023-06-04 17:15:07] INFO: 字幕文件[BeanSub&FZSD&LoliHouse] Jigokuraku - 09 [WebRip 1080p HEVC-10bit AAC ASSx2].简体中文.ass已导入
@@ -158,9 +163,9 @@
 * 输出内容(debug用):
   ```
   [2023-06-03 12:49:12] INFO: 匹配剧集为01
-  [2023-06-03 12:49:12] INFO: 通过剧集截断文件名为-Kono-Subarashil-Sekai-ni-Bakuen-wo=---
-  [2023-06-03 12:49:12] INFO: 番剧Name为Kono-Subarashil-Sekai-ni-Bakuen-wo
-  [2023-06-03 12:49:12] INFO: id 4 TrueVideoName=Kono-Subarashil-Sekai-ni-Bakuen-wo,Season=01
+  [2023-06-03 12:49:12] INFO: 通过剧集截断文件名 ==> -Kono-Subarashil-Sekai-ni-Bakuen-wo=---
+  [2023-06-03 12:49:12] INFO: 番剧Name ==> Kono-Subarashil-Sekai-ni-Bakuen-wo
+  [2023-06-03 12:49:12] INFO: id 4 TrueVideoName ==> Kono-Subarashil-Sekai-ni-Bakuen-wo,Season ==> 01
   [2023-06-03 12:49:12] INFO: Kono-Subarashil-Sekai-ni-Bakuen-wo 01 01 .mkv << [DMG&LoliHouse] Kono Subarashil Sekai ni Bakuen wo! - 01 [WebRip 1080p HEVC-10bit AAC ASSx2].mkv
   {'Bt': '[DMG&LoliHouse] Kono Subarashil Sekai ni Bakuen wo! - 01 [WebRip 1080p HEVC-10bit AAC ASSx2].mkv', 'Name': 'Kono-Subarashil-Sekai-ni-Bakuen-wo', 'Season': '01', 'Episodes': '01', 'FileType': '.mkv'}....Ok
   ```
@@ -182,7 +187,9 @@ OPDETAILEDLOGFLAGS = True
   
 # 📝 使用方法 
 
- > `AutoCartoonMv.py`需要三个参数,`下载路径` `下载文件名` `下载文件数` `文件分类`(可选,需要您更改code) 
+ > `AutoCartoonMv.py`需要三到四个参数,`下载路径` `下载文件名` `下载文件数` `文件分类`(可选) 
+ 
+ > 批处理模式下 `AutoCartoonMv.py`需要一到俩个参数，`下载路径` `文件分类`(可选) 
 ## 使用场景1-配合NAS 🔵Qbittorrent进行使用
   * 1.将`AutoCartoonMv.py`上传至`🔵QBittorrent`能访问的路径下
   
@@ -191,11 +198,11 @@ OPDETAILEDLOGFLAGS = True
   * 3.修改qb配置: `下载`勾选 `Torrent 完成时运行外部程序`, 下面填上(传入参数顺序不可更改)
   
     ```
-    python3 AutoCartoonMv.py放置路径 下载路径 下载文件名 下载文件数 文件分类(可选,需要您更改code) 
+    python3 AutoCartoonMv.py放置路径 下载路径 下载文件名 下载文件数 文件分类(可选) 
     ```
     上面三个参数可以由`🔵Qbittorrent`传入，即
     ```
-    python3 AutoCartoonMv.py放置路径 "%D" "%N" "%C" "%L"(可选,您需要自己在源码里修改)
+    python3 AutoCartoonMv.py放置路径 "%D" "%N" "%C" "%L"(可选)
     ```
      > <img src="./Image/Example/two.jpg" width="400" height="300"> <img src="./Image/Example/three.jpg" width="400" height="300">
   * 4.取消做种，修改qb配置: 将`🔵QBitTorrent `的`做种限制`改成`当分享率达到0当做种时间达到0分钟然后暂停torrent`
@@ -210,6 +217,47 @@ OPDETAILEDLOGFLAGS = True
     > 或者是带有干扰项的 `【喵萌奶茶屋】★01月新番★[英雄王，为了穷尽武道而转生～然后，成为世界最强的见习骑士♀～ / Eiyuuou, Bu wo Kiwameru Tame Tenseisu][10][720p][简体][招募翻译].mp4`
 ## 使用场景2-配合Windows 🔵Qbittorrent进行使用
 * 不必多说,见上文
+
+## 使用场景3-批处理本地已下载番剧
+* 在Shell中执行以下代码,工具即可自动处理`下载路径`下的所有番剧和字幕文件
+```
+python3 AutoCartoonMv.py放置路径 下载路径 文件分类(可选) 
+```
+* log输出
+```
+[2023-06-10 15:11:23] INFO: Running....
+[2023-06-10 15:11:23] INFO: 当前工具版本为1.14.1
+[2023-06-10 15:11:23] INFO: 当前操作系统识别码为nt,posix/nt/java对应linux/windows/java虚拟机
+[2023-06-10 15:11:23] INFO: 接受到参数 ==> ['E:\\D\\fork\\AutoAnimeMv\\AutoAnimeMv.py ', 'E:\\D\\Test']
+[2023-06-10 15:11:23] INFO: 现在是本地番剧文件批处理模式,正在扫描Path ==> E:\D\Test
+[2023-06-10 15:11:23] INFO: 发现1个字幕文件 ==> ['[BeanSub&FZSD&LoliHouse] Jigokuraku - 09 [WebRip 1080p HEVC-10bit AAC ASSx2].简体中文.ass']
+[2023-06-10 15:11:23] INFO: 发现3个番剧视频 ==> ['[ANi] 机动战士钢弹水星的魔女Season 2 - 18 [1080P][Baha][WEB-DL][AAC AVC][CHT][MP4].mp4', '[BeanSub&FZSD&LoliHouse] Jigokuraku - 09 [WebRip 1080p HEVC-10bit AAC ASSx2].mkv', '[Sakurato] Made in Abyss_ Retsujitsu no Ougonkyou [04v2][AVC-8bit 1080p AAC][CHS].mp4']
+[2023-06-10 15:11:23] INFO: 匹配剧集 ==> 18
+[2023-06-10 15:11:23] INFO: 通过剧集截断文件名 ==> -机动战士钢弹水星的魔女Season-2---
+[2023-06-10 15:11:23] INFO: 番剧Name ==> 机动战士钢弹水星的魔女Season-2
+[2023-06-10 15:11:23] INFO: id 2 TrueVideoName ==> 机动战士钢弹水星的魔女,Season ==> 02
+[2023-06-10 15:11:23] INFO: 机动战士钢弹水星的魔女 02 18 .mp4 << [ANi] 机动战士钢弹水星的魔女Season 2 - 18 [1080P][Baha][WEB-DL][AAC AVC][CHT][MP4].mp4
+[2023-06-10 15:11:23] INFO: 创建 机动战士钢弹水星的魔女\Season_02 完成
+[2023-06-10 15:11:23] INFO: 字幕文件[BeanSub&FZSD&LoliHouse] Jigokuraku - 09 [WebRip 1080p HEVC-10bit AAC ASSx2].简体中文.ass已导入
+[2023-06-10 15:11:25] INFO: 创建 E:\D\Test\机动战士钢弹水星的魔女\Season_02\S02E18.mp4 完成...一切已经准备就绪
+[2023-06-10 15:11:25] INFO: 匹配剧集 ==> 09
+[2023-06-10 15:11:25] INFO: 通过剧集截断文件名 ==> -Jigokuraku---
+[2023-06-10 15:11:25] INFO: 番剧Name ==> Jigokuraku
+[2023-06-10 15:11:25] INFO: id 4 TrueVideoName ==> Jigokuraku,Season ==> 01
+[2023-06-10 15:11:25] INFO: Jigokuraku 01 09 .mkv << [BeanSub&FZSD&LoliHouse] Jigokuraku - 09 [WebRip 1080p HEVC-10bit AAC ASSx2].mkv
+[2023-06-10 15:11:25] INFO: 创建 Jigokuraku\Season_01 完成
+[2023-06-10 15:11:27] INFO: 创建 E:\D\Test\Jigokuraku\Season_01\S01E09.mkv 完成...一切已经准备就绪
+[2023-06-10 15:11:27] INFO: 匹配剧集 ==> 04
+[2023-06-10 15:11:27] INFO: 通过剧集截断文件名 ==> -Made-in-Abyss_-Retsujitsu-no-Ougonkyou-=
+[2023-06-10 15:11:27] INFO: 番剧Name ==> Made-in-Abyss_-Retsujitsu-no-Ougonkyou
+[2023-06-10 15:11:27] INFO: id 4 TrueVideoName ==> Made-in-Abyss_-Retsujitsu-no-Ougonkyou,Season ==> 01
+[2023-06-10 15:11:27] INFO: Made-in-Abyss_-Retsujitsu-no-Ougonkyou 01 04 .mp4 << [Sakurato] Made in Abyss_ Retsujitsu no Ougonkyou [04v2][AVC-8bit 1080p AAC][CHS].mp4
+[2023-06-10 15:11:27] INFO: 创建 Made-in-Abyss_-Retsujitsu-no-Ougonkyou\Season_01 完成
+[2023-06-10 15:11:29] INFO: 创建 E:\D\Test\Made-in-Abyss_-Retsujitsu-no-Ougonkyou\Season_01\S01E04.mp4 完成...一切已经准备就绪
+```
+
+## ~~启用自动更新(Dev)~~
+
 ## 开启下载并整理完成进行通知功能(可选)
 
 ### Windows下使用WinAPI进行通知
