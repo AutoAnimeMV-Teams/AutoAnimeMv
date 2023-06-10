@@ -24,11 +24,12 @@
 > **🚀点击左上角打开目录，选择您要阅读的部分**
 <div align="center">
  
- ## **New功能！**
+ ## **🛎️🛎️New功能！🛎️🛎️**
  </div>
  
  > * 可以批处理刮削已下载番剧啦！(包括字幕文件)
- > * 番剧文件分类
+ > * 自动更新上线啦！
+ > * 番剧文件分类回归啦！
 
 # 🏕️ 环境支持
 
@@ -37,9 +38,9 @@
 # 💡 帮助&提醒
 
  * **`🐍Python3环境`**:您可以在[🐍Python官网](https://www.python.org/downloads/windows/)下载合适的版本进行安装,我们建议安装3.9及以上的版本,最低的版本要求是3.6版本
-   >  🐍Python使用的依赖库:`sys` `os` `time` `re` `ast`(Test.py用) `shutil` `win10toast`
+   >  🐍Python使用的依赖库:`sys` `os` `time` `re` `ast` `shutil` `win10toast` `requests`
    
-   >以上依赖应该只有`win10toast`(Win通知-可选)需要您进行安装,Linux(NAS)用户不需要安装
+   >以上依赖应该只有`win10toast`(Win通知-可选) `requests`(自动更新-可选)需要您进行安装,Linux(NAS)用户不需要安装`win10toast`(Win通知-可选)
  * 如果您直接使用pip进行install遇到 `❗Fatal error in launcher: Unable to create process using pip问题` ,请使用`python3 -m pip install`
  * **`🔵Qbittorrent`**:我们推荐您使用Docker进行安装使用,Win用户可以访问[Qbittorrent官网](https://www.qbittorrent.org/)进行安装
  * **`🟩Emby/🎶Jellyfin`**:[🟩Emby官网](https://emby.media/) [🎶Jellyfin官网](https://jellyfin.org/) [🎶Jellyfin-GitHub](https://github.com/jellyfin/jellyfin-media-player)
@@ -179,17 +180,19 @@
 * 在群晖NAS中，套件中心安装的`🐍python3`环境可能出现奇奇怪怪的问题，请使用第三方套件源(第三方源需要手动为`🐍python3`创建软连接至/usr/local/bin/python3)
 
 * 如果你使用的是群晖NAS `🐳Docker`版的`🔵QBitTorrent`,你可以在容器日志中直接看到`AutoCartoonMv.py`输出的`简单Log信息`
-> 如果您想要输出详细的Log信息，请启用`OPDETAILEDLOGFLAGS`
+> 如果您想要输出详细的Log信息，请在`AutoAnimeMv.py`12行启用`OPDETAILEDLOGFLAGS`
 ```python
 #config
-OPDETAILEDLOGFLAGS = True
+OPDETAILEDLOGFLAGS = True #详细日志输出开关
 ```
   
 # 📝 使用方法 
 
  > `AutoCartoonMv.py`需要三到四个参数,`下载路径` `下载文件名` `下载文件数` `文件分类`(可选) 
  
- > 批处理模式下 `AutoCartoonMv.py`需要一到俩个参数，`下载路径` `文件分类`(可选) 
+ > 批处理模式下 `AutoCartoonMv.py`需要一到俩个参数,`下载路径` `文件分类`(可选) 
+
+ > 更新模式下`AutoCartoonMv.py`需要一个参数,`update`(就是纯字符串update)
 ## 使用场景1-配合NAS(linux)/Windows 🔵Qbittorrent进行使用
   * 1.将`AutoCartoonMv.py`上传至`🔵QBittorrent`能访问的路径下
   
@@ -221,7 +224,7 @@ OPDETAILEDLOGFLAGS = True
 ```
 python3 AutoCartoonMv.py放置路径 下载路径 文件分类(可选) 
 ```
-* log输出
+* 输出Log
 ```
 [2023-06-10 15:11:23] INFO: Running....
 [2023-06-10 15:11:23] INFO: 当前工具版本为1.14.1
@@ -254,7 +257,39 @@ python3 AutoCartoonMv.py放置路径 下载路径 文件分类(可选)
 [2023-06-10 15:11:29] INFO: 创建 E:\D\Test\Made-in-Abyss_-Retsujitsu-no-Ougonkyou\Season_01\S01E04.mp4 完成...一切已经准备就绪
 ```
 
-## ~~启用自动更新(Dev)~~
+## 启用自动更新
+* 安装`requests` `🐍Python依赖库`
+* 检查`AutoAnimeMv.py`第13行的`AUTOUPDATEFLAGS`开关为`True`
+  ```python
+  #config
+  AUTOUPDATEFLAGS = True #自动更新开关
+  ```
+  > 如果您使用了代理,您还需要检查`AutoAnimeMv.py`第13行的`USINGPROXYFLAGS`开关为`True`,并`配置代理信息`
+  ```python
+  #config
+  USINGPROXYFLAGS = True #使用代理开关
+  HTTPPROXY = 'http://127.0.0.1:7890' #Http代理,请根据您的实际情况填写  
+  HTTPSPROXY = 'http://127.0.0.1:7890' #Https代理,请根据您的实际情况填写  
+  ```
+* 在Shell中执行以下代码,即可更新相关文件
+  ```bash
+  python3 AutoAnimeMv.py update
+  #python3 AutoAnimeMv.py UPDATE 也是可以的
+  ```
+* 输出Log
+  ```
+  [2023-06-10 20:31:54] INFO: 当前工具版本为1.14.1
+  [2023-06-10 20:31:54] INFO: 当前操作系统识别码为nt,posix/nt/java对应linux/windows/java虚拟机
+  [2023-06-10 20:31:54] INFO: 接受到参数 ==> ['.\\AutoAnimeMv.py', 'update']
+  [2023-06-10 20:31:54] INFO: 准备更新中
+  [2023-06-10 20:31:55] INFO: 最新版 ==> 1.15.0,可更新的文件 ==> ['AutoAnimeMv.py']
+  [2023-06-10 20:31:56] INFO: 更新 ==> AutoAnimeMv.py
+  [2023-06-10 20:31:56] INFO: 全部已更新完毕
+  ```
+* 设置定时检查更新
+> NAS(Linux)用户您可以使用`Crontab`或其他定时任务功能进行自动检查更新
+
+> Win用户您可以使用`计划任务程序`进行自动检查更新
 
 ## 开启下载并整理完成进行通知功能(可选)
 
@@ -263,7 +298,7 @@ python3 AutoCartoonMv.py放置路径 下载路径 文件分类(可选)
 * 检查`AutoAnimeMv.py`第11行的`WINTOASTFLAGS`开关为`True`
   ```python
   #config
-  WINTOASTFLAGS = True
+  WINTOASTFLAGS = True #win弹窗通知开关 
   ```
 * 一切准备就绪后,当番剧下载并整理完成Win将弹窗提醒您
 

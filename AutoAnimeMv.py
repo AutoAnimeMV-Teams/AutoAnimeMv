@@ -1,17 +1,20 @@
 #!/usr/bin/python3
 #coding:utf-8
 from sys import argv
-from os import path,name,makedirs,listdir,getcwd
+from os import path,name,makedirs,listdir,getcwd,chdir
 from time import sleep,strftime,localtime,time
 from re import findall,match,search,sub,I
 from shutil import move
-
+from ast import literal_eval
 
 #config
-WINTOASTFLAGS = False
-OPDETAILEDLOGFLAGS = True
+WINTOASTFLAGS = False #win弹窗通知开关 
+OPDETAILEDLOGFLAGS = True #详细日志输出开关
+AUTOUPDATEFLAGS = True #自动更新开关
+USINGPROXYFLAGS = True #使用代理开关
+HTTPPROXY = 'http://127.0.0.1:7890' #Http代理,请根据您的实际情况填写  
+HTTPSPROXY = 'http://127.0.0.1:7890' #Https代理,请根据您的实际情况填写  
 
-    
 
 def WinTaoast(title,msg):
     a = ToastNotifier().show_toast(title, msg,duration=5,threaded=True)   
@@ -121,8 +124,17 @@ def AttributesMatch(VideoName,FLAGS=None):
 
 def GetArgv():#接受参数
     Log(f"INFO: 接受到参数 ==> {argv}")
-#筛选分类,您可以根据不同的类型设置不同路径
+    #筛选分类,您可以根据不同的类型设置不同路径
     #if len(argv) == 2 or len(argv) == 3:
+    try:
+        if argv[1] == 'update' or argv[1] == 'UPDATE':
+            Log('INFO: 准备更新中')
+            UpDate(CheckUpdate())
+            Log('INFO: 全部已更新完毕')
+            exit()
+    except:
+        Log(f'ERROR 未知的参数 ==> {argv}',FLAGS='PRINT')
+
     if 2 <= len(argv) <=  3:
         SavePath,CategoryName = argv[1],None
         Log(f'INFO: 现在是本地番剧文件批处理模式,正在扫描Path ==> {SavePath}')
@@ -134,13 +146,13 @@ def GetArgv():#接受参数
         return SavePath,VDFileNameL,ASSFileN,CategoryName
             
     #elif len(argv) == 4 or len(argv) == 5:
-    elif 5 <= len(argv) <= 6:
+    elif 4 <= len(argv) <= 5:
         SavePath,VideoName,CategoryName = argv[1],argv[2],None
-        if len(argv) == 6:
+        if len(argv) == 5:
             CategoryName = argv[4]
             Log(f'INFO: 分类模式已启用,当前分类 ==> {CategoryName}')
         if argv[3] == '1': #NumberOfFile == 1
-            return SavePath,VideoName,None
+            return SavePath,VideoName,None,None
         else:
             FileList = listdir(SavePath)
             VDFileList = []
@@ -154,7 +166,7 @@ def GetArgv():#接受参数
             VDFileName,ASSFileN = VDFileMatch(VDFileList)
             return SavePath,VDFileName,ASSFileN,CategoryName
     else:
-        Log(f'ERROR 错误的参数: {argv}',FLAGS='PRINT')
+        Log(f'ERROR 错误的参数 ==> {argv}',FLAGS='PRINT')
         exit()
 
 def AutoMv(SavePath,VideoName,Season,Episodes,VideoTrueName,FileType,AssList,CategoryName):#整理+重命名
@@ -178,7 +190,7 @@ def AutoMv(SavePath,VideoName,Season,Episodes,VideoTrueName,FileType,AssList,Cat
                 AssFileType = path.splitext(AssList[i])[1]
                 move(f'{SavePath}{a}{AssList[i]}',f'{SavePath}{a}{NewVideoDir}{a}S{Season}E{Episodes}.Chinese(版本{i+1}){AssFileType}')
                 Log(f'INFO: 字幕文件{AssList[i]}已导入',FLAGS='PRINT')
-    sleep(2)
+    sleep(0.5)
     #system(f'{a[0]} "{SavePath}{a[2]}{VideoName}"  "{SavePath}{a[2]}{NewVideoDir}{a[2]}{NewName}"')
     if path.isfile(f'{SavePath}{a}{VideoName}') == False:
         Log(f'ERROR: 不存在 {SavePath}{a}{VideoName} 文件...EXIT',FLAGS='PRINT')
@@ -198,8 +210,76 @@ def Log(message,FLAGS=None):
     #print(message)  
     DataLog = DataLog + '\n' + message
 
+def GetHttpData(File):
+    from requests import get,exceptions
+    UpdateURL = 'https://raw.githubusercontent.com/Abcuders/AutoAnimeMv/main/'
+    Proxy = {'http':HTTPPROXY,'https':HTTPSPROXY}
+    UpdateUrl = UpdateURL + File 
+    try:
+        Update = get(UpdateUrl,proxies=Proxy)
+    except exceptions.ConnectionError:
+        Log(f'ERROR: Get {UpdateURL} 失败,未能获取到Update 内容,请检查您是否启用了系统代理,如是则您应该在此工具中配置代理信息',FLAGS='PRINT')
+        exit()
+    except:
+        Log(f'ERROR: Get {UpdateURL} 失败,未能获取到Update 内容,请检查您的网络',FLAGS='PRINT')
+        exit()
+    else:
+        if Update.status_code == 200:
+            return Update.text
+        else:
+            Log('INFO: GETUPDATE Status-Code NO 200')
+            exit()
+
+def RWAnimeList(WriteData=None):
+    with open(f'{SavePath}{a}AnimeList','r+',encoding='UTF-8') as ff:
+        if WriteData == None:
+            data = ff.read()
+            if data != ' ':
+                Log(f'INFO: 正在读取AnimeList ==> {data}')
+                return data
+            else:
+                return None
+        elif WriteData != None:
+            Log(f'INFO: 正在写入AnimeList <== {WriteData}')
+            ff.write(WriteData)
+        else:
+            return None
+        
+def UpDate(UpdateFileList):
+   chdir(getcwd())
+   for i in UpdateFileList:
+        Update = GetHttpData(i)
+        with open(i,'w+',encoding='utf-8') as ff:
+            ff.write(Update)
+            Log(f'INFO: 更新 ==> {i}')
+
+def CheckUpdate():
+    CheckUpdate = literal_eval(GetHttpData('update'))
+    if CheckUpdate['V'] == V:
+        Log('INFO: 当前即是最新版不需要更新')
+    else:
+        Log(f'INFO: 最新版 ==> {CheckUpdate["V"]},可更新的文件 ==> {CheckUpdate["File"]}')
+    return CheckUpdate['File']
+
 def MainOperate(VideoName,AssList,CategoryName,Flags=None):
-    Season,Episodes,VideoTrueName,FileType = AttributesMatch(VideoName)
+    if path.isfile(f'{SavePath}{a}AnimeList'):
+        AimeList = RWAnimeList()
+    if AimeList != None:
+        AimeList = literal_eval(AimeList)
+        for i in AimeList:
+            ii = VideoName.replace(' ','-') if ' ' in VideoName else VideoName
+            if i in ii:
+                VideoTrueName = i
+                break
+        if VideoTrueName:
+            Log(f'INFO: {VideoTrueName} << AnimeList')
+            Season,Episodes,Dice,FileType = AttributesMatch(VideoName)
+        else:
+            Season,Episodes,VideoTrueName,FileType = AttributesMatch(VideoName)
+            RWAnimeList(str(AimeList.append(VideoTrueName)))
+    else: 
+        Season,Episodes,VideoTrueName,FileType = AttributesMatch(VideoName)
+        RWAnimeList(f'["{VideoTrueName}"]')
     if Flags != None:
         AssForVideo = []
         for i in AssList:
@@ -211,10 +291,10 @@ def MainOperate(VideoName,AssList,CategoryName,Flags=None):
             AssList = AssForVideo   
     AutoMv(SavePath,VideoName,Season,Episodes,VideoTrueName,FileType,AssList,CategoryName)
 
-V = '1.14.1'
+V = '1.15.1'
 DataLog = f'\n[{strftime("%Y-%m-%d %H:%M:%S",localtime(time()))}] INFO: Running....'
 a = '\\' if name == 'nt' else '/'
-if name == 'nt': from win10toast import ToastNotifier
+if name == 'nt' and WINTOASTFLAGS == True: from win10toast import ToastNotifier
 
 if __name__ == "__main__":
     Log(f'INFO: 当前工具版本为{V}')
