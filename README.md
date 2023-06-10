@@ -257,7 +257,7 @@ python3 AutoCartoonMv.py放置路径 下载路径 文件分类(可选)
 [2023-06-10 15:11:29] INFO: 创建 E:\D\Test\Made-in-Abyss_-Retsujitsu-no-Ougonkyou\Season_01\S01E04.mp4 完成...一切已经准备就绪
 ```
 
-## 启用自动更新
+## 启用自动更新(可选)
 * 安装`requests` `🐍Python依赖库`
 * 检查`AutoAnimeMv.py`第13行的`AUTOUPDATEFLAGS`开关为`True`
   ```python

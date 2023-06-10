@@ -132,9 +132,9 @@ def GetArgv():#接受参数
             UpDate(CheckUpdate())
             Log('INFO: 全部已更新完毕')
             exit()
-    except:
+    except IndexError:
         Log(f'ERROR 未知的参数 ==> {argv}',FLAGS='PRINT')
-
+        exit()
     if 2 <= len(argv) <=  3:
         SavePath,CategoryName = argv[1],None
         Log(f'INFO: 现在是本地番剧文件批处理模式,正在扫描Path ==> {SavePath}')
@@ -216,19 +216,19 @@ def GetHttpData(File):
     Proxy = {'http':HTTPPROXY,'https':HTTPSPROXY}
     UpdateUrl = UpdateURL + File 
     try:
-        Update = get(UpdateUrl,proxies=Proxy)
+        Update = get(UpdateUrl,proxies=Proxy) if USINGPROXYFLAGS == True else get(UpdateUrl)
     except exceptions.ConnectionError:
-        Log(f'ERROR: Get {UpdateURL} 失败,未能获取到Update 内容,请检查您是否启用了系统代理,如是则您应该在此工具中配置代理信息',FLAGS='PRINT')
+        Log(f'ERROR: Get {UpdateUrl} 失败,未能获取到Update 内容,请检查您是否启用了系统代理,如是则您应该在此工具中配置代理信息,否您则需要检查您的网络能否访问raw.githubusercontent.com',FLAGS='PRINT')
         exit()
     except:
-        Log(f'ERROR: Get {UpdateURL} 失败,未能获取到Update 内容,请检查您的网络',FLAGS='PRINT')
+        Log(f'ERROR: Get {UpdateUrl} 失败,未能获取到Update 内容,请检查您的网络',FLAGS='PRINT')
         exit()
     else:
         if Update.status_code == 200:
             return Update.text
         else:
             Log('INFO: GETUPDATE Status-Code NO 200')
-            exit()
+            exit()  
 
 def RWAnimeList(WriteData=None):
     with open(f'{SavePath}{a}AnimeList','r+',encoding='UTF-8') as ff:
@@ -257,6 +257,7 @@ def CheckUpdate():
     CheckUpdate = literal_eval(GetHttpData('update'))
     if CheckUpdate['V'] == V:
         Log('INFO: 当前即是最新版不需要更新')
+        exit()
     else:
         Log(f'INFO: 最新版 ==> {CheckUpdate["V"]},可更新的文件 ==> {CheckUpdate["File"]}')
     return CheckUpdate['File']
@@ -291,7 +292,7 @@ def MainOperate(VideoName,AssList,CategoryName,Flags=None):
             AssList = AssForVideo   
     AutoMv(SavePath,VideoName,Season,Episodes,VideoTrueName,FileType,AssList,CategoryName)
 
-V = '1.15.1'
+V = '1.15.2'
 DataLog = f'\n[{strftime("%Y-%m-%d %H:%M:%S",localtime(time()))}] INFO: Running....'
 a = '\\' if name == 'nt' else '/'
 if name == 'nt' and WINTOASTFLAGS == True: from win10toast import ToastNotifier
@@ -301,6 +302,7 @@ if __name__ == "__main__":
     Log(f"INFO: 当前操作系统识别码为{name},posix/nt/java对应linux/windows/java虚拟机")
     SavePath,VideoName,AssList,CategoryName = GetArgv()
     try:
+        
         if type(VideoName) == list:
             Log(f'INFO: 发现{len(VideoName)}个番剧视频 ==> {VideoName}',FLAGS='PRINT')
             for i in VideoName:
@@ -308,7 +310,6 @@ if __name__ == "__main__":
         else:
             MainOperate(VideoName,AssList,CategoryName)
     except :
-        print(1)
         if len(argv) == 1: 
             SavePath = getcwd()
     finally:
