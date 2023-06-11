@@ -11,7 +11,7 @@ def Test():
             if TestData != '' and TestData[0] != '#':
                 TestData = literal_eval(TestData.strip())
                 if TestData['Bt'] != '':
-                    Season,Episodes,TrueVideoName,FileType = AttributesMatch(TestData['Bt'],FLAGS = 'PRINT')
+                    Season,Episodes,TrueVideoName,FileType = AttributesMatch(TestData['Bt'])
                     if TrueVideoName == TestData["Name"] and Season == TestData['Season'] and Episodes == TestData['Episodes'] and FileType == TestData['FileType']:
                         print(f'{TestData}....Ok\n ')
                     else:

@@ -27,9 +27,12 @@
  ## **🛎️🛎️New功能！🛎️🛎️**
  </div>
  
- > * 可以批处理刮削已下载番剧啦！(包括字幕文件)
- > * 自动更新上线啦！
- > * 番剧文件分类回归啦！
+ > * 可以批处理刮削已下载番剧啦！(包括字幕文件) [如何使用?](#使用场景2-批处理本地已下载番剧) 
+ > * 加入了Bgm API支持！[看看](#bgm-api)
+ > * 新增AnimeList查询,针对Bgm和TMDB无法识别的特殊番剧别名提出的解决办法 [看一下?](#Animelist查询文件)
+ > * 自动更新上线啦！[如何使用?](#启用自动更新可选)
+ > * 番剧文件分类回归啦！[如何使用?](#使用场景1-配合naslinuxwindows-🔵qbittorrent进行使用)
+> * 支持外置配置了 [如何使用?](#配置)
 
 # 🏕️ 环境支持
 
@@ -40,7 +43,7 @@
  * **`🐍Python3环境`**:您可以在[🐍Python官网](https://www.python.org/downloads/windows/)下载合适的版本进行安装,我们建议安装3.9及以上的版本,最低的版本要求是3.6版本
    >  🐍Python使用的依赖库:`sys` `os` `time` `re` `ast` `shutil` `win10toast` `requests`
    
-   >以上依赖应该只有`win10toast`(Win通知-可选) `requests`(自动更新-可选)需要您进行安装,Linux(NAS)用户不需要安装`win10toast`(Win通知-可选)
+   >以上依赖应该只有`win10toast`(Win通知-可选) `requests`(网络访问-可选)需要您进行安装,Linux(NAS)用户不需要安装`win10toast`(Win通知-可选)
  * 如果您直接使用pip进行install遇到 `❗Fatal error in launcher: Unable to create process using pip问题` ,请使用`python3 -m pip install`
  * **`🔵Qbittorrent`**:我们推荐您使用Docker进行安装使用,Win用户可以访问[Qbittorrent官网](https://www.qbittorrent.org/)进行安装
  * **`🟩Emby/🎶Jellyfin`**:[🟩Emby官网](https://emby.media/) [🎶Jellyfin官网](https://jellyfin.org/) [🎶Jellyfin-GitHub](https://github.com/jellyfin/jellyfin-media-player)
@@ -90,6 +93,7 @@
     [2023-06-04 17:15:07] INFO: 字幕文件[BeanSub&FZSD&LoliHouse] Jigokuraku - 09 [WebRip 1080p HEVC-10bit AAC ASSx2].简体中文.ass已导入
     [2023-06-04 17:15:09] INFO: 创建 E:\\D\\Test\Jigokuraku\Season_01\S01E09.mkv 完成...一切已经准备就绪
     ```
+
 ### ❓ 什么样的番剧能够被识别?
 * 工具目前能够识别的类型要求为:
 > 存在番剧剧集,且剧集处于剧名后(支持的剧集格式为`1-4位纯数字/XXXX集/第XXXX集`),若存在`字幕组信息`,`字幕组信息`应在第一个位置,如果不在,则第一个位置应存在`《》`或者是其他情况(后文)
@@ -142,6 +146,24 @@
 ```
 [V2][织梦字幕组][鬼灭之刃 锻刀村篇 鬼灭の刃 刀锻冶の里编][01集][720P][AVC][繁日双语] [614.11 MB].mp4
 ```
+## 使番剧识别更精准的方法
+### Bgm Api 
+* 我们使用了BgmApi来进行更精准的剧名识别,您可以自由选择是否使用它
+```ini
+USEBGMAPIFLAGS = True #使用BgmApi进行更准确的识别
+```
+### AnimeList查询文件
+* 这是一个针对Bgm和TMDB都无法识别的特殊番剧别名,进行查询的文件,其内容为
+```json
+{"AnimeList":['86-Eiti-Shikkusu','放學後失眠的你'],"AnimeAlias":{'86-Eiti-Shikkusu':'86-不存在的战区','放學後失眠的你':'放学后失眠的你'}}
+```
+* 您可以选择是否启用此功能和使用Github或本地的AnimeList(本地位置和`AutoAnimeMV.py`同路径) [配置?](#配置)
+> 如果同时打开使用Github上的文件和使用本地的文件，则工具只会使用Github上的AnimeList文件
+```ini
+USEGITHUBANIMELISTFLAG = True #使用Github上的AnimeList文件
+USELOCALANIMELISTFLAG = False #使用本地的AnimeList文件
+FORCEDUSEBGMAPI = False #强制使用BgmApi进行识别,不查询AimeList文件
+```
 
 ## 🧰 测试工具 
 * 自🍞`v1.5.0`以后，您可以使用`Test.py`对`AutoCartoonMv.py`进行Bt识别测试，以下是`Test.py`的使用方法
@@ -162,7 +184,7 @@
   python3 Test.py 
   ```
 * 输出内容(debug用):
-  ```
+  ```log
   [2023-06-03 12:49:12] INFO: 匹配剧集为01
   [2023-06-03 12:49:12] INFO: 通过剧集截断文件名 ==> -Kono-Subarashil-Sekai-ni-Bakuen-wo=---
   [2023-06-03 12:49:12] INFO: 番剧Name ==> Kono-Subarashil-Sekai-ni-Bakuen-wo
@@ -180,8 +202,8 @@
 * 在群晖NAS中，套件中心安装的`🐍python3`环境可能出现奇奇怪怪的问题，请使用第三方套件源(第三方源需要手动为`🐍python3`创建软连接至/usr/local/bin/python3)
 
 * 如果你使用的是群晖NAS `🐳Docker`版的`🔵QBitTorrent`,你可以在容器日志中直接看到`AutoCartoonMv.py`输出的`简单Log信息`
-> 如果您想要输出详细的Log信息，请在`AutoAnimeMv.py`12行启用`OPDETAILEDLOGFLAGS`
-```python
+> 如果您想要输出详细的Log信息，请在`AutoAnimeMv.py`12行启用`OPDETAILEDLOGFLAGS` [配置?](#配置)
+```ini
 #config
 OPDETAILEDLOGFLAGS = True #详细日志输出开关
 ```
@@ -225,7 +247,7 @@ OPDETAILEDLOGFLAGS = True #详细日志输出开关
 python3 AutoCartoonMv.py放置路径 下载路径 文件分类(可选) 
 ```
 * 输出Log
-```
+```log
 [2023-06-10 15:11:23] INFO: Running....
 [2023-06-10 15:11:23] INFO: 当前工具版本为1.14.1
 [2023-06-10 15:11:23] INFO: 当前操作系统识别码为nt,posix/nt/java对应linux/windows/java虚拟机
@@ -259,17 +281,18 @@ python3 AutoCartoonMv.py放置路径 下载路径 文件分类(可选)
 
 ## 启用自动更新(可选)
 * 安装`requests` `🐍Python依赖库`
-* 检查`AutoAnimeMv.py`第13行的`AUTOUPDATEFLAGS`开关为`True`
-  ```python
+* 检查`AutoAnimeMv.py`第13行的`AUTOUPDATEFLAGS`开关为`True` [配置?](#配置)
+  ```ini
   #config
   AUTOUPDATEFLAGS = True #自动更新开关
   ```
   > 如果您使用了代理,您还需要检查`AutoAnimeMv.py`第13行的`USINGPROXYFLAGS`开关为`True`,并`配置代理信息`
-  ```python
+  ```ini
   #config
-  USINGPROXYFLAGS = True #使用代理开关
+  USINGPROXYFLAGS = True #使用代理开关,,如果您的代理服务器需要认证,请使用 账号:密码@ip:port 这样的格式
   HTTPPROXY = 'http://127.0.0.1:7890' #Http代理,请根据您的实际情况填写  
   HTTPSPROXY = 'http://127.0.0.1:7890' #Https代理,请根据您的实际情况填写  
+  SOCKS5PROXY = '' #SOCKS5代理,请根据您的实际情况填写
   ```
 * 在Shell中执行以下代码,即可更新相关文件
   ```bash
@@ -277,7 +300,7 @@ python3 AutoCartoonMv.py放置路径 下载路径 文件分类(可选)
   #python3 AutoAnimeMv.py UPDATE 也是可以的
   ```
 * 输出Log
-  ```
+  ```log
   [2023-06-10 20:31:54] INFO: 当前工具版本为1.14.1
   [2023-06-10 20:31:54] INFO: 当前操作系统识别码为nt,posix/nt/java对应linux/windows/java虚拟机
   [2023-06-10 20:31:54] INFO: 接受到参数 ==> ['.\\AutoAnimeMv.py', 'update']
@@ -290,13 +313,43 @@ python3 AutoCartoonMv.py放置路径 下载路径 文件分类(可选)
 > NAS(Linux)用户您可以使用`Crontab`或其他定时任务功能进行自动检查更新
 
 > Win用户您可以使用`计划任务程序`进行自动检查更新
+## 配置
+### 使用内置配置
+* `AutoAnimeMv.py` 内存在`config部分`,您可以自行配置相关参数(当不存在外置配置文件时使用)
+```ini
+#config
+WINTOASTFLAGS = False #win弹窗通知开关 
+OPDETAILEDLOGFLAGS = True #详细日志输出开关
+AUTOUPDATEFLAGS = True #自动更新开关
+UPDATEURLPATH = 'https://raw.githubusercontent.com/Abcuders/AutoAnimeMv/main/' #UPDATEURL
+USEGITHUBANIMELISTFLAG = False #使用Github上的AnimeList文件
+USELOCALANIMELISTFLAG = False #使用本地的AnimeList文件
+USINGPROXYFLAGS = True #使用代理开关,如果您的代理服务器需要认证,请使用 账号:密码@ip:port 这样的格式
+HTTPPROXY = 'http://127.0.0.1:7890' #Http代理,请根据您的实际情况填写  
+HTTPSPROXY = 'http://127.0.0.1:7890' #Https代理,请根据您的实际情况填写
+SOCKS5PROXY = '' #SOCKS5代理,请根据您的实际情况填写
+USEBGMAPIFLAGS = True #使用BgmApi进行更准确的识别
+FORCEDUSEBGMAPI = False #强制使用BgmApi进行识别,不查询AimeList文件
+BGMAPIURLPATH = 'https://api.bgm.tv/search/subject/' #BGMAPIURL
+```
+### 使用外置配置
+* `Config.ini` 是外置配置文件,把它放在`AutoAnimeMv.py`的目录下,`AutoAnimeMv.py`便会自行加载
+* 在外置配置文件没有配置的参数仍旧会使用内置配置
+* *如何编写`Config.ini`请见上面*
+
+> 使用外置配置的输出Log
+  ```log
+  [2023-06-12 00:54:39] INFO: 正在读取外置ini文件
+  [2023-06-12 00:54:39] INFO: 配置 < AUTOUPDATEFLAGS = False
+  ```
+
 
 ## 开启下载并整理完成进行通知功能(可选)
 
 ### Windows下使用WinAPI进行通知
 * 安装`win10toast` `🐍Python依赖库`
-* 检查`AutoAnimeMv.py`第11行的`WINTOASTFLAGS`开关为`True`
-  ```python
+* 检查`AutoAnimeMv.py`第11行的`WINTOASTFLAGS`开关为`True` [配置?](#配置)
+  ```ini
   #config
   WINTOASTFLAGS = True #win弹窗通知开关 
   ```
