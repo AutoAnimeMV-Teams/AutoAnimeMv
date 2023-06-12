@@ -54,7 +54,7 @@
    
 ## 🕹️ 工具的处理逻辑
 
-  * 开始Run之后会进行自动识别视频文件格式、番剧剧集、截断文件名、去除无效文字、剔除字幕组、保留剧名剧季，并将视频文件重命名为`S剧季E剧集.文件格式`再移至`下载路径` 下的`剧名\Season_剧季`文件夹(如果没有则会自动创建)就像下面一样:
+  * 开始Run之后会进行自动识别视频文件格式、番剧剧集、截断文件名、去除无效文字、剔除字幕组、保留剧名剧季，并将视频文件重命名为`S剧季E剧集.文件格式`再移至`下载路径` 下的`剧名\Season_剧季`文件夹(如果没有则会自动创建)就像下面一样,特殊剧集如7.5和00,则会被认为是`SP剧集`:
     ```
     [ANi] 无神世界的神明活动（仅限港澳台地区） - 01 [1080P][Bilibili][WEB-DL]  [AAC AVC][CHT CHS][MP4].MP4
     >>无神世界的神明活动/Season_01/S01E01.mp4
@@ -97,7 +97,7 @@
 
 ### ❓ 什么样的番剧能够被识别?
 * 工具目前能够识别的类型要求为:
-> 存在番剧剧集,且剧集处于剧名后(支持的剧集格式为`1-4位纯数字/XXXX集/第XXXX集`),若存在`字幕组信息`,`字幕组信息`应在第一个位置,如果不在,则第一个位置应存在`《》`或者是其他情况(后文)
+> 存在番剧剧集,且剧集处于剧名后(支持的剧集格式为`1-4位纯数字/XXXX集/第XXXX集/00/XX.XX(这些SP也可以识别)`),若存在`字幕组信息`,`字幕组信息`应在第一个位置,如果不在,则第一个位置应存在`《》`或者是其他情况(后文)
 ```
 [DMG&LoliHouse] Kono Subarashil Sekai ni Bakuen wo! - 01 [WebRip 1080p HEVC-10bit AAC ASSx2].mkv
 ```
@@ -214,11 +214,12 @@ OPDETAILEDLOGFLAGS = True #详细日志输出开关
  
  > 批处理模式下 `AutoCartoonMv.py`需要一到俩个参数,`下载路径` `文件分类`(可选) 
 
- > 更新模式下`AutoCartoonMv.py`需要一个参数,`update`(就是纯字符串update)
+ > 更新模式下`AutoCartoonMv.py`需要一个至俩个参数,`update`(就是纯字符串update) `指定更新文件`
+
 ## 使用场景1-配合NAS(Linux)/Windows🔵Qbittorrent进行使用
   * 1.将`AutoCartoonMv.py`上传至`🔵QBittorrent`能访问的路径下
   
-  * 2.在`🔵Qbittorrent`中创建`动漫`分类(非必须，你想要用什么名字都可以，去修改`AutoCartoonMv.py`中的判断即可，当然不要分类也可以)
+  * 2.在`🔵Qbittorrent`中创建`动漫`分类(非必须，当然不要分类也可以)
 
   * 3.修改qb配置: `下载`勾选 `Torrent 完成时运行外部程序`, 下面填上(传入参数顺序不可更改)
   
@@ -280,15 +281,17 @@ python3 AutoCartoonMv.py放置路径 下载路径 文件分类(可选)
 ```
 ## 配置
 ### 使用内置配置
-* `AutoAnimeMv.py` 内存在`config部分`,您可以自行配置相关参数(当不存在外置配置文件时使用)
+* `AutoAnimeMv.py` 内存在内置`config部分`,您可以自行配置相关参数(当不存在外置配置文件时使用)
 ```ini
 #config
-WINTOASTFLAGS = False #win弹窗通知开关 
 OPDETAILEDLOGFLAGS = True #详细日志输出开关
-USEFILELINKFLAGS = True #不使用MOVE改为使用硬链接进行番剧的整理(保种使用)
+WINTOASTFLAGS = False #win弹窗通知开关 
+USEFILELINKFLAGS = False #不使用MOVE改为使用硬链接进行番剧的整理(保种使用)
 LINKFAILSUSEMOVEFLAGS = False #硬链接失败时使用MOVE
 AUTOUPDATEFLAGS = True #自动更新开关
 UPDATEURLPATH = 'https://raw.githubusercontent.com/Abcuders/AutoAnimeMv/main/' #UPDATEURL
+NOUPDATELIST = 'AutoAnimeMv.py' #不更新列表
+SKIPCHECKBEFOREUPDATEFLAGS = False #跳过自动解决更新前检查到的问题(更新覆盖内置自定义配置)
 USEGITHUBANIMELISTFLAG = True #使用Github上的AnimeList文件
 USELOCALANIMELISTFLAGS = False #使用本地的AnimeList文件
 USINGPROXYFLAGS = True #使用代理开关,如果您的代理服务器需要认证,请使用 账号:密码@ip:port 这样的格式
@@ -330,7 +333,6 @@ BGMAPIURLPATH = 'https://api.bgm.tv/search/subject/' #BGMAPIURL
 * 在Shell中执行以下代码,即可更新相关文件
   ```bash
   python3 AutoAnimeMv.py update
-  #python3 AutoAnimeMv.py UPDATE 也是可以的
   ```
 * 输出Log
   ```log
@@ -346,6 +348,28 @@ BGMAPIURLPATH = 'https://api.bgm.tv/search/subject/' #BGMAPIURL
 > NAS(Linux)用户您可以使用`Crontab`或其他定时任务功能进行自动检查更新
 
 > Win用户您可以使用`计划任务程序`进行自动检查更新
+
+#### 高级选项
+* 您可以使用以下命令来指定下载更新某个文件,指定更新文件不受更新排除列表的限制
+```
+python3 AutoAnimeMv.py update 指定文件
+```
+* 您可以配置更新排除列表,让工具跳过某些文件的更新,配置方法如下
+```ini
+#config
+NOUPDATELIST = '不想更新的文件1','不想更新的文件2','不想更新的文件3'  #不更新列表
+```
+
+* 如果您在更新主程序时没有配置外置config文件,工具会提醒您,并自动将您自定义的内置配置重写至config.ini文件中
+```log
+[2023-06-13 00:07:19] WARNING: 更新前检查到您没有配置外置config.ini,如果直接更新您的自定义配置将变为默认配置
+[2023-06-13 00:07:19] INFO: 正在将您自定义的内置配置重写至config.ini文件中
+```
+> 您也可以关闭自动重写功能,开启`SKIPCHECKBEFOREUPDATEFLAGS`即可 [配置?](#配置)
+```ini
+#config
+SKIPCHECKBEFOREUPDATEFLAGS = True #跳过自动解决更新前检查到的问题(更新覆盖内置自定义配置)
+```
 
 ### 使用硬链接整理番剧
 * 如果您想要保种,只需要启用(注意exFAT文件系统不支持软链接与硬链接)

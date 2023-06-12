@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 #coding:utf-8
-from sys import argv
+from sys import argv,executable
 from os import path,name,makedirs,listdir,getcwd,chdir,link
 from time import sleep,strftime,localtime,time
 from re import findall,match,search,sub,I
@@ -8,17 +8,19 @@ from shutil import move
 from ast import literal_eval
 
 #config
-WINTOASTFLAGS = False #win弹窗通知开关 
 OPDETAILEDLOGFLAGS = True #详细日志输出开关
-USEFILELINKFLAGS = True #不使用MOVE改为使用硬链接进行番剧的整理(保种使用)
+WINTOASTFLAGS = False #win弹窗通知开关 
+USEFILELINKFLAGS = False #不使用MOVE改为使用硬链接进行番剧的整理(保种使用)
 LINKFAILSUSEMOVEFLAGS = False #硬链接失败时使用MOVE
 AUTOUPDATEFLAGS = True #自动更新开关
 UPDATEURLPATH = 'https://raw.githubusercontent.com/Abcuders/AutoAnimeMv/main/' #UPDATEURL
+NOUPDATELIST = 'AutoAnimeMv.py' #不更新列表
+SKIPCHECKBEFOREUPDATEFLAGS = False #跳过自动解决更新前检查到的问题(更新覆盖内置自定义配置)
 USEGITHUBANIMELISTFLAG = True #使用Github上的AnimeList文件
 USELOCALANIMELISTFLAGS = False #使用本地的AnimeList文件
 USINGPROXYFLAGS = True #使用代理开关,如果您的代理服务器需要认证,请使用 账号:密码@ip:port 这样的格式
 HTTPPROXY = 'http://127.0.0.1:7890' #Http代理,请根据您的实际情况填写  
-HTTPSPROXY = 'http://127.0.0.1:7890' #Https代理,请根据您的实际情况填写
+HTTPSPROXY = 'http://192.168.1.112:7890' #Https代理,请根据您的实际情况填写
 SOCKS5PROXY = '' #SOCKS5代理,请根据您的实际情况填写
 USEBGMAPIFLAGS = True #使用BgmApi进行更准确的识别
 FORCEDUSEBGMAPI = False #强制使用BgmApi进行识别,不查询AimeList文件
@@ -75,7 +77,10 @@ def AttributesMatch(VideoName,Flag=None):
         VideoName = sub(i,'-',VideoName,flags=I)
     #匹配剧集
     try:
-        Episodes = findall(r'[^0-9a-z.\u4e00-\u9fa5\u0800-\u4e00][0-9]{1,4}[^0-9a-uw-z.\u4e00-\u9fa5\u0800-\u4e00]',VideoName[::-1],flags=I)[0][::-1].strip(" =-_eEv")
+        if findall(r'[^0-9a-z.\u4e00-\u9fa5\u0800-\u4e00](\d{1}\.[0-9]{1,4})[^0-9a-uw-z.\u4e00-\u9fa5\u0800-\u4e00]',VideoName[::-1],flags=I) != []:
+            Episodes = findall(r'[^0-9a-z.\u4e00-\u9fa5\u0800-\u4e00](\d{1}\.[0-9]{1,4})[^0-9a-uw-z.\u4e00-\u9fa5\u0800-\u4e00]',VideoName[::-1],flags=I)[0][::-1].strip(" =-_eEv")
+        else:
+            Episodes = findall(r'[^0-9a-z.\u4e00-\u9fa5\u0800-\u4e00][0-9]{1,4}[^0-9a-uw-z.\u4e00-\u9fa5\u0800-\u4e00]',VideoName[::-1],flags=I)[0][::-1].strip(" =-_eEv")
         VideoName = VideoName.strip('-')
         if VideoName[0] == '《':#判断有无字幕组
             VideoName = sub(r'《|》','',VideoName,flags=I) 
@@ -89,7 +94,7 @@ def AttributesMatch(VideoName,Flag=None):
         #    TrueVideoName = sub(r'ED.*','',VideoName,flags=I)
     else:        
         RAWEpisodes = Episodes
-        Episodes = f"0{Episodes}" if len(Episodes) == 1 else Episodes
+        Episodes = f"0{Episodes}" if len(Episodes) == 1 or '.' in Episodes else Episodes
         Log(f"INFO: 匹配剧集 ==> {Episodes}")
         #通过剧集截断文件名
         VideoName = sub(r'%s.*'%RAWEpisodes,'',VideoName,flags=I)
@@ -150,10 +155,12 @@ def GetArgv():#接受参数
     #筛选分类,您可以根据不同的类型设置不同路径
     #if len(argv) == 2 or len(argv) == 3:
     try:
-        if argv[1] == 'update' or argv[1] == 'UPDATE':
+        if argv[1] == 'update':
+            flag = 'PY' if 'python' in executable else  'EXE'
+            flag = argv[2] if len(argv) == 3 else flag
             if AUTOUPDATEFLAGS == True:
-                Log('INFO: 准备更新中')
-                UpDate(CheckUpdate())
+                Log(f'INFO: 准备更新中-{flag}')
+                UpDate(CheckUpdate(flag))
                 Log('INFO: 全部已更新完毕')
                 exit()
             else:
@@ -171,7 +178,6 @@ def GetArgv():#接受参数
         FileList = listdir(SavePath)
         VDFileNameL,ASSFileN = VDFileMatch(FileList)
         return SavePath,VDFileNameL,ASSFileN,CategoryName
-            
     #elif len(argv) == 4 or len(argv) == 5:
     elif 4 <= len(argv) <= 5:
         SavePath,VideoName,CategoryName = argv[1],argv[2],None
@@ -198,7 +204,7 @@ def GetArgv():#接受参数
 
 def AutoMv(SavePath,VideoName,Season,Episodes,VideoTrueName,FileType,AssList,CategoryName):#整理+重命名
     #a = ['move /y','mkdir','\\'] if name == 'nt' else ['mv','mkdir -p','/']#识别操作系统
-    NewName = f"S{Season}E{Episodes}{FileType}"
+    NewName =  f"S{Season}SP{Episodes}{FileType}" if '.' in NewName or Episodes == 00 else f"S{Season}E{Episodes}{FileType}"
     NewVideoDir = f"{VideoTrueName}{a}Season_{Season}"
     SavePath = SavePath.strip('\\')
     if CategoryName != None:
@@ -216,58 +222,65 @@ def AutoMv(SavePath,VideoName,Season,Episodes,VideoTrueName,FileType,AssList,Cat
         for i in range(len(AssList[VideoName])):
             if path.isfile(f'{SavePath}{a}{AssList[VideoName][i]}') == True:
                 AssFileType = path.splitext(AssList[VideoName][i])[1]
-                if USEFILELINKFLAGS == True:
-                    try:
-                        link(f'{SavePath}{a}{AssList[VideoName][i]}',f'{SavePath}{a}{NewVideoDir}{a}S{Season}E{Episodes}.Chinese(版本{i+1}){AssFileType}')
-                    except OSError as err:
-                        if '[WinError 1]' in str(err):
-                            Log(f'ERROR: 当前文件系统不支持硬链接',FLAGS='PRINT')
+                if path.isfile(f'{SavePath}{a}{NewVideoDir}{a}S{Season}E{Episodes}.Chinese(版本{i+1}){AssFileType}') == False:                              
+                    if USEFILELINKFLAGS == True:
+                        try:
+                            link(f'{SavePath}{a}{AssList[VideoName][i]}',f'{SavePath}{a}{NewVideoDir}{a}S{Season}E{Episodes}.Chinese(版本{i+1}){AssFileType}')
+                        except OSError as err:
+                            if '[WinError 1]' in str(err):
+                                Log(f'ERROR: 当前文件系统不支持硬链接',FLAGS='PRINT')
+                            else:
+                                Log(f'ERROR: {err}')
+                            if LINKFAILSUSEMOVEFLAGS == True:
+                                move(f'{SavePath}{a}{AssList[VideoName][i]}',f'{SavePath}{a}{NewVideoDir}{a}S{Season}E{Episodes}.Chinese(版本{i+1}){AssFileType}')
+                                Log(f'INFO: 硬链接失败,使用MOVE导入字幕文件{AssList[VideoName][i]}',FLAGS='PRINT')
+                            else:
+                                exit()
                         else:
-                            Log(f'ERROR: {err}')
-                        if LINKFAILSUSEMOVEFLAGS == True:
-                            move(f'{SavePath}{a}{AssList[VideoName][i]}',f'{SavePath}{a}{NewVideoDir}{a}S{Season}E{Episodes}.Chinese(版本{i+1}){AssFileType}')
-                            Log(f'INFO: 硬链接失败,使用MOVE导入字幕文件{AssList[VideoName][i]}',FLAGS='PRINT')
-                        else:
-                            exit()
+                            Log(f'INFO: 字幕文件{AssList[VideoName][i]}已导入(硬链接)',FLAGS='PRINT')
                     else:
-                        Log(f'INFO: 字幕文件{AssList[VideoName][i]}已导入(硬链接)',FLAGS='PRINT')
+                        move(f'{SavePath}{a}{AssList[VideoName][i]}',f'{SavePath}{a}{NewVideoDir}{a}S{Season}E{Episodes}.Chinese(版本{i+1}){AssFileType}')
+                        Log(f'INFO: 字幕文件{AssList[VideoName][i]}已导入',FLAGS='PRINT')
+
                 else:
-                    move(f'{SavePath}{a}{AssList[VideoName][i]}',f'{SavePath}{a}{NewVideoDir}{a}S{Season}E{Episodes}.Chinese(版本{i+1}){AssFileType}')
-                    Log(f'INFO: 字幕文件{AssList[VideoName][i]}已导入',FLAGS='PRINT')
+                    Log(f'ERROR: {SavePath}{a}{NewVideoDir}{a}S{Season}E{Episodes}.Chinese(版本{i+1}){AssFileType}已存在,程序跳过')
     sleep(0.5)
     #system(f'{a[0]} "{SavePath}{a[2]}{VideoName}"  "{SavePath}{a[2]}{NewVideoDir}{a[2]}{NewName}"')
-    if path.isfile(f'{SavePath}{a}{VideoName}') == False:
-        Log(f'ERROR: 不存在 {SavePath}{a}{VideoName} 文件...EXIT',FLAGS='PRINT')
-        #exit()
+    if path.isfile(f'{SavePath}{a}{NewVideoDir}{a}{NewName}') == False:   
+        if path.isfile(f'{SavePath}{a}{VideoName}') == False:
+            Log(f'ERROR: 不存在 {SavePath}{a}{VideoName} 文件...EXIT',FLAGS='PRINT')
+            #exit()
+        else:
+            if USEFILELINKFLAGS == True:
+                try:
+                    link(f'{SavePath}{a}{VideoName}',f'{SavePath}{a}{NewVideoDir}{a}{NewName}')
+                except OSError as err:
+                    if '[WinError 1]' in str(err):
+                        Log(f'ERROR: 当前文件系统不支持硬链接')
+                    else:
+                        Log(f'ERROR: {err}')
+                    if LINKFAILSUSEMOVEFLAGS == True:
+                        move(f'{SavePath}{a}{VideoName}',f'{SavePath}{a}{NewVideoDir}{a}{NewName}')
+                        Log(f"INFO: 硬链接失败,使用MOVE创建 {SavePath}{a}{NewVideoDir}{a}{NewName} 完成...一切已经准备就绪")
+                    else:
+                        exit()
+                else:
+                    Log(f"INFO: 硬链接至 {SavePath}{a}{NewVideoDir}{a}{NewName} 完成...一切已经准备就绪")
+            else:    
+                move(f'{SavePath}{a}{VideoName}',f'{SavePath}{a}{NewVideoDir}{a}{NewName}')
+                Log(f"INFO: 创建 {SavePath}{a}{NewVideoDir}{a}{NewName} 完成...一切已经准备就绪")
+        if name == 'nt' and WINTOASTFLAGS == True:
+            WinTaoast('番剧下载整理完毕',f'{VideoTrueName}已经准备就绪了')
     else:
-        if USEFILELINKFLAGS == True:
-            try:
-                link(f'{SavePath}{a}{VideoName}',f'{SavePath}{a}{NewVideoDir}{a}{NewName}')
-            except OSError as err:
-                if '[WinError 1]' in str(err):
-                    Log(f'ERROR: 当前文件系统不支持硬链接')
-                else:
-                    Log(f'ERROR: {err}')
-                if LINKFAILSUSEMOVEFLAGS == True:
-                    move(f'{SavePath}{a}{VideoName}',f'{SavePath}{a}{NewVideoDir}{a}{NewName}')
-                    Log(f"INFO: 硬链接失败,使用MOVE创建 {SavePath}{a}{NewVideoDir}{a}{NewName} 完成...一切已经准备就绪")
-                else:
-                    exit()
-            else:
-                Log(f"INFO: 硬链接至 {SavePath}{a}{NewVideoDir}{a}{NewName} 完成...一切已经准备就绪")
-        else:    
-            move(f'{SavePath}{a}{VideoName}',f'{SavePath}{a}{NewVideoDir}{a}{NewName}')
-            Log(f"INFO: 创建 {SavePath}{a}{NewVideoDir}{a}{NewName} 完成...一切已经准备就绪")
-    if name == 'nt' and WINTOASTFLAGS == True:
-        WinTaoast('番剧下载整理完毕',f'{VideoTrueName}已经准备就绪了')
+        Log(f'ERROR: {SavePath}{a}{NewVideoDir}{a}{NewName}已存在,程序跳过')
 
 def Log(message,FLAGS=None):
     global DataLog
-    global OPDETAILEDLOGFLAGS
+    #global OPDETAILEDLOGFLAGS
     message = f'[{strftime("%Y-%m-%d %H:%M:%S",localtime(time()))}] {message}'
     if OPDETAILEDLOGFLAGS == True or FLAGS == 'PRINT' :
         print(message)
-    #print(message)  
+    #print(message) 
     DataLog = DataLog + '\n' + message
 
 def GetHttpData(Path,Flag=None):
@@ -320,23 +333,70 @@ def RWAnimeList(WriteData=None):
                 ff.write(str(WriteData))
             else:
                 return None
-        
-def UpDate(UpdateFileList):
-   chdir(getcwd())
-   for i in UpdateFileList:
-        Update = GetHttpData(i,Flag='UPDATE')
-        with open(i,'w+',encoding='utf-8') as ff:
-            ff.write(Update)
-            Log(f'INFO: 更新 ==> {i}')
+def CheckBeforeUpdate():
+    chdir(getcwd())
+    if path.isfile('config.ini') == False:
+        Log('WARNING: 更新主程序前检查到您没有配置外置config.ini,如果直接更新您的自定义配置将变为默认配置')
+        if SKIPCHECKBEFOREUPDATEFLAGS == False:
+            Log('INFO: 正在将您自定义的内置配置重写至config.ini文件中')
+            with open('config.ini','w+',encoding='utf-8') as ff:
+                data = f'''#config
+OPDETAILEDLOGFLAGS = '{OPDETAILEDLOGFLAGS}' #详细日志输出开关
+WINTOASTFLAGS = '{WINTOASTFLAGS}' #win弹窗通知开关 
+USEFILELINKFLAGS = '{USEFILELINKFLAGS}' #不使用MOVE改为使用硬链接进行番剧的整理(保种使用)
+LINKFAILSUSEMOVEFLAGS = '{LINKFAILSUSEMOVEFLAGS}' #硬链接失败时使用MOVE
+AUTOUPDATEFLAGS = '{AUTOUPDATEFLAGS}' #自动更新开关
+UPDATEURLPATH = '{UPDATEURLPATH}' #UPDATEURL
+NOUPDATELIST = '{NOUPDATELIST}' #不更新列表
+SKIPCHECKBEFOREUPDATEFLAGS = '{SKIPCHECKBEFOREUPDATEFLAGS}' #跳过自动解决更新前检查到的问题(更新覆盖内置自定义配置)
+USEGITHUBANIMELISTFLAG = '{USEGITHUBANIMELISTFLAG}' #使用Github上的AnimeList文件
+USELOCALANIMELISTFLAGS = '{USELOCALANIMELISTFLAGS}' #使用本地的AnimeList文件
+USINGPROXYFLAGS = '{USINGPROXYFLAGS}' #使用代理开关,如果您的代理服务器需要认证,请使用 账号:密码@ip:port 这样的格式
+HTTPPROXY = '{HTTPPROXY}' #Http代理,请根据您的实际情况填写  
+HTTPSPROXY = '{HTTPSPROXY}' #Https代理,请根据您的实际情况填写
+SOCKS5PROXY = '{SOCKS5PROXY}' #SOCKS5代理,请根据您的实际情况填写
+USEBGMAPIFLAGS = '{USEBGMAPIFLAGS}' #使用BgmApi进行更准确的识别
+FORCEDUSEBGMAPI = '{FORCEDUSEBGMAPI}' #强制使用BgmApi进行识别,不查询AimeList文件
+BGMAPIURLPATH = '{BGMAPIURLPATH}' #BGMAPIURL
+                '''
+                ff.write(data)
 
-def CheckUpdate():
-    CheckUpdate = literal_eval(GetHttpData('update',Flag='UPDATE'))
-    if CheckUpdate['V'] == V:
-        Log('INFO: 当前即是最新版不需要更新')
-        exit()
+def UpDate(UpdateFileList):
+    chdir(getcwd())
+    #UpdateFileList = [] if flag != 'PY' and flag != 'EXE' else UpdateFileList
+    #flag = UpdateFileList.append(flag) if UpdateFileList == [] else flag
+    #UpdateFileList = None if flag == 'EXE' else UpdateFileList
+    if type(UpdateFileList) == list:
+        for i in UpdateFileList:
+            if i in NOUPDATELIST:
+                Log(f'INFO: {i} 在更新排除列表里,故跳过更新')
+            else:
+                CheckBeforeUpdate()
+                Update = GetHttpData(i,Flag='UPDATE')
+                with open(i,'w+',encoding='utf-8') as ff:
+                    ff.write(Update)
+                    Log(f'INFO: 更新 ==> {i}')
     else:
-        Log(f'INFO: 最新版 ==> {CheckUpdate["V"]},可更新的文件 ==> {CheckUpdate["File"]}')
-    return CheckUpdate['File']
+        Update = GetHttpData(UpdateFileList,Flag='UPDATE')
+        if 'AutoAnimeMv' in UpdateFileList:
+            CheckBeforeUpdate()
+        with open(UpdateFileList,'w+',encoding='utf-8') as ff:
+                ff.write(Update)
+                Log(f'INFO: 自定义更新 ==> {UpdateFileList}')
+
+def CheckUpdate(flag):
+    CheckUpdate = literal_eval(GetHttpData('update',Flag='UPDATE'))
+    if flag == 'PY' or flag == 'EXE':
+        if CheckUpdate['V'] == V:
+            Log('INFO: 当前即是最新版不需要更新')
+            exit()
+        else:
+            CheckUpdate["File"] = literal_eval(str(CheckUpdate["File"]).replace('AutoAnimeMv.py','AutoAnimeMv.exe')) if flag == 'EXE' else CheckUpdate["File"]
+            Log(f'INFO: 最新版 ==> {CheckUpdate["V"]},可更新的文件 ==> {CheckUpdate["File"]}')
+        return CheckUpdate['File']
+    else:
+        Log(f'INFO: 指定的更新文件 ==> {flag}')
+        return flag
 
 def ProcessingBgmAPIDate(Name):
     from urllib.parse import quote,unquote
@@ -400,8 +460,8 @@ def MainOperate(VideoName,AssList,CategoryName,Flags=None):
         VideoTrueName = ApiVideoTrueName
     AutoMv(SavePath,VideoName,Season,Episodes,VideoTrueName,FileType,AssList,CategoryName)
 
-V = '1.17.1'
-DataLog = f'\n[{strftime("%Y-%m-%d %H:%M:%S",localtime(time()))}] INFO: Running....'
+V = '1.18.0'
+DataLog = f'\n\n[{strftime("%Y-%m-%d %H:%M:%S",localtime(time()))}] INFO: Running....'
 a = '\\' if name == 'nt' else '/'
 if name == 'nt' and WINTOASTFLAGS == True: from win10toast import ToastNotifier
 
@@ -414,24 +474,26 @@ if __name__ == "__main__":
             Log('INFO: 正在读取外置ini文件',FLAGS='PRINT')
             T = 0
             for i in ff.readlines():
-                if i[0] != '#':
+                if i[0] != '#' and i != '':
                     i = i.strip('\n') 
-                    Log(f"INFO: 配置 < {i}")
+                    Log(f'INFO: 配置 < {i}')
                     exec(i)
                     T = T + 1
             if T == 0:
                 Log('WARNING: 外置ini文件没有配置',FLAGS='PRINT')
-    SavePath,VideoName,AssList,CategoryName = GetArgv()
     try:
+        SavePath,VideoName,AssList,CategoryName = GetArgv()
         if type(VideoName) == list:
             Log(f'INFO: 发现{len(VideoName)}个番剧视频 ==> {VideoName}',FLAGS='PRINT')
             for i in VideoName:
                 MainOperate(i,AssList,CategoryName,0)
         else:
             MainOperate(VideoName,AssList,CategoryName)
-    except SystemError:
-        if len(argv) == 1: 
-            SavePath = getcwd()
+    except Exception as err:
+        Log(f'ERROR: 严重BUG:{err}',FLAGS='PRINT')
     finally:
+        if len(argv) == 1 or argv[1] == 'update' or path.exists(argv[1]) == False: 
+            SavePath = getcwd()
+            Log(F'INFO: 不可访问保存路径,Log已存放至AutoAnimeMV工具目录下')
         with open(f"{SavePath}{a}{strftime('%Y-%m-%d',localtime(time()))}.log","a+",encoding='utf-8') as ff:
             ff.write(DataLog)
