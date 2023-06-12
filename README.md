@@ -27,11 +27,12 @@
  ## **🛎️🛎️New功能！🛎️🛎️**
  </div>
  
- > * 可以批处理刮削已下载番剧啦！(包括字幕文件) [如何使用?](#使用场景2-批处理本地已下载番剧) 
- > * 加入了Bgm API支持！[看看](#bgm-api)
+ > * 可以**批处理刮削已下载番剧**啦！(包括字幕文件) [如何使用?](#使用场景2-批处理本地已下载番剧) 
+ > * 整理番剧可以使用硬链接了,**保种用户的福音** [如何使用?](#使用硬链接整理番剧)
+ > * 加入了**Bgm API支持**！[看看](#bgm-api)
  > * 新增AnimeList查询,针对Bgm和TMDB无法识别的特殊番剧别名提出的解决办法 [看一下?](#Animelist查询文件)
  > * 自动更新上线啦！[如何使用?](#启用自动更新可选)
- > * 番剧文件分类回归啦！[如何使用?](#使用场景1-配合NAS(linux)/Windows🔵Qbittorrent进行使用)
+ > * 番剧文件分类回归啦！[如何使用?](#📝-使用方法)
 > * 支持外置配置了 [如何使用?](#配置)
 
 # 🏕️ 环境支持
@@ -164,7 +165,6 @@ USEGITHUBANIMELISTFLAG = True #使用Github上的AnimeList文件
 USELOCALANIMELISTFLAG = False #使用本地的AnimeList文件
 FORCEDUSEBGMAPI = False #强制使用BgmApi进行识别,不查询AimeList文件
 ```
-
 ## 🧰 测试工具 
 * 自🍞`v1.5.0`以后，您可以使用`Test.py`对`AutoCartoonMv.py`进行Bt识别测试，以下是`Test.py`的使用方法
   > `Test.py` 不需要任何参数，但是需要`tese`文件，其内容为
@@ -202,7 +202,7 @@ FORCEDUSEBGMAPI = False #强制使用BgmApi进行识别,不查询AimeList文件
 * 在群晖NAS中，套件中心安装的`🐍python3`环境可能出现奇奇怪怪的问题，请使用第三方套件源(第三方源需要手动为`🐍python3`创建软连接至/usr/local/bin/python3)
 
 * 如果你使用的是群晖NAS `🐳Docker`版的`🔵QBitTorrent`,你可以在容器日志中直接看到`AutoCartoonMv.py`输出的`简单Log信息`
-> 如果您想要输出详细的Log信息，请在`AutoAnimeMv.py`12行启用`OPDETAILEDLOGFLAGS` [配置?](#配置)
+> 如果您想要输出详细的Log信息，请启用`OPDETAILEDLOGFLAGS`配置 [配置?](#配置)
 ```ini
 #config
 OPDETAILEDLOGFLAGS = True #详细日志输出开关
@@ -215,7 +215,7 @@ OPDETAILEDLOGFLAGS = True #详细日志输出开关
  > 批处理模式下 `AutoCartoonMv.py`需要一到俩个参数,`下载路径` `文件分类`(可选) 
 
  > 更新模式下`AutoCartoonMv.py`需要一个参数,`update`(就是纯字符串update)
-## 使用场景1-配合NAS(linux)/Windows🔵Qbittorrent进行使用
+## 使用场景1-配合NAS(Linux)/Windows🔵Qbittorrent进行使用
   * 1.将`AutoCartoonMv.py`上传至`🔵QBittorrent`能访问的路径下
   
   * 2.在`🔵Qbittorrent`中创建`动漫`分类(非必须，你想要用什么名字都可以，去修改`AutoCartoonMv.py`中的判断即可，当然不要分类也可以)
@@ -278,15 +278,48 @@ python3 AutoCartoonMv.py放置路径 下载路径 文件分类(可选)
 [2023-06-10 15:11:27] INFO: 创建 Made-in-Abyss_-Retsujitsu-no-Ougonkyou\Season_01 完成
 [2023-06-10 15:11:29] INFO: 创建 E:\D\Test\Made-in-Abyss_-Retsujitsu-no-Ougonkyou\Season_01\S01E04.mp4 完成...一切已经准备就绪
 ```
+## 配置
+### 使用内置配置
+* `AutoAnimeMv.py` 内存在`config部分`,您可以自行配置相关参数(当不存在外置配置文件时使用)
+```ini
+#config
+WINTOASTFLAGS = False #win弹窗通知开关 
+OPDETAILEDLOGFLAGS = True #详细日志输出开关
+USEFILELINKFLAGS = True #不使用MOVE改为使用硬链接进行番剧的整理(保种使用)
+LINKFAILSUSEMOVEFLAGS = False #硬链接失败时使用MOVE
+AUTOUPDATEFLAGS = True #自动更新开关
+UPDATEURLPATH = 'https://raw.githubusercontent.com/Abcuders/AutoAnimeMv/main/' #UPDATEURL
+USEGITHUBANIMELISTFLAG = True #使用Github上的AnimeList文件
+USELOCALANIMELISTFLAGS = False #使用本地的AnimeList文件
+USINGPROXYFLAGS = True #使用代理开关,如果您的代理服务器需要认证,请使用 账号:密码@ip:port 这样的格式
+HTTPPROXY = 'http://127.0.0.1:7890' #Http代理,请根据您的实际情况填写  
+HTTPSPROXY = 'http://127.0.0.1:7890' #Https代理,请根据您的实际情况填写
+SOCKS5PROXY = '' #SOCKS5代理,请根据您的实际情况填写
+USEBGMAPIFLAGS = True #使用BgmApi进行更准确的识别
+FORCEDUSEBGMAPI = False #强制使用BgmApi进行识别,不查询AimeList文件
+BGMAPIURLPATH = 'https://api.bgm.tv/search/subject/' #BGMAPIURL
+```
+### 使用外置配置
+* `Config.ini` 是外置配置文件,把它放在`AutoAnimeMv.py`的目录下,`AutoAnimeMv.py`便会自行加载
+* 在外置配置文件没有配置的参数仍旧会使用内置配置
+* *如何编写`Config.ini`请见上面*
 
-## 启用自动更新(可选)
+> 使用外置配置的输出Log
+  ```log
+  [2023-06-12 00:54:39] INFO: 正在读取外置ini文件
+  [2023-06-12 00:54:39] INFO: 配置 < AUTOUPDATEFLAGS = False
+  ```
+
+***
+
+### 启用自动更新(可选)
 * 安装`requests` `🐍Python依赖库`
-* 检查`AutoAnimeMv.py`第13行的`AUTOUPDATEFLAGS`开关为`True` [配置?](#配置)
+* 检查`AUTOUPDATEFLAGS`配置开关为`True` [配置?](#配置)
   ```ini
   #config
   AUTOUPDATEFLAGS = True #自动更新开关
   ```
-  > 如果您使用了代理,您还需要检查`AutoAnimeMv.py`第13行的`USINGPROXYFLAGS`开关为`True`,并`配置代理信息`
+  > 如果您使用了代理,您还需要检查`USINGPROXYFLAGS`配置开关为`True`,并`配置代理信息`
   ```ini
   #config
   USINGPROXYFLAGS = True #使用代理开关,,如果您的代理服务器需要认证,请使用 账号:密码@ip:port 这样的格式
@@ -313,49 +346,36 @@ python3 AutoCartoonMv.py放置路径 下载路径 文件分类(可选)
 > NAS(Linux)用户您可以使用`Crontab`或其他定时任务功能进行自动检查更新
 
 > Win用户您可以使用`计划任务程序`进行自动检查更新
-## 配置
-### 使用内置配置
-* `AutoAnimeMv.py` 内存在`config部分`,您可以自行配置相关参数(当不存在外置配置文件时使用)
+
+### 使用硬链接整理番剧
+* 如果您想要保种,只需要启用(注意exFAT文件系统不支持软链接与硬链接)
+> 如果您想在硬链接失败时改为使用MOVE处理番剧,请开启`LINKFAILSUSEMOVEFLAGS`
+
 ```ini
 #config
-WINTOASTFLAGS = False #win弹窗通知开关 
-OPDETAILEDLOGFLAGS = True #详细日志输出开关
-AUTOUPDATEFLAGS = True #自动更新开关
-UPDATEURLPATH = 'https://raw.githubusercontent.com/Abcuders/AutoAnimeMv/main/' #UPDATEURL
-USEGITHUBANIMELISTFLAG = True #使用Github上的AnimeList文件
-USELOCALANIMELISTFLAG = False #使用本地的AnimeList文件
-USINGPROXYFLAGS = True #使用代理开关,如果您的代理服务器需要认证,请使用 账号:密码@ip:port 这样的格式
-HTTPPROXY = 'http://127.0.0.1:7890' #Http代理,请根据您的实际情况填写  
-HTTPSPROXY = 'http://127.0.0.1:7890' #Https代理,请根据您的实际情况填写
-SOCKS5PROXY = '' #SOCKS5代理,请根据您的实际情况填写
-USEBGMAPIFLAGS = True #使用BgmApi进行更准确的识别
-FORCEDUSEBGMAPI = False #强制使用BgmApi进行识别,不查询AimeList文件
-BGMAPIURLPATH = 'https://api.bgm.tv/search/subject/' #BGMAPIURL
+USEFILELINKFLAGS = True #不使用MOVE改为使用硬链接进行番剧的整理(保种使用)
+LINKFAILSUSEMOVEFLAGS = False #硬链接失败时使用MOVE
 ```
-### 使用外置配置
-* `Config.ini` 是外置配置文件,把它放在`AutoAnimeMv.py`的目录下,`AutoAnimeMv.py`便会自行加载
-* 在外置配置文件没有配置的参数仍旧会使用内置配置
-* *如何编写`Config.ini`请见上面*
+* 相关Log
+```log
+[2023-06-12 15:34:26] INFO: 创建 地狱乐\Season_01 完成
+[2023-06-12 15:34:26] INFO: 字幕文件[BeanSub&FZSD&LoliHouse] Jigokuraku - 09 [WebRip 1080p HEVC-10bit AAC ASSx2].简体中文.ass已导入(硬链接)
+[2023-06-12 15:34:26] INFO: 硬链接至 D:\D\Test\地狱乐\Season_01\S01E09.mkv 完成...一切已经准备就绪
+```
+* **💞小贴士**:如果您使用`保种功能`,我们建议您搭配`分类功能`使用 
 
-> 使用外置配置的输出Log
-  ```log
-  [2023-06-12 00:54:39] INFO: 正在读取外置ini文件
-  [2023-06-12 00:54:39] INFO: 配置 < AUTOUPDATEFLAGS = False
-  ```
+### 开启下载并整理完成进行通知功能(可选)
 
-
-## 开启下载并整理完成进行通知功能(可选)
-
-### Windows下使用WinAPI进行通知
+#### Windows下使用WinAPI进行通知
 * 安装`win10toast` `🐍Python依赖库`
-* 检查`AutoAnimeMv.py`第11行的`WINTOASTFLAGS`开关为`True` [配置?](#配置)
+* 将`WINTOASTFLAGS`开关改为`True` [配置?](#配置)
   ```ini
   #config
   WINTOASTFLAGS = True #win弹窗通知开关 
   ```
 * 一切准备就绪后,当番剧下载并整理完成Win将弹窗提醒您
 
- ### 使用`🔵Qbittorrent`的Mail提醒功能
+#### 使用`🔵Qbittorrent`的Mail提醒功能
 * 进行`🔵Qbittorrent`设置>>`下载`选项
 * 启用`下载完成时发送电子邮件通知`功能,填好相关配置
 * 一切准备就绪后,当番剧下载并整理完成`qb`将发送Mail提醒您
