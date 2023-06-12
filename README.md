@@ -31,7 +31,7 @@
  > * 加入了Bgm API支持！[看看](#bgm-api)
  > * 新增AnimeList查询,针对Bgm和TMDB无法识别的特殊番剧别名提出的解决办法 [看一下?](#Animelist查询文件)
  > * 自动更新上线啦！[如何使用?](#启用自动更新可选)
- > * 番剧文件分类回归啦！[如何使用?](#使用场景1-配合naslinuxwindows-🔵qbittorrent进行使用)
+ > * 番剧文件分类回归啦！[如何使用?](#使用场景1-配合NAS(linux)/Windows🔵Qbittorrent进行使用)
 > * 支持外置配置了 [如何使用?](#配置)
 
 # 🏕️ 环境支持
@@ -215,7 +215,7 @@ OPDETAILEDLOGFLAGS = True #详细日志输出开关
  > 批处理模式下 `AutoCartoonMv.py`需要一到俩个参数,`下载路径` `文件分类`(可选) 
 
  > 更新模式下`AutoCartoonMv.py`需要一个参数,`update`(就是纯字符串update)
-## 使用场景1-配合NAS(linux)/Windows 🔵Qbittorrent进行使用
+## 使用场景1-配合NAS(linux)/Windows🔵Qbittorrent进行使用
   * 1.将`AutoCartoonMv.py`上传至`🔵QBittorrent`能访问的路径下
   
   * 2.在`🔵Qbittorrent`中创建`动漫`分类(非必须，你想要用什么名字都可以，去修改`AutoCartoonMv.py`中的判断即可，当然不要分类也可以)
@@ -322,7 +322,7 @@ WINTOASTFLAGS = False #win弹窗通知开关
 OPDETAILEDLOGFLAGS = True #详细日志输出开关
 AUTOUPDATEFLAGS = True #自动更新开关
 UPDATEURLPATH = 'https://raw.githubusercontent.com/Abcuders/AutoAnimeMv/main/' #UPDATEURL
-USEGITHUBANIMELISTFLAG = False #使用Github上的AnimeList文件
+USEGITHUBANIMELISTFLAG = True #使用Github上的AnimeList文件
 USELOCALANIMELISTFLAG = False #使用本地的AnimeList文件
 USINGPROXYFLAGS = True #使用代理开关,如果您的代理服务器需要认证,请使用 账号:密码@ip:port 这样的格式
 HTTPPROXY = 'http://127.0.0.1:7890' #Http代理,请根据您的实际情况填写  

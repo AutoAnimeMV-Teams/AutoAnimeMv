@@ -12,7 +12,7 @@ WINTOASTFLAGS = False #win弹窗通知开关
 OPDETAILEDLOGFLAGS = True #详细日志输出开关
 AUTOUPDATEFLAGS = True #自动更新开关
 UPDATEURLPATH = 'https://raw.githubusercontent.com/Abcuders/AutoAnimeMv/main/' #UPDATEURL
-USEGITHUBANIMELISTFLAG = False #使用Github上的AnimeList文件
+USEGITHUBANIMELISTFLAG = True #使用Github上的AnimeList文件
 USELOCALANIMELISTFLAG = False #使用本地的AnimeList文件
 USINGPROXYFLAGS = True #使用代理开关,如果您的代理服务器需要认证,请使用 账号:密码@ip:port 这样的格式
 HTTPPROXY = 'http://127.0.0.1:7890' #Http代理,请根据您的实际情况填写  
@@ -264,8 +264,9 @@ def GetHttpData(Path,Flag=None):
 
 def RWAnimeList(WriteData=None):
     if USEGITHUBANIMELISTFLAG == True:
-        data = GetHttpData('AnimeList')
+        data = GetHttpData('AnimeList',Flag='UPDATE')
         if data != None:
+            Log(f'INFO: 正在获取GITHUB AnimeList ==>  {data}')
             return data
         else:
             return None
@@ -340,10 +341,12 @@ def MainOperate(VideoName,AssList,CategoryName,Flags=None):
         #    AimeList['AnimeList'].append(VideoTrueName)
         #    AimeList['AnimeAlias'][VideoName] = VideoTrueName
         #    RWAnimeList(AimeList)
-    else: 
-        Season,Episodes,VideoTrueName,FileType = AttributesMatch(VideoName)
+        else: 
+            Season,Episodes,VideoTrueName,FileType = AttributesMatch(VideoName)
         #RWAnimeList(f'{"AnimeList":[{VideoTrueName}],"AnimeAlias":{{VideoTrueName}:{VideoTrueName}}}')
         #RWAnimeList(f'{"AnimeList":[""],"AnimeAlias":{"":""}}')
+    else:
+        Season,Episodes,VideoTrueName,FileType = AttributesMatch(VideoName)
     if Flags != None:
         if AssList != None:
             AssForVideo = []
@@ -356,7 +359,7 @@ def MainOperate(VideoName,AssList,CategoryName,Flags=None):
                 AssList = AssForVideo   
     AutoMv(SavePath,VideoName,Season,Episodes,VideoTrueName,FileType,AssList,CategoryName)
 
-V = '1.16.1'
+V = '1.16.2'
 DataLog = f'\n[{strftime("%Y-%m-%d %H:%M:%S",localtime(time()))}] INFO: Running....'
 a = '\\' if name == 'nt' else '/'
 if name == 'nt' and WINTOASTFLAGS == True: from win10toast import ToastNotifier
