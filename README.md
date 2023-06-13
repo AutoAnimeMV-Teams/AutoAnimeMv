@@ -165,6 +165,7 @@ USEGITHUBANIMELISTFLAG = True #使用Github上的AnimeList文件
 USELOCALANIMELISTFLAG = False #使用本地的AnimeList文件
 FORCEDUSEBGMAPI = False #强制使用BgmApi进行识别,不查询AimeList文件
 ```
+* *Bgm Api和AnimeList均有缓存设计,以加快运行速度*
 ## 🧰 测试工具 
 * 自🍞`v1.5.0`以后，您可以使用`Test.py`对`AutoCartoonMv.py`进行Bt识别测试，以下是`Test.py`的使用方法
   > `Test.py` 不需要任何参数，但是需要`tese`文件，其内容为
@@ -315,7 +316,7 @@ BGMAPIURLPATH = 'https://api.bgm.tv/search/subject/' #BGMAPIURL
 
 ***
 
-### 启用自动更新(可选)
+## 启用自动更新(可选)
 * 安装`requests` `🐍Python依赖库`
 * 检查`AUTOUPDATEFLAGS`配置开关为`True` [配置?](#配置)
   ```ini
@@ -349,7 +350,7 @@ BGMAPIURLPATH = 'https://api.bgm.tv/search/subject/' #BGMAPIURL
 
 > Win用户您可以使用`计划任务程序`进行自动检查更新
 
-#### 高级选项
+### 高级选项
 * 您可以使用以下命令来指定下载更新某个文件,指定更新文件不受更新排除列表的限制
 ```
 python3 AutoAnimeMv.py update 指定文件
@@ -371,7 +372,7 @@ NOUPDATELIST = '不想更新的文件1','不想更新的文件2','不想更新�
 SKIPCHECKBEFOREUPDATEFLAGS = True #跳过自动解决更新前检查到的问题(更新覆盖内置自定义配置)
 ```
 
-### 使用硬链接整理番剧
+## 使用硬链接整理番剧
 * 如果您想要保种,只需要启用(注意exFAT文件系统不支持软链接与硬链接)
 > 如果您想在硬链接失败时改为使用MOVE处理番剧,请开启`LINKFAILSUSEMOVEFLAGS`
 
@@ -388,9 +389,9 @@ LINKFAILSUSEMOVEFLAGS = False #硬链接失败时使用MOVE
 ```
 * **💞小贴士**:如果您使用`保种功能`,我们建议您搭配`分类功能`使用 
 
-### 开启下载并整理完成进行通知功能(可选)
+## 开启下载并整理完成进行通知功能(可选)
 
-#### Windows下使用WinAPI进行通知
+### Windows下使用WinAPI进行通知
 * 安装`win10toast` `🐍Python依赖库`
 * 将`WINTOASTFLAGS`开关改为`True` [配置?](#配置)
   ```ini
@@ -399,7 +400,7 @@ LINKFAILSUSEMOVEFLAGS = False #硬链接失败时使用MOVE
   ```
 * 一切准备就绪后,当番剧下载并整理完成Win将弹窗提醒您
 
-#### 使用`🔵Qbittorrent`的Mail提醒功能
+### 使用`🔵Qbittorrent`的Mail提醒功能
 * 进行`🔵Qbittorrent`设置>>`下载`选项
 * 启用`下载完成时发送电子邮件通知`功能,填好相关配置
 * 一切准备就绪后,当番剧下载并整理完成`qb`将发送Mail提醒您
