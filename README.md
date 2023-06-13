@@ -424,6 +424,9 @@ LINKFAILSUSEMOVEFLAGS = False #硬链接失败时使用MOVE
 <img src="https://avatars.githubusercontent.com/u/60038246?s=96&v=4"  width="60px" height="60px">
 </a>
 
+# Star History
+[![Star History Chart](https://api.star-history.com/svg?repos=Abcuders/AutoAnimeMv&type=Date)](https://star-history.com/#Abcuders/AutoAnimeMv)
+
 # 🧾 声明
 
 **该仅供个人合法用途,任何使用该工具进行直接或者间接非法盈利活动的行为,均不属于授权范围,也不受到任何支持和认可**
