@@ -6,6 +6,8 @@ from time import sleep,strftime,localtime,time
 from re import findall,match,search,sub,I
 from shutil import move
 from ast import literal_eval
+from zhconv import convert
+
 
 #config
 OPDETAILEDLOGFLAGS = True #详细日志输出开关
@@ -14,9 +16,9 @@ USEFILELINKFLAGS = False #不使用MOVE改为使用硬链接进行番剧的整�
 LINKFAILSUSEMOVEFLAGS = False #硬链接失败时使用MOVE
 AUTOUPDATEFLAGS = True #自动更新开关
 UPDATEURLPATH = 'https://raw.githubusercontent.com/Abcuders/AutoAnimeMv/main/' #UPDATEURL
-NOUPDATELIST = 'AutoAnimeMv.py' #不更新列表
+NOUPDATELIST = '' #不更新列表
 SKIPCHECKBEFOREUPDATEFLAGS = False #跳过自动解决更新前检查到的问题(更新覆盖内置自定义配置)
-USEGITHUBANIMELISTFLAG = True #使用Github上的AnimeList文件
+USEGITHUBANIMELISTFLAG = False #使用Github上的AnimeList文件
 USELOCALANIMELISTFLAGS = False #使用本地的AnimeList文件
 USINGPROXYFLAGS = True #使用代理开关,如果您的代理服务器需要认证,请使用 账号:密码@ip:port 这样的格式
 HTTPPROXY = 'http://127.0.0.1:7890' #Http代理,请根据您的实际情况填写  
@@ -24,7 +26,7 @@ HTTPSPROXY = 'http://192.168.1.112:7890' #Https代理,请根据您的实际情�
 SOCKS5PROXY = '' #SOCKS5代理,请根据您的实际情况填写
 USEBGMAPIFLAGS = True #使用BgmApi进行更准确的识别
 FORCEDUSEBGMAPI = False #强制使用BgmApi进行识别,不查询AimeList文件
-BGMAPIURLPATH = 'https://api.bgm.tv/search/subject/' #BGMAPIURL
+BGMAPIURLPATH = 'https://api.bgm.tv/' #BGMAPIURL
 
 
 def WinTaoast(title,msg):
@@ -92,15 +94,19 @@ def AttributesMatch(VideoName,Flag=None):
         else:
             VideoName = sub(r'^=.*?=','',VideoName,flags=I)
     except IndexError:
-        Log('ERROR: 未匹配出剧集,请检查(程序目前不支持特典和电影)...EXIT',FLAGS='PRINT')
-        #Log('WARNING: 未匹配出剧集,可能是特典番剧',FLAGS='PRINT')
+        Log('ERROR: 未匹配出剧集,请检查(程序目前不支持电影动漫)...EXIT',FLAGS='PRINT')
+        #Log('WARNING: 未匹配出剧集,可能是电影番剧',FLAGS='PRINT')
         exit()
         #if search(r'ED',VideoName,flags=I) != None :
         #    TrueVideoName = sub(r'ED.*','',VideoName,flags=I)
     else:        
         RAWEpisodes = Episodes
-        Episodes = f"0{Episodes}" if len(Episodes) == 1 else Episodes
-        Episodes = f"0{Episodes}" if '.' in Episodes and Episodes[0] != '0' else Episodes
+        #Episodes = f"0{Episodes}" if len(Episodes) == 1 and Episodes != 0 else Episodes
+        #Episodes = f"0{Episodes}" if '.' in Episodes and Episodes[0] != '0' else Episodes
+        #if ('.' in Episodes and len(Episodes)>3 and Episodes[0] == 0):
+        #        Episodes = Episodes.lstrip('0')
+        #elif Episodes[0] == Episodes[1] == '0':
+        #    Episodes = '0'
         Log(f"INFO: 匹配剧集 ==> {Episodes}")
         #通过剧集截断文件名
         VideoName = sub(r'%s.*'%RAWEpisodes,'',VideoName,flags=I)
@@ -108,7 +114,7 @@ def AttributesMatch(VideoName,Flag=None):
         VideoName = VideoName.replace('=','').replace(' ','').strip('-')
         Log(f"INFO: 番剧Name ==> {VideoName}")
         #匹配剧季
-        if '.' in Episodes or Episodes == '00':
+        if '.' in Episodes or Episodes == '0':
             Season = '00'
             RAWSeason = None
             TrueVideoName = VideoName
@@ -130,6 +136,7 @@ def AttributesMatch(VideoName,Flag=None):
                             Log(f"INFO: id 1 TrueVideoName ==> {TrueVideoName},Season ==> {Season}")
                             break
                         elif i ==  len(VideoName)-1 :
+                            RAWSeason = Season
                             TrueVideoName = VideoName[0]
             elif search(SeasonMatchData2,VideoName[::-1],flags=I) != None :#单语言(中/英)匹配是否存在剧季
                     Season = search(SeasonMatchData2,VideoName[::-1],flags=I).group(0)[::-1]
@@ -148,25 +155,27 @@ def AttributesMatch(VideoName,Flag=None):
                 TrueVideoName = VideoName
                 RAWSeason = ''
                 Log(f"INFO: id 4 TrueVideoName ==> {TrueVideoName},Season ==> {Season}")
-    TrueVideoName = TrueVideoName.strip('-=_')
-    Log(f'INFO: {TrueVideoName} {Season} {Episodes} {FileType} << {RAWVideoName}',FLAGS='PRINT')
-    if Flag != 'ANIMELIST' or FORCEDUSEBGMAPI == True:
-            if findall('[\d\u4e00-\u9fa5\d]+',TrueVideoName) != []:
-                #print(findall('啊啊啊,好累呀',TrueVideoName))
-                data = findall('[\d\u4e00-\u9fa5\d]+',TrueVideoName)
-                for i in data:
-                    ApiVideoName = ProcessingBgmAPIDate(i)
-                    if ApiVideoName != None:
-                        TrueVideoName = ApiVideoName
-                        break
-            else:
+        TrueVideoName = convert(TrueVideoName.strip('-=_'),'zh-hans')
+        if Flag != 'ANIMELIST' or FORCEDUSEBGMAPI == True:
+                if findall('[\d\u4e00-\u9fa5\d]+',TrueVideoName) != []:
+                    #print(findall('啊啊啊,好累呀',TrueVideoName))
+                    data = findall('[\d\u4e00-\u9fa5\d]+',TrueVideoName)
+                    TrueVideoName = data[0]
+               
                 global BgmAPIDateCache
                 if TrueVideoName in BgmAPIDateCache:
-                    ApiVideoName = BgmAPIDateCache[TrueVideoName]
+                    ApiVideoName = BgmAPIDateCache[TrueVideoName][0]
+                    AnimeId = BgmAPIDateCache[TrueVideoName][1]
                 else:
-                    ApiVideoName = ProcessingBgmAPIDate(TrueVideoName)
-                    BgmAPIDateCache['TrueVideoName'] = ApiVideoName if ApiVideoName != None else TrueVideoName
-    return Season,Episodes,TrueVideoName,ApiVideoName,FileType,RAWSeason,RAWEpisodes
+                    ApiVideoName,AnimeId = ProcessingBgmAPIDate(TrueVideoName)
+
+                    BgmAPIDateCache['TrueVideoName'] = [ApiVideoName,AnimeId] if ApiVideoName != None else TrueVideoName
+                if Season == '00':
+                    SP = ProcessingBgmAPIDate(AnimeID=AnimeId,EP=Episodes)[0]
+                    Episodes = SP if SP != None else Episodes
+        Episodes = f"0{Episodes}" if len(Episodes) == 1 else Episodes
+        Log(f'INFO: {TrueVideoName} {Season} {Episodes} {FileType} << {RAWVideoName}',FLAGS='PRINT')
+        return Season,Episodes,TrueVideoName,ApiVideoName,FileType,RAWSeason,RAWEpisodes
 
 def GetArgv():#接受参数
     Log(f"INFO: 接受到参数 ==> {argv}")
@@ -228,7 +237,7 @@ def AutoMv(SavePath,VideoName,RAWVideoName,Season,Episodes,VideoTrueName,FileTyp
         flag = 'Other'
         if '中文' in ASSFileName :
             flag = 'chinese'
-            if '简体' in ASSFileName or '简中' in ASSFileName or '简' in ASSFileName:
+            if '简体' in ASSFileName or '简中' in ASSFileName or '简繁' in ASSFileName or '简' in ASSFileName:
                 flag = 'chs'
             elif '繁体' in ASSFileName or '繁中' in ASSFileName or '繁' in ASSFileName:
                 flag = 'cht'
@@ -314,10 +323,11 @@ def Log(message,FLAGS=None):
 def GetHttpData(Path,Flag=None):
     from requests import get,exceptions
     proxy = {'http':HTTPPROXY,'https':HTTPSPROXY,'socks5':SOCKS5PROXY}
+    headers = {'User-Agent':f'Abcuders/AutoAnimeMv/{V}(https://github.com/Abcuders/AutoAnimeMv)'}
     if Flag == 'UPDATE':    
         Path = UPDATEURLPATH + Path 
     try:
-        Httpdate = get(Path,proxies=proxy) if USINGPROXYFLAGS == True else get(Path)
+        Httpdate = get(Path,proxies=proxy,headers=headers) if USINGPROXYFLAGS == True else get(Path,headers=headers)
     except exceptions.ConnectionError:
         Log(f'ERROR: Get {Path} 失败,未能获取到内容,请检查您是否启用了系统代理,如是则您应该在此工具中配置代理信息,否您则需要检查您的网络能否访问raw.githubusercontent.com',FLAGS='PRINT')
         if Flag == 'UPDATE':   
@@ -340,6 +350,7 @@ def GetHttpData(Path,Flag=None):
                 return None
 
 def RWAnimeList(WriteData=None):
+    chdir(getcwd())
     if USEGITHUBANIMELISTFLAG == True:
         data = GetHttpData('AnimeList',Flag='UPDATE')
         if data != None:
@@ -348,7 +359,7 @@ def RWAnimeList(WriteData=None):
         else:
             return None
     else:
-        with open(f'{SavePath}{a}AnimeList','r+',encoding='UTF-8') as ff:
+        with open(f'AnimeList','r+',encoding='UTF-8') as ff:
             if WriteData == None:
                 data = ff.read()
                 if data != ' ':
@@ -426,21 +437,38 @@ def CheckUpdate(flag):
         Log(f'INFO: 指定的更新文件 ==> {flag}')
         return flag
 
-def ProcessingBgmAPIDate(Name):
+def ProcessingBgmAPIDate(Name=None,AnimeID=None,EP=None):
     from urllib.parse import quote,unquote
-    UrlEDName = quote(Name, safe='/', encoding='UTF-8', errors=None)
-    data = GetHttpData(f'{BGMAPIURLPATH}{UrlEDName}?max_results=1')
-    if data != None:
-        try:                                               
-            Name = unquote(literal_eval(data)['list'][0]['name_cn'],encoding='utf-8',errors='replace')
-            Name = Name.replace(' ','-') if ' ' in Name else Name
-            Log(f'INFO: {Name} << bgmApi精确查询结果',FLAGS='PRINT')
-            return Name
-        except SyntaxError:
-             Log(f'INFO: bgmApi没有查询出结果',FLAGS='PRINT')
-             return None
+    if AnimeID == None:
+        UrlEDName = quote(Name, safe='/', encoding='UTF-8', errors=None)
+        data = GetHttpData(f'{BGMAPIURLPATH}search/subject/{UrlEDName}?type=2&responseGroup=small&max_results=1')
     else:
-        return None
+        data = GetHttpData(f'{BGMAPIURLPATH}v0/episodes?subject_id={AnimeID}&type=1&limit=100&offset=0')
+    if data != None:
+        if AnimeID == None:
+            try:
+                data = literal_eval(data)                                               
+                Name = unquote(data['list'][0]['name_cn'],encoding='utf-8',errors='replace')
+                Name = Name.replace(' ','-') if ' ' in Name else Name
+                AnimeId = data['list'][0]['id']
+                Log(f'INFO: id:{AnimeId} {Name} << bgmApi精确查询结果',FLAGS='PRINT')
+                return Name,str(AnimeId)
+            except SyntaxError:
+                Log(f'INFO: bgmApi没有查询出结果',FLAGS='PRINT')
+                return None,None
+        else:
+            try:
+                SPList = literal_eval(data)['data']
+                for i in range(len(SPList)):
+                    if str(SPList[i]['sort']) == EP:
+                        Log(f'INFO: {EP} 特别篇 ==> {i}')
+                        return str(i),None
+                Log('INFO: 当前特别篇无法整理')
+            except SyntaxError:
+                Log(f'INFO: bgmApi没有查询出结果',FLAGS='PRINT')
+                return None,None
+    else:
+        return None,None
 
 def MainOperate(FileName,AssFL,CategoryName,Flags=None):
     global AimeList
@@ -449,8 +477,9 @@ def MainOperate(FileName,AssFL,CategoryName,Flags=None):
         FileName = AssFL
     if AimeList != None:
         Log(f'INFO: 正在读取AimeList Cache(缓存) ==> {AimeList}',FLAGS='PRINT')
-    elif path.isfile(f'AnimeList') or USEGITHUBANIMELISTFLAG == True or USELOCALANIMELISTFLAGS == True:
-        AimeList = RWAnimeList()
+    elif USEGITHUBANIMELISTFLAG == True or USELOCALANIMELISTFLAGS == True:
+        if path.isfile(f'AnimeList'):
+            AimeList = RWAnimeList()
     if AimeList != None:
         VideoTrueName = []
         AimeList = literal_eval(AimeList) if type(AimeList) == str else AimeList
@@ -495,7 +524,7 @@ def MainOperate(FileName,AssFL,CategoryName,Flags=None):
         VideoTrueName = ApiVideoTrueName
     AutoMv(SavePath,FileName,RAWVideoName,Season,Episodes,VideoTrueName,FileType,AssFL,CategoryName)
 
-V = '1.19.0'
+V = '1.20.0'
 AimeList = None
 BgmAPIDateCache = {}
 DataLog = f'\n\n[{strftime("%Y-%m-%d %H:%M:%S",localtime(time()))}] INFO: Running....'

@@ -30,6 +30,7 @@
  > * 可以**批处理刮削已下载番剧**啦！(包括字幕文件) [如何使用?](#使用场景2-批处理本地已下载番剧) 
  > * 整理番剧可以使用硬链接了,**保种用户的福音** [如何使用?](#使用硬链接整理番剧)
  > * 加入了**Bgm API支持**！[看看](#bgm-api)
+ > * **番剧特别篇**也可以识别了,并且可以按TMDB支持的方式刮削 [康康](#❓-什么样的番剧能够被识别)
  > * 新增AnimeList查询,针对Bgm和TMDB无法识别的特殊番剧别名提出的解决办法 [看一下?](#Animelist查询文件)
  > * 自动更新上线啦！[如何使用?](#启用自动更新可选)
  > * 番剧文件分类回归啦！[如何使用?](#📝-使用方法)
@@ -42,9 +43,9 @@
 # 💡 帮助&提醒
 
  * **`🐍Python3环境`**:您可以在[🐍Python官网](https://www.python.org/downloads/windows/)下载合适的版本进行安装,我们建议安装3.9及以上的版本,最低的版本要求是3.6版本
-   >  🐍Python使用的依赖库:`sys` `os` `time` `re` `ast` `shutil` `win10toast` `requests`
+   >  🐍Python使用的依赖库:`sys` `os` `time` `re` `ast` `shutil` `win10toast` `requests` `zhconv`
    
-   >以上依赖应该只有`win10toast`(Win通知-可选) `requests`(网络访问-可选)需要您进行安装,Linux(NAS)用户不需要安装`win10toast`(Win通知-可选)
+   >以上依赖应该只有`win10toast`(Win通知-可选) `requests`(网络访问-可选),`zhconv`(简繁互化-必须)需要您进行安装,Linux(NAS)用户不需要安装`win10toast`(Win通知-可选)
  * 如果您直接使用pip进行install遇到 `❗Fatal error in launcher: Unable to create process using pip问题` ,请使用`python3 -m pip install`
  * **`🔵Qbittorrent`**:我们推荐您使用Docker进行安装使用,Win用户可以访问[Qbittorrent官网](https://www.qbittorrent.org/)进行安装
  * **`🟩Emby/🎶Jellyfin`**:[🟩Emby官网](https://emby.media/) [🎶Jellyfin官网](https://jellyfin.org/) [🎶Jellyfin-GitHub](https://github.com/jellyfin/jellyfin-media-player)
@@ -147,6 +148,8 @@
 ```
 [V2][织梦字幕组][鬼灭之刃 锻刀村篇 鬼灭の刃 刀锻冶の里编][01集][720P][AVC][繁日双语] [614.11 MB].mp4
 ```
+> 番剧特别篇,会按TMDB支持的方式进行整理,即特别篇剧季会认定为`Season 00`,剧集则会按TMDB上的来,比如`我推的孩子`的`7.5`集,在TMDB上则是`第1集`
+* 以上规则应该涵盖了绝大多番剧torrent
 ## 使番剧识别更精准的方法
 ### Bgm Api 
 * 我们使用了BgmApi来进行更精准的剧名识别,您可以自由选择是否使用它
@@ -167,7 +170,7 @@ FORCEDUSEBGMAPI = False #强制使用BgmApi进行识别,不查询AimeList文件
 ```
 * *Bgm Api和AnimeList均有缓存设计,以加快运行速度*
 ## 🧰 测试工具 
-* 自🍞`v1.5.0`以后，您可以使用`Test.py`对`AutoCartoonMv.py`进行Bt识别测试，以下是`Test.py`的使用方法
+* 自🍞`v1.5.0`以后，您可以使用`Test.py`对`AutoAnimeMv.py`进行Bt识别测试，以下是`Test.py`的使用方法
   > `Test.py` 不需要任何参数，但是需要`tese`文件，其内容为
     ```json
    {"Bt":"","Name":"","Season":"","Episodes":"","FileType":""}
@@ -202,7 +205,7 @@ FORCEDUSEBGMAPI = False #强制使用BgmApi进行识别,不查询AimeList文件
 
 * 在群晖NAS中，套件中心安装的`🐍python3`环境可能出现奇奇怪怪的问题，请使用第三方套件源(第三方源需要手动为`🐍python3`创建软连接至/usr/local/bin/python3)
 
-* 如果你使用的是群晖NAS `🐳Docker`版的`🔵QBitTorrent`,你可以在容器日志中直接看到`AutoCartoonMv.py`输出的`简单Log信息`
+* 如果你使用的是群晖NAS `🐳Docker`版的`🔵QBitTorrent`,你可以在容器日志中直接看到`AutoAnimeMv.py`输出的`简单Log信息`
 > 如果您想要输出详细的Log信息，请启用`OPDETAILEDLOGFLAGS`配置 [配置?](#配置)
 ```ini
 #config
@@ -210,26 +213,26 @@ OPDETAILEDLOGFLAGS = True #详细日志输出开关
 ```
   
 # 📝 使用方法 
-
- > `AutoCartoonMv.py`需要三到四个参数,`下载路径` `下载文件名` `下载文件数` `文件分类`(可选) 
+## 🚀Quick Start
+ > `AutoAnimeMv.py`需要三到四个参数,`下载路径` `下载文件名` `下载文件数` `文件分类`(可选) 
  
- > 批处理模式下 `AutoCartoonMv.py`需要一到俩个参数,`下载路径` `文件分类`(可选) 
+ > 批处理模式下 `AutoAnimeMv.py`需要一到俩个参数,`下载路径` `文件分类`(可选) 
 
- > 更新模式下`AutoCartoonMv.py`需要一个至俩个参数,`update`(就是纯字符串update) `指定更新文件`
+ > 更新模式下`AutoAnimeMv.py`需要一个至俩个参数,`update`(就是纯字符串update) `指定更新文件`
 
-## 使用场景1-配合NAS(Linux)/Windows🔵Qbittorrent进行使用
-  * 1.将`AutoCartoonMv.py`上传至`🔵QBittorrent`能访问的路径下
+### 使用场景1-配合NAS(Linux)/Windows🔵Qbittorrent进行使用
+  * 1.将`AutoAnimeMv.py`上传至`🔵QBittorrent`能访问的路径下
   
   * 2.在`🔵Qbittorrent`中创建`动漫`分类(非必须，当然不要分类也可以)
 
   * 3.修改qb配置: `下载`勾选 `Torrent 完成时运行外部程序`, 下面填上(传入参数顺序不可更改)
   
     ```
-    python3 AutoCartoonMv.py放置路径 下载路径 下载文件名 下载文件数 文件分类(可选) 
+    python3 AutoAnimeMv.py放置路径 下载路径 下载文件名 下载文件数 文件分类(可选) 
     ```
     上面三个参数可以由`🔵Qbittorrent`传入，即
     ```
-    python3 AutoCartoonMv.py放置路径 "%D" "%N" "%C" "%L"(可选)
+    python3 AutoAnimeMv.py放置路径 "%D" "%N" "%C" "%L"(可选)
     ```
      > <img src="./Image/Example/two.jpg" width="400" height="300"> <img src="./Image/Example/three.jpg" width="400" height="300">
   * 4.取消做种，修改qb配置: 将`🔵QBitTorrent `的`做种限制`改成`当分享率达到0当做种时间达到0分钟然后暂停torrent`
@@ -243,10 +246,10 @@ OPDETAILEDLOGFLAGS = True #详细日志输出开关
   
     > 或者是带有干扰项的 `【喵萌奶茶屋】★01月新番★[英雄王，为了穷尽武道而转生～然后，成为世界最强的见习骑士♀～ / Eiyuuou, Bu wo Kiwameru Tame Tenseisu][10][720p][简体][招募翻译].mp4`
 
-## 使用场景2-批处理本地已下载番剧
+### 使用场景2-批处理本地已下载番剧
 * 在Shell中执行以下代码,工具即可自动处理`下载路径`下的所有番剧和字幕文件
 ```
-python3 AutoCartoonMv.py放置路径 下载路径 文件分类(可选) 
+python3 AutoAnimeMv.py放置路径 下载路径 文件分类(可选) 
 ```
 * 输出Log
 ```log
@@ -280,6 +283,7 @@ python3 AutoCartoonMv.py放置路径 下载路径 文件分类(可选)
 [2023-06-10 15:11:27] INFO: 创建 Made-in-Abyss_-Retsujitsu-no-Ougonkyou\Season_01 完成
 [2023-06-10 15:11:29] INFO: 创建 E:\D\Test\Made-in-Abyss_-Retsujitsu-no-Ougonkyou\Season_01\S01E04.mp4 完成...一切已经准备就绪
 ```
+
 ## 配置
 ### 使用内置配置
 * `AutoAnimeMv.py` 内存在内置`config部分`,您可以自行配置相关参数(当不存在外置配置文件时使用)
