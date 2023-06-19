@@ -11,7 +11,7 @@
 
 *! En-README.md 由于我精力不够所以有太多落后未更新的地方,如果您感兴趣并且有时间的希望您能帮助一下我✊*
 
-[![ GitHub 许可证](https://img.shields.io/github/license/Abcuders/AutoAnimeMv)](https://github.com/Abcuders/AutoCartoonMv/LICENSE) [![GitHub release](https://img.shields.io/github/v/release/Abcuders/AutoAnimeMv)](https://github.com/Abcuders/AutoAnimeMv/releases/) [![telegram](https://img.shields.io/badge/telegram-AutoAnimeMv-blue?style=flat&logo=telegram)](https://t.me/+3q1JuBrrPkJkOWJl)
+[![ GitHub 许可证](https://img.shields.io/github/license/Abcuders/AutoAnimeMv)](https://github.com/Abcuders/AutoCartoonMv/LICENSE) [![GitHub release](https://img.shields.io/github/v/release/Abcuders/AutoAnimeMv)](https://github.com/Abcuders/AutoAnimeMv/releases/) [![telegram](https://img.shields.io/badge/telegram-AutoAnimeMv-blue?style=flat&logo=telegram)](https://t.me/AutoAnimeMv)
 
 ***
 
@@ -57,13 +57,24 @@
 * **快速更新,享受更多新体验**
 
     ## 待更新的功能
-    * BgmApi支持
-    * TMDBApi支持
-    * 本地番剧缓存
-    * 完全番剧特典支持 
+    - [ ] BgmApi支持
+    - [ ] TMDBApi支持
+    - [ ] 本地番剧信息缓存
+    - [ ] 完全番剧特典支持 
+    - [ ] 定时清理log
 
 # 🚀 快速开始
-* `AutoAnimeMv.py`是核心处理程序,它有俩种处理方式,模式的切换靠的是传参数量 [点我跳转到`AutoAnimeMv.py`点击右上角开始下载](https://github.com/Abcuders/AutoAnimeMv/blob/main/AutoAnimeMv.py)
+## 🏕️ 环境支持
+要使用本工具您必须需要`🐍Python3环境`支持，我们建议您搭配`🔵Qbittorrent`下载工具和 `🟩Emby`/`🎶Jellyfin`等媒体库使用
+>  🐍Python使用的依赖库:`sys` `os` `time` `re` `ast` `shutil`  `requests` `zhconv`
+
+>以上依赖应该只有`requests`(网络访问),`zhconv`(简繁互化)需要您进行安装
+
+## 使用介绍
+* `AutoAnimeMv.py`是核心处理程序,它有俩种处理方式,模式的切换靠的是传参数量 [点我跳转到`AutoAnimeMv.py`点击右上角开始下载](https://github.com/Abcuders/AutoAnimeMv/blob/main/AutoAnimeMv.py) 
+* 同时工具自己拥有一些可配置项,详情见 [这个](#详细的文档)
+* 注意,如果您使用本工具没有打印任何信息,请不要担心,工具默认不打印任何信息,如果您有需要,请在配置文件中进行配置,详情见 [这个](#详细的文档)
+
     ## QB下载模式
     > 在此模式下`AutoAnimeMv.py`支持三到四个参数,`下载路径` `下载文件名` `下载文件数` `文件分类`(可选) 
     
@@ -99,11 +110,21 @@
     ```
     python3 AutoAnimeMv.py updata
     ```
-# 详细的文档
-* [点我到详细文档(其实就是1.0的文档,如上题所述1.0和2.0有部分不同,我会及早更新出2.0的详细的文档)](./Backups/1.20.1/README.md)
+# 📝 详细的文档
+* [点我到详细文档](./DOCS.md)
+* 详细文档目录
+  * [❓ 什么样的番剧能够被识别?](/DOCS.md/#❓-什么样的番剧能够被识别)
+  * [配置](/DOCS.md/#配置)
+  * [常见问题](/DOCS.md/#常见问题)
+    * pip安装出现问题
+    * 群晖NAS使用Python出现奇怪的问题
+  * [一些介绍说明](/DOCS.md/#一些介绍说明)
+    * Log相关
+      * Log 保存位置的解释
+  * [想要学习早期版本代码](/DOCS.md/#想要学习早期版本代码)
 
 # 相关群组
-* 交流/工作群: [Telegram](https://t.me/+3q1JuBrrPkJkOWJl)
+* 交流/工作群: [Telegram](https://t.me/AutoAnimeMv)
 
 # ⭐ 贡献者 ✨
 

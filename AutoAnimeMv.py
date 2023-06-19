@@ -15,7 +15,7 @@ from requests import get,exceptions # 网络部分
 def Start_PATH():# 初始化
     # 版本 数据库缓存 Api数据缓存 Log数据集 分隔符
     global Versions,AimeListCache,BgmAPIDataCache,LogData,Separator,Proxy,BgmApi
-    Versions = '2.0.0'
+    Versions = '2.0.1'
     AimeListCache = None
     BgmAPIDataCache = {}
     LogData = f'\n\n[{strftime("%Y-%m-%d %H:%M:%S",localtime(time()))}] INFO: Running....'
@@ -34,6 +34,7 @@ def Start_PATH():# 初始化
 
 def Start_GetArgv():# 获取参数,判断处理模式
     ArgvNumber = len(argv)
+    Auxiliary_Log(f'接受到的参数 > {argv}',)
     if 2 <= ArgvNumber <= 3:# 接受1-2个参数
         if argv[1] == ('update' or 'updata'):# 更新模式
             Auxiliary_Updata()
@@ -58,6 +59,7 @@ def Processing_Mode(ArgvData):# 模式选择
         # 批处理模式(非分类|分类) or Qb下载模式
         FileListTuporList = Auxiliary_ScanDIR(Path) if ArgvNumber <= 2 or (ArgvData[2] != '1') else [ArgvData[1]]
         global CategoryName
+        CategoryName = ''
         if ArgvNumber == 2:# 分类识别
             CategoryName = ArgvData[1]
         elif ArgvNumber == 4:
@@ -291,9 +293,10 @@ def Auxiliary_ScanDIR(Dir):# 扫描文件目录,返回文件列表
                         VDFileList.append(File)
     if  VDFileList != []:# 判断模式,处理字幕还是视频
         if AssFileList != []:
-            Auxiliary_Log((f'发现{len(AssFileList)}个字幕文件 ==> {AssFileList}',f'发现{len(VDFileList)}个字幕文件 ==> {VDFileList}'),'INFO')
+            Auxiliary_Log((f'发现{len(AssFileList)}个字幕文件 ==> {AssFileList}',f'发现{len(VDFileList)}个视频文件 ==> {VDFileList}'),'INFO')
             return VDFileList,AssFileList
         else:
+            Auxiliary_Log(f'发现{len(VDFileList)}个视频文件,没有发现字幕文件, ==> {VDFileList}','INFO')
             return VDFileList
     elif AssFileList != []:
         Auxiliary_Log((f'没有发现任何番剧视频文件,但发现{len(AssFileList)}个字幕文件 ==> {AssFileList}','只有字幕文件需要处理'),'INFO')
@@ -309,7 +312,7 @@ def Auxiliary_AnimeFileCheck(File):# 检查番剧文件
     return True         
 
 def Auxiliary_ASSFileCA(ASSFile):# 字幕文件的语言分类
-    SubtitleList = [['简','sc'],['繁','tc']]
+    SubtitleList = [['简','sc','chs'],['繁','tc','chi']]
     for i in range(len(SubtitleList)):
         for ii in SubtitleList[i]:
             if search(ii[::-1],ASSFile[::-1],flags=I) != None:
@@ -317,8 +320,8 @@ def Auxiliary_ASSFileCA(ASSFile):# 字幕文件的语言分类
                     return '.chs'
                 elif i == 1:
                     return '.chi'
-                else:
-                    return '.other'
+            else:
+                return '.other'
                 
 def Auxiliary_Http(Url):# 网络
     headers = {'User-Agent':f'Abcuders/AutoAnimeMv/{Versions}(https://github.com/Abcuders/AutoAnimeMv)'}
@@ -339,9 +342,9 @@ def Auxiliary_Updata():# 更新
         if Versions != search(r"Versions = '(\d{1}.\d{1,4}.\d{1,4})'",Updata,flags=I).group(1):
             with open('AutoAnimeMv.py','w+',encoding='UTF-8') as UpdataFile:
                 UpdataFile.write(Updata)
-                Auxiliary_Log('更新完成','INFO')
+                Auxiliary_Exit('更新完成','INFO')
         else:
-            Auxiliary_Log('当前即是最新版本')
+            Auxiliary_Exit('当前即是最新版本')
     else:
         Auxiliary_Exit('更新数据存在问题')
 
