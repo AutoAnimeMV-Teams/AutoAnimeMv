@@ -85,8 +85,23 @@ ALLPROXY = '' # 全部代理
 USELINK = False # 使用硬链接开关
 LINKFAILSUSEMOVEFLAGS = False #硬链接失败时使用MOVE
 PRINTLOGFLAG = False # 打印log开关
+RMLOGSFLAG = 7 # 日志文件超时删除
 ```
 * `config.ini.Template`是配置文件的模板,内容如上
+***
+## 配置介绍
+* 如果您想在配置文件中屏蔽一条配置项,在前面添上 `#` 即可
+  ```ini
+  #PRINTLOGFLAG = True
+  ```
+
+* `HTTPPROXY` `HTTPSPROXY` `ALLPROXY` 配置项是用来给您配置代理相关信息的,请按自己情况的来填
+
+* `USELINK` 配置项是 `使用硬链接` 来整理番剧的开关,如果您需要保种请设置为 `True` [什么是硬链接？](https://zh.wikipedia.org/zh-cn/%E7%A1%AC%E9%93%BE%E6%8E%A5)
+
+* `LINKFAILSUSEMOVEFLAGS`配置项,功能是硬链接失败时使用 Move 来整理番剧,部分文件系统不支持硬链接请注意(如 `exFat`)
+
+* `RMLOGSFLAG` 配置项是用来控制工具删除保存天数达到和超过 `RMLOGSFLAG` 的值的配置,默认为 7 天,如果您不想删除请设置为 `False`
 
 # 常见问题
 ## pip安装出现问题
@@ -130,6 +145,10 @@ PRINTLOGFLAG = False # 打印log开关
 
 ### Log 保存位置的解释
 * 默认情况下,Log文件会保存在传入的`保存路径`下,当无法访问此路径时,Log保存在工具目录下
+
+# 🔥 彩蛋 
+* 在配置文件中填上 `#mtf` 或 `#ftm`,再运行工具
+
 
 # 想要学习早期版本代码
 * 仓库`/Backups`存放着`1.0`版本的全部仓库内容,有需求的可以前去查看

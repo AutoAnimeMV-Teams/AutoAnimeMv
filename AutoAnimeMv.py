@@ -1,8 +1,9 @@
 #!/usr/bin/python3
 #coding:utf-8
 from sys import argv,executable #获取外部传参和外置配置更新
-from os import path,name,makedirs,listdir,getcwd,chdir,link # os操作
+from os import path,name,makedirs,listdir,getcwd,chdir,link,remove # os操作
 from time import sleep,strftime,localtime,time # 时间相关
+from datetime import datetime # 时间相减用
 from re import findall,match,search,sub,I # 匹配相关
 from shutil import move # 移动File
 from ast import literal_eval # srt转化
@@ -15,12 +16,11 @@ from requests import get,exceptions # 网络部分
 def Start_PATH():# 初始化
     # 版本 数据库缓存 Api数据缓存 Log数据集 分隔符
     global Versions,AimeListCache,BgmAPIDataCache,LogData,Separator,Proxy,BgmApi
-    Versions = '2.0.1'
+    Versions = '2.1.0'
     AimeListCache = None
     BgmAPIDataCache = {}
     LogData = f'\n\n[{strftime("%Y-%m-%d %H:%M:%S",localtime(time()))}] INFO: Running....'
     Separator = '\\' if name == 'nt' else '/'
-    BgmApi = 'https://api.bgm.tv/'
     Auxiliary_READConfig()
     Auxiliary_Log((f'当前工具版本为{Versions}',f'当前操作系统识别码为{name},posix/nt/java对应linux/windows/java虚拟机'),'INFO')
     # 代理
@@ -58,6 +58,7 @@ def Processing_Mode(ArgvData):# 模式选择
     if path.exists(Path) == True:
         # 批处理模式(非分类|分类) or Qb下载模式
         FileListTuporList = Auxiliary_ScanDIR(Path) if ArgvNumber <= 2 or (ArgvData[2] != '1') else [ArgvData[1]]
+        Auxiliary_DeleteLogs()
         global CategoryName
         CategoryName = ''
         if ArgvNumber == 2:# 分类识别
@@ -89,14 +90,16 @@ def Processing_Main(LorT):# 核心处理
                     break
                 SE,EP,RAWSE,RAWEP,RAWName = flag
                 ASSList = Auxiliary_IDEASS(RAWName,RAWSE,RAWEP,LorT[1])
-                Sorting_Mv(File,RAWName,SE,EP,ASSList)
+                BgmApiName = Auxiliary_BgmApi(RAWName)
+                Sorting_Mv(File,RAWName,SE,EP,ASSList,BgmApiName)
     else:# 唯一有效的文件列表
         for File in LorT:
             flag = Processing_Identification(File)
             if flag == None:
                 break
             SE,EP,RAWSE,RAWEP,RAWName = flag
-            Sorting_Mv(File,RAWName,SE,EP,None)
+            BgmApiName = Auxiliary_BgmApi(RAWName)
+            Sorting_Mv(File,RAWName,SE,EP,None,BgmApiName)
 
 def Processing_Identification(File):# 识别
     AnimeFileCheckFlag = Auxiliary_AnimeFileCheck(File)
@@ -119,12 +122,12 @@ def Processing_Identification(File):# 识别
         Auxiliary_Log(f'当前文件属于{AnimeFileCheckFlag},跳过处理','INFO')
 
 # Sorting 进行整理工作
-def Sorting_Mv(FileName,RAWFile,SE,EP,ASSList):# 文件处理
+def Sorting_Mv(FileName,RAWFile,SE,EP,ASSList,BgmApiName):# 文件处理
     def FileML(src,dst):
         if USELINK == True:
             try:
                 link(src,dst)
-                Auxiliary_Log(f'Link-{src} << {dst}','INFO')
+                Auxiliary_Log(f'Link-{dst} << {src}','INFO')
             except OSError as err:
                 if '[WinError 1]' in str(err):
                     Auxiliary_Log('当前文件系统不支持硬链接','ERROR')
@@ -135,8 +138,8 @@ def Sorting_Mv(FileName,RAWFile,SE,EP,ASSList):# 文件处理
                     Auxiliary_Exit(err)
         else:
             move(src,dst)
-            Auxiliary_Log(f'Move-{src} << {dst}')
-    NewDir = f'{Path}{Separator}{CategoryName}{Separator}{RAWFile}{Separator}Season{SE}{Separator}'
+            Auxiliary_Log(f'Move-{dst} << {src}')
+    NewDir = f'{Path}{Separator}{CategoryName}{Separator}{BgmApiName}{Separator}Season{SE}{Separator}'
     NewName = f'S{SE}E{EP}'
     if path.exists(NewDir) == False:
         makedirs(NewDir)
@@ -160,26 +163,32 @@ def Sorting_Mv(FileName,RAWFile,SE,EP,ASSList):# 文件处理
 # Auxiliary 其他辅助
 def Auxiliary_READConfig():# 读取外置Config.ini文件并更新
     chdir(getcwd())
-    global HTTPPROXY,HTTPSPROXY,ALLPROXY,USELINK,LINKFAILSUSEMOVEFLAGS,PRINTLOGFLAG
+    global HTTPPROXY,HTTPSPROXY,ALLPROXY,USELINK,LINKFAILSUSEMOVEFLAGS,PRINTLOGFLAG,RMLOGSFLAG
     HTTPPROXY = '' # Http代理
     HTTPSPROXY = '' # Https代理
     ALLPROXY = '' # 全部代理
     USELINK = False # 使用硬链接开关
     LINKFAILSUSEMOVEFLAGS = False #硬链接失败时使用MOVE
     PRINTLOGFLAG = False # 打印log开关
+    RMLOGSFLAG = '7' # 日志文件超时删除
     if path.isfile('config.ini'):
         with open('config.ini','r',encoding='UTF-8') as ff:
             Auxiliary_Log('正在读取外置ini文件','INFO')
             T = 0
+            COEFLAG = False
             for i in ff.readlines():
+                i = i.strip('\n') 
                 if i[0] != '#' and i != '':
-                    i = i.strip('\n') 
                     ii = i.split("=",1)[0].strip('- ')
-                    Auxiliary_Log(f'配置 < {i}','INFO')
+                    #Auxiliary_Log(f'配置 < {i}','INFO')
                     exec(f'global {ii};{i}')
                     T = T + 1
+                elif i == '#mtf' or i == '#ftm':
+                    COEFLAG = True
             if T == 0:
                 Auxiliary_Log('外置ini文件没有配置','WARNING')
+            elif COEFLAG == True:
+                COE()
 
 def Auxiliary_Log(Msg,MsgFlag='INFO'):# 日志
     global LogData
@@ -189,6 +198,19 @@ def Auxiliary_Log(Msg,MsgFlag='INFO'):# 日志
         if PRINTLOGFLAG == True:
             print(Msg)
         LogData = LogData + '\n' + Msg
+
+def Auxiliary_DeleteLogs():# 日志清理
+    RmLogsList = []
+    if RMLOGSFLAG != False and LogsFileList != []:
+        ToDay = datetime.strptime(datetime.now().strftime('%Y-%m-%d'),"%Y-%m-%d").date()
+        for Logs in LogsFileList:
+            LogDate =  datetime.strptime(Logs.strip('.log'),"%Y-%m-%d").date()
+            if (ToDay - LogDate).days >= int(RMLOGSFLAG):
+                remove(f'{Path}{Separator}{Logs}')
+                RmLogsList.append(Logs)
+        if RmLogsList != []:
+            Auxiliary_Log(f'清理了保存时间达到和超过{RMLOGSFLAG}天的日志文件 << {RmLogsList}')
+
 
 def Auxiliary_WriteLog():# 写log文件
     LogPath = argv[1] if path.exists(argv[1]) == True else getcwd()
@@ -280,15 +302,19 @@ def Auxiliary_IDEASS(File,SE,EP,ASSList):# 识别当前番剧视频的所属字�
     return ASSFileList
 
 def Auxiliary_ScanDIR(Dir):# 扫描文件目录,返回文件列表
-    SuffixList = ['.ass','.srt','.mp4','mkv']
+    global LogsFileList
+    SuffixList = ['.ass','.srt','.mp4','mkv','.log']
     AssFileList = []
     VDFileList = []
+    LogsFileList = []
     for File in listdir(Dir):# 扫描目录,并按文件类型分类
         if search(r'S\d{1,2}E\d{1,4}',File,flags=I) == None:
             for ii in SuffixList:
                 if match(ii[::-1],File[::-1],flags=I) != None:
                     if ii == '.ass' or ii == '.srt':
                         AssFileList.append(File)
+                    elif ii == '.log':
+                        LogsFileList.append(File)
                     else:
                         VDFileList.append(File)
     if  VDFileList != []:# 判断模式,处理字幕还是视频
@@ -342,15 +368,25 @@ def Auxiliary_Updata():# 更新
         if Versions != search(r"Versions = '(\d{1}.\d{1,4}.\d{1,4})'",Updata,flags=I).group(1):
             with open('AutoAnimeMv.py','w+',encoding='UTF-8') as UpdataFile:
                 UpdataFile.write(Updata)
-                Auxiliary_Exit('更新完成','INFO')
+                Auxiliary_Exit('更新完成')
         else:
             Auxiliary_Exit('当前即是最新版本')
     else:
         Auxiliary_Exit('更新数据存在问题')
 
+def Auxiliary_BgmApi(Name):# BgmApi相关,返回一个标准的中文名称
+    BgmApiData = literal_eval(Auxiliary_Http(f"https://api.bgm.tv/search/subject/{Name}?type=2&responseGroup=small&max_results=1"))
+    ApiName = unquote(BgmApiData['list'][0]['name_cn'],encoding='UTF-8',errors='replace')  
+    ApiName = sub('第\d{1,2}季','',ApiName,flags=I).strip('- []【】 ')
+    Auxiliary_Log(f'{ApiName} << bgmApi查询结果')
+    return ApiName
+
 def Auxiliary_Exit(LogMsg):# 因可预见错误离场
     Auxiliary_Log(LogMsg,'EXIT')
     exit()
+# Colored Eggs
+def COE():# 
+    Auxiliary_Log('你的存在千真万确毋需置疑,我们一直都在这里,我们一直会爱你,愿每一个人都能自由的生活在阳光下','AAM')
 
 if __name__ == '__main__':
     start = time()

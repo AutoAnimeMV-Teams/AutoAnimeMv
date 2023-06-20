@@ -1,7 +1,8 @@
 #Config
-PRINTLOGFLAG = False # 打印log开关
 HTTPPROXY = '' # Http代理
 HTTPSPROXY = '' # Https代理
 ALLPROXY = '' # 全部代理
 USELINK = False # 使用硬链接开关
 LINKFAILSUSEMOVEFLAGS = False #硬链接失败时使用MOVE
+PRINTLOGFLAG = False # 打印log开关
+RMLOGSFLAG = '7' # 日志文件超时删除

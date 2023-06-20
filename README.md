@@ -57,16 +57,18 @@
 * **快速更新,享受更多新体验**
 
     ## 待更新的功能
-    - [ ] BgmApi支持
+    - [x] BgmApi支持
     - [ ] TMDBApi支持
     - [ ] 本地番剧信息缓存
     - [ ] 完全番剧特典支持 
-    - [ ] 定时清理log
+    - [x] 清理过时日志
+    - [ ] Tg机器人通知
+    - [x] 🔥 彩蛋
 
 # 🚀 快速开始
 ## 🏕️ 环境支持
 要使用本工具您必须需要`🐍Python3环境`支持，我们建议您搭配`🔵Qbittorrent`下载工具和 `🟩Emby`/`🎶Jellyfin`等媒体库使用
->  🐍Python使用的依赖库:`sys` `os` `time` `re` `ast` `shutil`  `requests` `zhconv`
+>  🐍Python使用的依赖库:`sys` `os` `time` `datetime` `re` `ast` `shutil`  `requests` `zhconv`
 
 >以上依赖应该只有`requests`(网络访问),`zhconv`(简繁互化)需要您进行安装
 
@@ -115,12 +117,14 @@
 * 详细文档目录
   * [❓ 什么样的番剧能够被识别?](/DOCS.md/#-什么样的番剧能够被识别)
   * [配置](/DOCS.md/#配置)
+    * 配置介绍
   * [常见问题](/DOCS.md/#常见问题)
     * pip安装出现问题
     * 群晖NAS使用Python出现奇怪的问题
   * [一些介绍说明](/DOCS.md/#一些介绍说明)
     * Log相关
       * Log 保存位置的解释
+  * [🔥 彩蛋](/DOCS.md/#-彩蛋)
   * [想要学习早期版本代码](/DOCS.md/#想要学习早期版本代码)
 
 # 相关群组
