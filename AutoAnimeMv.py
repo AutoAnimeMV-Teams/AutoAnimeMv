@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 #coding:utf-8
 from sys import argv,executable #获取外部传参和外置配置更新
-from os import path,name,makedirs,listdir,getcwd,chdir,link,remove # os操作
+from os import path,name,makedirs,listdir,getcwd,chdir,link,remove,system # os操作
 from time import sleep,strftime,localtime,time # 时间相关
 from datetime import datetime # 时间相减用
 from re import findall,match,search,sub,I # 匹配相关
@@ -9,18 +9,19 @@ from shutil import move # 移动File
 from ast import literal_eval # srt转化
 from zhconv import convert # 繁化简
 from urllib.parse import quote,unquote # url encode
-from requests import get,exceptions # 网络部分
-
+from requests import get,post,exceptions # 网络部分
+from random import randint # 随机数生成
 #Start 开始部分进行程序的初始化 
 
 def Start_PATH():# 初始化
     # 版本 数据库缓存 Api数据缓存 Log数据集 分隔符
-    global Versions,AimeListCache,BgmAPIDataCache,LogData,Separator,Proxy,BgmApi
-    Versions = '2.1.0'
+    global Versions,AimeListCache,BgmAPIDataCache,LogData,Separator,Proxy,TgBotMsgData
+    Versions = '2.2.0'
     AimeListCache = None
     BgmAPIDataCache = {}
     LogData = f'\n\n[{strftime("%Y-%m-%d %H:%M:%S",localtime(time()))}] INFO: Running....'
     Separator = '\\' if name == 'nt' else '/'
+    TgBotMsgData = ''
     Auxiliary_READConfig()
     Auxiliary_Log((f'当前工具版本为{Versions}',f'当前操作系统识别码为{name},posix/nt/java对应linux/windows/java虚拟机'),'INFO')
     # 代理
@@ -38,6 +39,8 @@ def Start_GetArgv():# 获取参数,判断处理模式
     if 2 <= ArgvNumber <= 3:# 接受1-2个参数
         if argv[1] == ('update' or 'updata'):# 更新模式
             Auxiliary_Updata()
+        elif argv[1] == 'tgbot':
+            Auxiliary_TgBot()
         elif path.exists(argv[1]) == True:# 批处理模式
             if ArgvNumber == 2:
                 return argv[1], #待扫描目录
@@ -124,21 +127,25 @@ def Processing_Identification(File):# 识别
 # Sorting 进行整理工作
 def Sorting_Mv(FileName,RAWFile,SE,EP,ASSList,BgmApiName):# 文件处理
     def FileML(src,dst):
+        global TgBotMsgData
         if USELINK == True:
             try:
                 link(src,dst)
                 Auxiliary_Log(f'Link-{dst} << {src}','INFO')
+                TgBotMsgData = TgBotMsgData + (f'Link-{src} << {dst}\n')
             except OSError as err:
                 if '[WinError 1]' in str(err):
                     Auxiliary_Log('当前文件系统不支持硬链接','ERROR')
                     if LINKFAILSUSEMOVEFLAGS == True:
                         move(src,dst)
                         Auxiliary_Log(f'Move-{src} << {dst}')
+                        TgBotMsgData= TgBotMsgData + (f'Move-{src} << {dst}\n')
                 else:
                     Auxiliary_Exit(err)
         else:
             move(src,dst)
             Auxiliary_Log(f'Move-{dst} << {src}')
+            TgBotMsgData = TgBotMsgData + (f'Move-{src} << {dst}\n')
     NewDir = f'{Path}{Separator}{CategoryName}{Separator}{BgmApiName}{Separator}Season{SE}{Separator}'
     NewName = f'S{SE}E{EP}'
     if path.exists(NewDir) == False:
@@ -163,7 +170,7 @@ def Sorting_Mv(FileName,RAWFile,SE,EP,ASSList,BgmApiName):# 文件处理
 # Auxiliary 其他辅助
 def Auxiliary_READConfig():# 读取外置Config.ini文件并更新
     chdir(getcwd())
-    global HTTPPROXY,HTTPSPROXY,ALLPROXY,USELINK,LINKFAILSUSEMOVEFLAGS,PRINTLOGFLAG,RMLOGSFLAG
+    global HTTPPROXY,HTTPSPROXY,ALLPROXY,USELINK,LINKFAILSUSEMOVEFLAGS,PRINTLOGFLAG,RMLOGSFLAG,USEBOTFLAG,TGBOTTOKEN,BOTUSERIDLIST
     HTTPPROXY = '' # Http代理
     HTTPSPROXY = '' # Https代理
     ALLPROXY = '' # 全部代理
@@ -171,6 +178,9 @@ def Auxiliary_READConfig():# 读取外置Config.ini文件并更新
     LINKFAILSUSEMOVEFLAGS = False #硬链接失败时使用MOVE
     PRINTLOGFLAG = False # 打印log开关
     RMLOGSFLAG = '7' # 日志文件超时删除
+    USEBOTFLAG = True # 使用TgBot进行通知
+    TGBOTTOKEN = '' # TgBot Token
+    BOTUSERIDLIST = [] # 使用TgBot的用户列表
     if path.isfile('config.ini'):
         with open('config.ini','r',encoding='UTF-8') as ff:
             Auxiliary_Log('正在读取外置ini文件','INFO')
@@ -190,13 +200,13 @@ def Auxiliary_READConfig():# 读取外置Config.ini文件并更新
             elif COEFLAG == True:
                 COE()
 
-def Auxiliary_Log(Msg,MsgFlag='INFO'):# 日志
+def Auxiliary_Log(Msg,MsgFlag='INFO',flag=None,end='\n'):# 日志
     global LogData
     Msg = Msg if type(Msg) == tuple else (Msg,)
     for OneMsg in Msg:
         Msg = f'[{strftime("%Y-%m-%d %H:%M:%S",localtime(time()))}] {MsgFlag}: {OneMsg}'
-        if PRINTLOGFLAG == True:
-            print(Msg)
+        if PRINTLOGFLAG == True or flag == 'PRINT':
+            print(Msg,end=end)         
         LogData = LogData + '\n' + Msg
 
 def Auxiliary_DeleteLogs():# 日志清理
@@ -349,18 +359,77 @@ def Auxiliary_ASSFileCA(ASSFile):# 字幕文件的语言分类
             else:
                 return '.other'
                 
-def Auxiliary_Http(Url):# 网络
+def Auxiliary_Http(Url,flag='GET',json=None):# 网络
     headers = {'User-Agent':f'Abcuders/AutoAnimeMv/{Versions}(https://github.com/Abcuders/AutoAnimeMv)'}
     try:
-        HttpData = get(Url,proxies=Proxy,headers=headers) if Proxy != {} else get(Url,headers=headers)
+        if flag != 'GET':
+            HttpData = post(Url,json,proxies=Proxy,headers=headers) if Proxy != {} else post(Url,json,headers=headers)
+        else:
+            HttpData = get(Url,proxies=Proxy,headers=headers) if Proxy != {} else get(Url,headers=headers)
     except exceptions.ConnectionError:
-        Auxiliary_Exit(f'Get {Url} 失败,未能获取到内容,请检查您是否启用了系统代理,如是则您应该在此工具中配置代理信息,否则您则需要检查您的网络能否访问')
+        Auxiliary_Exit(f'访问 {Url} 失败,未能获取到内容,请检查您是否启用了系统代理,如是则您应该在此工具中配置代理信息,否则您则需要检查您的网络能否访问')
     except:
-        Auxiliary_Exit(f'Get {Url} 失败,未能获取到内容,请检查您的网络')
+        Auxiliary_Exit(f'访问 {Url} 失败,未能获取到内容,请检查您的网络')
     if HttpData.status_code == 200:
         return HttpData.text
     else:
         Auxiliary_Exit('HttpData Status Code != 200')
+
+def Auxiliary_TgBot(Msg=None):# TgBot相关
+    if USEBOTFLAG == True and TGBOTTOKEN != '':
+        if Msg == None:# 注册模式
+            RegistrationCode = randint(1,10000*10000)
+            Auxiliary_Log(f'您现在在进行TgBot通知的注册,您的注册码为：{RegistrationCode}',flag='PRINT')
+            UserId = ''
+            while True: 
+                # 清空消息
+                Auxiliary_Http(f'https://api.telegram.org/bot{TGBOTTOKEN}/getupdates',json={"offset": -1,"limit": 100,"timeout": 'None'},flag='POST')
+                Auxiliary_Log('请将您的注册码发送给AutoAnimeMv_Bot(在群组和PM里均可)后再按下回车',flag='PRINT')
+                Auxiliary_Log('',flag='PRINT',end="")
+                system("pause")
+                #sleep(2)
+                TgBotData = literal_eval(Auxiliary_Http(f'https://api.telegram.org/bot{TGBOTTOKEN}/getupdates').replace(':false', ':False').replace(':true', ':True'))['result']
+                for i in range(len(TgBotData),0,-1):
+                    if 'message' in TgBotData[i-1]:
+                        flag = 'message'
+                    elif 'my_chat_member' in TgBotData[i-1]:
+                        flag = 'my_chat_member'
+                    elif 'edited_message' in TgBotData[i-1]:
+                        flag = 'edited_message'
+                    else:
+                        continue
+                    if 'text' in TgBotData[i-1][flag]:           
+                        if TgBotData[i-1][flag]['text'].strip(' ') == str(RegistrationCode):
+                            ChatId = TgBotData[i-1][flag]['chat']['id']
+                            UserId = str(TgBotData[i-1][flag]['from']['username'])
+                            TestText = f'@{UserId} 您已成功注册,我们会在您选择的群组/PM进行通知'
+                            Auxiliary_Log(TestText,flag='PRINT')
+                            Auxiliary_Http(f'https://api.telegram.org/bot{TGBOTTOKEN}/sendMessage',json={"chat_id":ChatId,"text":TestText},flag='POST')
+                            break
+                    else:
+                        continue
+                if UserId != '':
+                    if {"UserId":UserId,"ChatId":str(ChatId)} not in BOTUSERIDLIST:
+                        BOTUSERIDLIST2 = BOTUSERIDLIST.copy()
+                        BOTUSERIDLIST2.append({"UserId":UserId,"ChatId":str(ChatId)})
+                        with open('config.ini','r+',encoding='UTF-8') as File:
+                            Config = File.read()
+                            NewConfig  = Config.replace(f'BOTUSERIDLIST = {BOTUSERIDLIST}',f'BOTUSERIDLIST = {BOTUSERIDLIST2}')
+                            File.seek(0)
+                            File.truncate()
+                            File.write(NewConfig)
+            
+                        Auxiliary_Exit('工作已完成')
+                    else:
+                        Auxiliary_Exit('注册信息重复')
+                else:
+                    Auxiliary_Log('没有您的注册申请,可能网络有所延迟','WARNING',flag='PRINT')
+        elif USEBOTFLAG == True and BOTUSERIDLIST != []:
+            for User in BOTUSERIDLIST:
+                Auxiliary_Http(f'https://api.telegram.org/bot{TGBOTTOKEN}/sendMessage',json={f"chat_id":User['ChatId'],"text":f"@{User['UserId']} 您的番剧已处理完成 \n ``` \n {Msg} ```"},flag='POST')
+    else:
+        Auxiliary_Exit('TgBot不可用,请检查您的配置')
+
 
 def Auxiliary_Updata():# 更新
     Updata = Auxiliary_Http('https://raw.githubusercontent.com/Abcuders/AutoAnimeMv/main/AutoAnimeMv.py')
@@ -382,7 +451,7 @@ def Auxiliary_BgmApi(Name):# BgmApi相关,返回一个标准的中文名称
     return ApiName
 
 def Auxiliary_Exit(LogMsg):# 因可预见错误离场
-    Auxiliary_Log(LogMsg,'EXIT')
+    Auxiliary_Log(LogMsg,'EXIT',flag='PRINT')
     exit()
 # Colored Eggs
 def COE():# 
@@ -398,8 +467,7 @@ if __name__ == '__main__':
         Auxiliary_Log(f'没有预料到的错误 > {err}','ERROR')
     else:
         end = time()
-        Auxiliary_Log(f'一切工作已经完成,用时{end - start}','INFO')
-        print(f'一切工作已经完成,用时{end - start}')
-
+        Auxiliary_Log(f'一切工作已经完成,用时{end - start}','INFO',flag='PRINT')
+        Auxiliary_TgBot(TgBotMsgData)
     finally:
         Auxiliary_WriteLog()

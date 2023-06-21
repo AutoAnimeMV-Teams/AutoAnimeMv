@@ -79,13 +79,16 @@
 * 以下是工具的默认配置信息,也是工具的所有可配置项,您可以在工具目录下的`config.ini`中进行自由配置,
 ```ini
 #Config
+PRINTLOGFLAG = False # 打印log开关
 HTTPPROXY = '' # Http代理
 HTTPSPROXY = '' # Https代理
 ALLPROXY = '' # 全部代理
 USELINK = False # 使用硬链接开关
 LINKFAILSUSEMOVEFLAGS = False #硬链接失败时使用MOVE
-PRINTLOGFLAG = False # 打印log开关
-RMLOGSFLAG = 7 # 日志文件超时删除
+RMLOGSFLAG = '7' # 日志文件超时删除
+USEBOTFLAG = False # 使用TgBot通知,
+TGBOTTOKEN = '' # TgBot Token
+BOTUSERIDLIST = [] # 接受TgBot通知的用户或群组,这个不需要用户填
 ```
 * `config.ini.Template`是配置文件的模板,内容如上
 ***
@@ -102,6 +105,8 @@ RMLOGSFLAG = 7 # 日志文件超时删除
 * `LINKFAILSUSEMOVEFLAGS`配置项,功能是硬链接失败时使用 Move 来整理番剧,部分文件系统不支持硬链接请注意(如 `exFat`)
 
 * `RMLOGSFLAG` 配置项是用来控制工具删除保存天数达到和超过 `RMLOGSFLAG` 的值的配置,默认为 7 天,如果您不想删除请设置为 `False`
+
+* `USEBOTFLAG`用来开启TgBot通知的开关,现在只有自建模式,就是您需要自己创建机器人 `TGBOTTOKEN`即是您机器人的Token
 
 # 常见问题
 ## pip安装出现问题
@@ -145,6 +150,25 @@ RMLOGSFLAG = 7 # 日志文件超时删除
 
 ### Log 保存位置的解释
 * 默认情况下,Log文件会保存在传入的`保存路径`下,当无法访问此路径时,Log保存在工具目录下
+
+## Telegram Bot通知功能
+* 您需要自己创建一个机器人,并在配置中开启bot通知,填入您机器人的Token
+* 启动`AutoAnimeMv.py` 并进入注册模式
+```
+python3 AutoAnimeMv.py tgbot
+```
+> print
+```
+[2023-06-21 22:02:10] INFO: 当前操作系统识别码为nt,posix/nt/java对应linux/windows/java虚拟机
+[2023-06-21 22:02:10] INFO: 接受到的参数 > ['E:\\D\\fork\\AutoAnimeMv\\AutoAnimeMv.py ', 'tgbot']
+[2023-06-21 22:02:10] INFO: 您现在在进行TgBot通知的注册,您的注册码为：61949712
+[2023-06-21 22:02:11] INFO: 请将您的注册码发送给AutoAnimeMv_Bot(在群组和PM里均可)后再按下回车
+[2023-06-21 22:02:11] INFO: 请按任意键继续. . .
+```
+* 按照提示在 [AutoAnimeMv_Bot](https://t.me/AutoAnimeMv_Bot) 机器人中发送注册码,当然您可以在群组中邀请机器人,并直接发送注册码 即可注册
+```
+[2023-06-21 22:02:24] INFO: @kenrst 您已成功注册,我们会在您选择的群组/PM进行通知
+```
 
 # 🔥 彩蛋 
 * 在配置文件中填上 `#mtf` 或 `#ftm`,再运行工具
