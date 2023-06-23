@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 #coding:utf-8
 from sys import argv,executable #获取外部传参和外置配置更新
-from os import path,name,makedirs,listdir,getcwd,chdir,link,remove,system # os操作
+from os import path,name,makedirs,listdir,link,remove,system # os操作
 from time import sleep,strftime,localtime,time # 时间相关
 from datetime import datetime # 时间相减用
 from re import findall,match,search,sub,I # 匹配相关
@@ -15,13 +15,15 @@ from random import randint # 随机数生成
 
 def Start_PATH():# 初始化
     # 版本 数据库缓存 Api数据缓存 Log数据集 分隔符
-    global Versions,AimeListCache,BgmAPIDataCache,LogData,Separator,Proxy,TgBotMsgData
+    global Versions,AimeListCache,BgmAPIDataCache,LogData,Separator,Proxy,TgBotMsgData,PyPath
     Versions = '2.2.0'
     AimeListCache = None
     BgmAPIDataCache = {}
     LogData = f'\n\n[{strftime("%Y-%m-%d %H:%M:%S",localtime(time()))}] INFO: Running....'
     Separator = '\\' if name == 'nt' else '/'
     TgBotMsgData = ''
+    PyPath = argv[0].strip('AutoAnimeMv.py')
+    print(PyPath)
     Auxiliary_READConfig()
     Auxiliary_Log((f'当前工具版本为{Versions}',f'当前操作系统识别码为{name},posix/nt/java对应linux/windows/java虚拟机'),'INFO')
     # 代理
@@ -169,7 +171,6 @@ def Sorting_Mv(FileName,RAWFile,SE,EP,ASSList,BgmApiName):# 文件处理
 
 # Auxiliary 其他辅助
 def Auxiliary_READConfig():# 读取外置Config.ini文件并更新
-    chdir(getcwd())
     global HTTPPROXY,HTTPSPROXY,ALLPROXY,USELINK,LINKFAILSUSEMOVEFLAGS,PRINTLOGFLAG,RMLOGSFLAG,USEBOTFLAG,TGBOTTOKEN,BOTUSERIDLIST
     HTTPPROXY = '' # Http代理
     HTTPSPROXY = '' # Https代理
@@ -181,8 +182,8 @@ def Auxiliary_READConfig():# 读取外置Config.ini文件并更新
     USEBOTFLAG = True # 使用TgBot进行通知
     TGBOTTOKEN = '' # TgBot Token
     BOTUSERIDLIST = [] # 使用TgBot的用户列表
-    if path.isfile('config.ini'):
-        with open('config.ini','r',encoding='UTF-8') as ff:
+    if path.isfile(f'{PyPath}config.ini'):
+        with open(f'{PyPath}config.ini','r',encoding='UTF-8') as ff:
             Auxiliary_Log('正在读取外置ini文件','INFO')
             T = 0
             COEFLAG = False
@@ -190,7 +191,7 @@ def Auxiliary_READConfig():# 读取外置Config.ini文件并更新
                 i = i.strip('\n') 
                 if i[0] != '#' and i != '':
                     ii = i.split("=",1)[0].strip('- ')
-                    #Auxiliary_Log(f'配置 < {i}','INFO')
+                    Auxiliary_Log(f'配置 < {i}','INFO')
                     exec(f'global {ii};{i}')
                     T = T + 1
                 elif i == '#mtf' or i == '#ftm':
@@ -211,7 +212,7 @@ def Auxiliary_Log(Msg,MsgFlag='INFO',flag=None,end='\n'):# 日志
 
 def Auxiliary_DeleteLogs():# 日志清理
     RmLogsList = []
-    if RMLOGSFLAG != False and LogsFileList != []:
+    if RMLOGSFLAG != False and 'LogsFileList' in globals() and LogsFileList != []:
         ToDay = datetime.strptime(datetime.now().strftime('%Y-%m-%d'),"%Y-%m-%d").date()
         for Logs in LogsFileList:
             LogDate =  datetime.strptime(Logs.strip('.log'),"%Y-%m-%d").date()
@@ -223,8 +224,8 @@ def Auxiliary_DeleteLogs():# 日志清理
 
 
 def Auxiliary_WriteLog():# 写log文件
-    LogPath = argv[1] if path.exists(argv[1]) == True else getcwd()
-    if LogPath == getcwd():
+    LogPath = argv[1] if path.exists(argv[1]) == True else PyPath
+    if LogPath == PyPath:
         Auxiliary_Log(f'Log文件保存在工具目录下','WARNING')
     with open(f'{LogPath}{Separator}{strftime("%Y-%m-%d",localtime(time()))}.log','a+',encoding='UTF-8') as LogFile:
         LogFile.write(LogData)

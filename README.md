@@ -64,6 +64,7 @@
     - [x] 清理过时日志
     - [X] Tg机器人通知(自建)
     - [ ] Tg机器人通知(公共)
+    - [ ] Tg远程管理Bot
     - [x] 🔥 彩蛋
 
 # 🚀 快速开始
@@ -138,10 +139,16 @@
 > 如果您也想要为这个项目添砖加瓦,可以直接来[Issues](https://github.com/Abcuders/AutoAnimeMv/issues)提出您宝贵的建议或者@我问一下能做些什么
 
 <a href="https://github.com/wzfdgh">
-<img src="https://avatars.githubusercontent.com/u/93830081?s=96&v=4"  width="60px" height="60px"> 
+<img src="https://avatars.githubusercontent.com/u/93830081?s=96&v=4"  width="100px" height="100px"> 
 </a>
 <a href="https://github.com/Nanako718">
-<img src="https://avatars.githubusercontent.com/u/60038246?s=96&v=4"  width="60px" height="60px">
+<img src="https://avatars.githubusercontent.com/u/60038246?s=96&v=4"  width="100px" height="100px">
+</a>
+<a href="https://github.com/star-cheat">
+<img src="https://avatars.githubusercontent.com/u/124486654?v=4"  width="100px" height="100px">
+</a>
+<a href="https://github.com/zerodoge">
+<img src="https://avatars.githubusercontent.com/u/126881933?v=4"  width="100px" height="100px">
 </a>
 
 # Star History
