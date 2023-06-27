@@ -16,13 +16,13 @@ from random import randint # 随机数生成
 def Start_PATH():# 初始化
     # 版本 数据库缓存 Api数据缓存 Log数据集 分隔符
     global Versions,AimeListCache,BgmAPIDataCache,LogData,Separator,Proxy,TgBotMsgData,PyPath
-    Versions = '2.2.0'
+    Versions = '2.2.1'
     AimeListCache = None
     BgmAPIDataCache = {}
     LogData = f'\n\n[{strftime("%Y-%m-%d %H:%M:%S",localtime(time()))}] INFO: Running....'
     Separator = '\\' if name == 'nt' else '/'
     TgBotMsgData = ''
-    PyPath = argv[0].strip('AutoAnimeMv.py')
+    PyPath = argv[0].replace('AutoAnimeMv.py','').strip(' ')
     print(PyPath)
     Auxiliary_READConfig()
     Auxiliary_Log((f'当前工具版本为{Versions}',f'当前操作系统识别码为{name},posix/nt/java对应linux/windows/java虚拟机'),'INFO')
@@ -429,7 +429,8 @@ def Auxiliary_TgBot(Msg=None):# TgBot相关
             for User in BOTUSERIDLIST:
                 Auxiliary_Http(f'https://api.telegram.org/bot{TGBOTTOKEN}/sendMessage',json={f"chat_id":User['ChatId'],"text":f"@{User['UserId']} 您的番剧已处理完成 \n ``` \n {Msg} ```"},flag='POST')
     else:
-        Auxiliary_Exit('TgBot不可用,请检查您的配置')
+        if USEBOTFLAG != False:
+            Auxiliary_Exit('TgBot不可用,请检查您的配置')
 
 
 def Auxiliary_Updata():# 更新
