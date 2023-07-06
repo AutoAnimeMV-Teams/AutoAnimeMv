@@ -11,7 +11,7 @@
 
 *! En-README.md 由于我精力不够所以有太多落后未更新的地方,如果您感兴趣并且有时间的希望您能帮助一下我✊*
 
-[![ GitHub 许可证](https://img.shields.io/github/license/Abcuders/AutoAnimeMv)](https://github.com/Abcuders/AutoCartoonMv/LICENSE) [![GitHub release](https://img.shields.io/github/v/release/Abcuders/AutoAnimeMv)](https://github.com/Abcuders/AutoAnimeMv/releases/) [![telegram](https://img.shields.io/badge/telegram-AutoAnimeMv-blue?style=flat&logo=telegram)](https://t.me/AutoAnimeMv)
+[![ GitHub 开源许可证](https://img.shields.io/github/license/Abcuders/AutoAnimeMv)](https://github.com/Abcuders/AutoCartoonMv/LICENSE) [![GitHub release](https://img.shields.io/github/v/release/Abcuders/AutoAnimeMv)](https://github.com/Abcuders/AutoAnimeMv/releases/) [![telegram](https://img.shields.io/badge/telegram-AutoAnimeMv-blue?style=flat&logo=telegram)](https://t.me/AutoAnimeMv)
 
 ***
 
@@ -69,40 +69,40 @@
 
 # 🚀 快速开始
 ## 🏕️ 环境支持
-要使用本工具您必须需要`🐍Python3环境`支持，我们建议您搭配`🔵Qbittorrent`下载工具和 `🟩Emby`/`🎶Jellyfin`等媒体库使用
+要使用本工具您必须需要`🐍Python3环境`支持,我们建议您搭配`🔵Qbittorrent`下载工具和 `🟩Emby`/`🎶Jellyfin`等媒体库使用
 >  🐍Python使用的依赖库:`sys` `os` `time` `datetime` `re` `ast` `shutil`  `requests` `zhconv`
 
->以上依赖应该只有`requests`(网络访问),`zhconv`(简繁互化)需要您进行安装
+>以上`requests`(网络访问),`zhconv`(简繁互化)需要您进行安装,如没有 `pip` 请参考 [详细文档](#-详细的文档)
+```shell
+pip install requests
+pip install zhconv
+```
 
 ## 使用介绍
-* `AutoAnimeMv.py`是核心处理程序,它有俩种处理方式,模式的切换靠的是传参数量 [点我跳转到`AutoAnimeMv.py`点击右上角开始下载](https://github.com/Abcuders/AutoAnimeMv/blob/main/AutoAnimeMv.py) 
-* 同时工具自己拥有一些可配置项,详情见 [这个](#-详细的文档)
-* 注意,如果您使用本工具没有打印任何信息,请不要担心,工具默认不打印任何信息,如果您有需要,请在配置文件中进行配置,详情见 [这个](#-详细的文档)
+* `AutoAnimeMv.py`是核心处理程序,它有两种处理方式,模式的切换靠的是传参数量 [点我开始下载`AutoAnimeMv.py`](https://raw.githubusercontent.com/Abcuders/AutoAnimeMv/main/AutoAnimeMv.py) 
+* 同时工具自己拥有一些可配置项,详情见 [详细文档](#-详细的文档)
+* 本工具默认不打印任何信息,如果您有需要,可在配置文件中进行配置,请参考 [详细文档](#-详细的文档)
 
     ## QB下载模式
-    > 在此模式下`AutoAnimeMv.py`支持三到四个参数,`下载路径` `下载文件名` `下载文件数` `文件分类`(可选) 
+    > 在此模式下`AutoAnimeMv.py`支持 3~4 个参数,`下载路径` `下载文件名` `下载文件数` `文件分类`(可选) 
     
     * 1.将`AutoAnimeMv.py`上传至`🔵QBittorrent`能访问的路径下
   
-    * 2.在`🔵Qbittorrent`中创建`动漫`分类(非必须，当然不要分类也可以)
+    * 2.在`🔵Qbittorrent`中创建`动漫`分类(非必须)
 
     * 3.修改qb配置: `下载`切换`Torrent 内容布局`为`不创建子文件夹`
 
-    * 4.修改qb配置: `下载`勾选 `Torrent 完成时运行外部程序`, 下面填上(传入参数顺序不可更改且参数要用`""`包裹)
-  
-    ```
-    python3 AutoAnimeMv.py放置路径 "下载路径" "下载文件名" "下载文件数" "文件分类(可选)" 
-    ```
-    上面三个参数可以由`🔵Qbittorrent`传入，即
-    ```
-    python3 AutoAnimeMv.py放置路径 "%D" "%N" "%C" "%L"(可选)
+    * 4.修改qb配置: `下载`勾选 `Torrent 完成时运行外部程序`, 在输入框填入如下内容(参数顺序不可更改且参数要用`""`包裹,其中 `/dir/to/AAM.py` 更换为步骤一中脚本放置的绝对路径,如没有配置`分类`,请删除`"%L"`)
+
+    ```shell
+    python3 /dir/to/AAM.py "%D" "%N" "%C" "%L"
     ```
      > <img src="./Image/Example/two.jpg" width="400" height="300"> <img src="./Image/Example/three.jpg" width="400" height="300">
      * 4.取消做种，修改qb配置: 将`🔵QBitTorrent `的`做种限制`改成`当分享率达到0当做种时间达到0分钟然后暂停torrent`
 
 
     ## 批处理模式
-    > 在此模式下`AutoAnimeMv.py`支持一到俩个参数,`需要整理的番剧所在路径` `文件分类`(可选) 
+    > 在此模式下`AutoAnimeMv.py`支持 1~2 个参数,`需要整理的番剧所在路径` `文件分类`(可选) 
     
     * 传入参数顺序不可更改且参数要用`""`包裹
     ```
@@ -128,7 +128,7 @@
       * Log 保存位置的解释
     * Telegram Bot通知功能
   * [🔥 彩蛋](/DOCS.md/#-彩蛋)
-  * [想要学习早期版本代码](/DOCS.md/#想要学习早期版本代码)
+  * [早期版本代码](/DOCS.md/#想要学习早期版本代码)
 
 # 相关群组
 * 交流/工作群: [Telegram](https://t.me/AutoAnimeMv)
