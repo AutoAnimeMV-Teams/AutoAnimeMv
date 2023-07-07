@@ -21,7 +21,7 @@
 > **🚀点击左上角打开目录，选择您要阅读的部分**
 # ❓ 什么样的番剧能够被识别?
 * 工具目前能够识别的类型要求为:
-> 存在番剧剧集,且剧集处于剧名后(支持的剧集格式为`1-4位纯数字/XXXX集/第XXXX集/00/XX.XX(这些SP也可以识别)`),若存在`字幕组信息`,`字幕组信息`应在第一个位置,如果不在,则第一个位置应存在`《》`或者是其他情况(后文)
+> 存在番剧剧集,且剧集处于剧名后(支持的剧集格式为`1-4位纯数字/XXXX集/第XXXX集/00/XX.XX(这些SP也可以识别)/XXEND/XXE//XX END//XX E`),若存在`字幕组信息`,`字幕组信息`应在第一个位置,如果不在,则第一个位置应存在`《》`或者是其他情况(后文)
 ```
 [DMG&LoliHouse] Kono Subarashil Sekai ni Bakuen wo! - 01 [WebRip 1080p HEVC-10bit AAC ASSx2].mkv
 ```
@@ -71,7 +71,7 @@
 ```
 [V2][织梦字幕组][鬼灭之刃 锻刀村篇 鬼灭の刃 刀锻冶の里编][01集][720P][AVC][繁日双语] [614.11 MB].mp4
 ```
-> 番剧特别篇,会按TMDB支持的方式进行整理,即特别篇剧季会认定为`Season 00`,剧集则会按TMDB上的来,比如`我推的孩子`的`7.5`集,在TMDB上则是`第1集`
+~~> 番剧特别篇,会按TMDB支持的方式进行整理,即特别篇剧季会认定为`Season 00`,剧集则会按TMDB上的来,比如`我推的孩子`的`7.5`集,在TMDB上则是`第1集`~~
 * 以上规则应该涵盖了绝大多番剧torrent
 
 # 配置
@@ -79,18 +79,26 @@
 * 以下是工具的默认配置信息,也是工具的所有可配置项,您可以在工具目录下的`config.ini`中进行自由配置,
 ```ini
 #Config
-PRINTLOGFLAG = False # 打印log开关
+PRINTLOGFLAG = True # 打印log开关
 HTTPPROXY = '' # Http代理
-HTTPSPROXY = '' # Https代理
+HTTPSPROXY = 'http://192.168.1.1:7890' # Https代理
 ALLPROXY = '' # 全部代理
-USELINK = False # 使用硬链接开关
+USELINK = True # 使用硬链接开关
 LINKFAILSUSEMOVEFLAGS = False #硬链接失败时使用MOVE
 RMLOGSFLAG = '7' # 日志文件超时删除
-USEBOTFLAG = False # 使用TgBot通知,
-TGBOTTOKEN = '' # TgBot Token
-BOTUSERIDLIST = [] # 接受TgBot通知的用户或群组,这个不需要用户填
+USERTGBOT = False # 使用TgBot进行远程管理
+TGBOTDEVICESFLAG = '' # 您的注册码
+USERBOTNOTICE = False # 使用TgBot进行通知
+USERQBAPI = False # 使用QBApi
+QBIP = '192.168.1.1' # QB的ip
+QBPORT = 8080 # QBApi端口
+QBUSERNAME = '' # Qb账号
+QBPASSWORD = '' # Qb密码
 ```
 * `config.ini.Template`是配置文件的模板,内容如上
+
+* **请注意！config.ini.Template内容已更新，目前模板版本为2.3.1**
+
 ***
 ## 配置介绍
 * 如果您想在配置文件中屏蔽一条配置项,在前面添上 `#` 即可
@@ -106,7 +114,9 @@ BOTUSERIDLIST = [] # 接受TgBot通知的用户或群组,这个不需要用户�
 
 * `RMLOGSFLAG` 配置项是用来控制工具删除保存天数达到和超过 `RMLOGSFLAG` 的值的配置,默认为 7 天,如果您不想删除请设置为 `False`
 
-* `USEBOTFLAG`用来开启TgBot通知的开关,现在只有自建模式,就是您需要自己创建机器人 `TGBOTTOKEN`即是您机器人的Token
+* `USEBOTFLAG`用来开启TgBot通知的开关
+
+* **注意如果有部分新配置没有解释，那么此配置即是内测功能，您可以来Tg群体验**
 
 # 常见问题
 ## pip安装出现问题

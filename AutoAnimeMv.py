@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 #coding:utf-8
 from sys import argv,executable #获取外部传参和外置配置更新
-from os import path,name,makedirs,listdir,link,remove,system # os操作
+from os import environ,path,name,makedirs,listdir,link,remove,system # os操作
 from time import sleep,strftime,localtime,time # 时间相关
 from datetime import datetime # 时间相减用
 from re import findall,match,search,sub,I # 匹配相关
@@ -11,12 +11,13 @@ from zhconv import convert # 繁化简
 from urllib.parse import quote,unquote # url encode
 from requests import get,post,exceptions # 网络部分
 from random import randint # 随机数生成
+from threading import Thread # 多线程
 #Start 开始部分进行程序的初始化 
 
 def Start_PATH():# 初始化
     # 版本 数据库缓存 Api数据缓存 Log数据集 分隔符
     global Versions,AimeListCache,BgmAPIDataCache,LogData,Separator,Proxy,TgBotMsgData,PyPath
-    Versions = '2.2.1'
+    Versions = '2.3.1'
     AimeListCache = None
     BgmAPIDataCache = {}
     LogData = f'\n\n[{strftime("%Y-%m-%d %H:%M:%S",localtime(time()))}] INFO: Running....'
@@ -26,14 +27,6 @@ def Start_PATH():# 初始化
     print(PyPath)
     Auxiliary_READConfig()
     Auxiliary_Log((f'当前工具版本为{Versions}',f'当前操作系统识别码为{name},posix/nt/java对应linux/windows/java虚拟机'),'INFO')
-    # 代理
-    Proxy = {}
-    if HTTPPROXY != '':
-        Proxy['http'] = HTTPPROXY
-    if HTTPSPROXY != '':
-        Proxy['https'] = HTTPSPROXY
-    if ALLPROXY != '':
-        Proxy['all'] = ALLPROXY
 
 def Start_GetArgv():# 获取参数,判断处理模式
     ArgvNumber = len(argv)
@@ -41,8 +34,6 @@ def Start_GetArgv():# 获取参数,判断处理模式
     if 2 <= ArgvNumber <= 3:# 接受1-2个参数
         if argv[1] == ('update' or 'updata'):# 更新模式
             Auxiliary_Updata()
-        elif argv[1] == 'tgbot':
-            Auxiliary_TgBot()
         elif path.exists(argv[1]) == True:# 批处理模式
             if ArgvNumber == 2:
                 return argv[1], #待扫描目录
@@ -56,7 +47,7 @@ def Start_GetArgv():# 获取参数,判断处理模式
                     return argv[1],argv[2],argv[3],argv[4]
 
 # Processing 进行程序的开始工作,进行核心处理
-def Processing_Mode(ArgvData):# 模式选择
+def Processing_Mode(ArgvData:list):# 模式选择
     ArgvNumber = len(ArgvData)
     global Path
     Path = ArgvData[0]
@@ -106,7 +97,7 @@ def Processing_Main(LorT):# 核心处理
             BgmApiName = Auxiliary_BgmApi(RAWName)
             Sorting_Mv(File,RAWName,SE,EP,None,BgmApiName)
 
-def Processing_Identification(File):# 识别
+def Processing_Identification(File:str):# 识别
     AnimeFileCheckFlag = Auxiliary_AnimeFileCheck(File)
     if AnimeFileCheckFlag == True:
         Auxiliary_Log('-'*80,'INFO')
@@ -118,6 +109,8 @@ def Processing_Identification(File):# 识别
         if '.' in RAWEP or RAWEP == '0' or RAWEP == '00':
             SE = '00'
             RAWSE = ''
+            SeasonMatchData = r'(季(.*?)第)|(([0-9]{0,1}[0-9]{1})S)|(([0-9]{0,1}[0-9]{1})nosaeS)|(([0-9]{0,1}[0-9]{1}) nosaeS)|(([0-9]{0,1}[0-9]{1})-nosaeS)|(nosaeS-dn([0-9]{1}))'
+            RAWName = sub(SeasonMatchData,'',RAWName[::-1],flags=I)[::-1].strip('-')
         else:
             SE,Name,RAWSE = Auxiliary_IDESE(RAWName)
             RAWName = RAWName if Name == None else Name
@@ -170,6 +163,32 @@ def Sorting_Mv(FileName,RAWFile,SE,EP,ASSList,BgmApiName):# 文件处理
         Auxiliary_Log(f'{NewDir}{NewName}{FileType}已存在,故跳过','WARNING')
 
 # Auxiliary 其他辅助
+def Auxiliary_PIPE(Flag,Msg=None):# 管道
+    if Flag == 'INIT':
+        if 'USERTGBOT' in globals():
+            global USERTGBOT
+            if USERTGBOT == True:
+                global PIPEName
+                PIPEName = r'\\.\pipe\AutoAnimeMvPIPE'
+                if 'USERBOTNOTICE' in globals():
+                    global USERBOTNOTICE
+                    if USERBOTNOTICE == True: 
+                        if name == 'nt':
+                            global PIPE,WritePIPE,ClosePIPE
+                            #from win32pipe import 
+                            from win32file import CreateFile,WriteFile as WritePIPE,CloseHandle as ClosePIPE,GENERIC_READ,GENERIC_WRITE,FILE_SHARE_WRITE,OPEN_EXISTING
+                            try:
+                                PIPE = CreateFile(PIPEName,GENERIC_READ | GENERIC_WRITE,FILE_SHARE_WRITE,None,OPEN_EXISTING, 0, None)
+                            except Exception as err:
+                                print(err)  
+                        else:
+                            pass
+    elif Flag == 'WRITE':
+        WritePIPE(PIPE,Msg.encode())
+        Auxiliary_Log('PIPE消息已发送')
+    elif Flag == 'CLONSE':
+        ClosePIPE(PIPE)
+
 def Auxiliary_READConfig():# 读取外置Config.ini文件并更新
     global HTTPPROXY,HTTPSPROXY,ALLPROXY,USELINK,LINKFAILSUSEMOVEFLAGS,PRINTLOGFLAG,RMLOGSFLAG,USEBOTFLAG,TGBOTTOKEN,BOTUSERIDLIST
     HTTPPROXY = '' # Http代理
@@ -200,9 +219,11 @@ def Auxiliary_READConfig():# 读取外置Config.ini文件并更新
                 Auxiliary_Log('外置ini文件没有配置','WARNING')
             elif COEFLAG == True:
                 COE()
+            Auxiliary_PIPE('INIT')
+            Auxiliary_PROXY()
 
 def Auxiliary_Log(Msg,MsgFlag='INFO',flag=None,end='\n'):# 日志
-    global LogData
+    global LogData,PRINTLOGFLAG
     Msg = Msg if type(Msg) == tuple else (Msg,)
     for OneMsg in Msg:
         Msg = f'[{strftime("%Y-%m-%d %H:%M:%S",localtime(time()))}] {MsgFlag}: {OneMsg}'
@@ -235,7 +256,7 @@ def Auxiliary_UniformOTSTR(File):# 统一意外字符
     NewUSTRFile = sub(r',|，| ','-',NewFile,flags=I) 
     NewUSTRFile = sub('[^a-z0-9\s&/\-:：.\(\)（）《》\u4e00-\u9fa5\u3040-\u309F\u30A0-\u30FF\u31F0-\u31FF]','=',NewUSTRFile,flags=I)
     #异种剧集统一
-    OtEpisodesMatchData = ['第(\d{1,4})集','(\d{1,4})集']
+    OtEpisodesMatchData = ['第(\d{1,4})集','(\d{1,4})集','(\d{1,4})END','(\d{1,4}) END','(\d{1,4})E']
     for i in OtEpisodesMatchData:
         if search(i,NewUSTRFile,flags=I) != None:
             a = search(i,NewUSTRFile,flags=I)
@@ -359,79 +380,32 @@ def Auxiliary_ASSFileCA(ASSFile):# 字幕文件的语言分类
                     return '.chi'
             else:
                 return '.other'
-                
+def Auxiliary_PROXY(): # 代理
+    if 'HTTPPROXY' in globals():
+        global HTTPPROXY
+        environ['http_proxy'] = HTTPPROXY
+    if 'HTTPSPROXY' in globals():
+        global HTTPSPROXY
+        environ['https_proxy'] = HTTPSPROXY
+    if 'ALLPROXY' in globals():
+        global ALLPROXY
+        environ['all_proxy'] = ALLPROXY
+
 def Auxiliary_Http(Url,flag='GET',json=None):# 网络
     headers = {'User-Agent':f'Abcuders/AutoAnimeMv/{Versions}(https://github.com/Abcuders/AutoAnimeMv)'}
     try:
         if flag != 'GET':
-            HttpData = post(Url,json,proxies=Proxy,headers=headers) if Proxy != {} else post(Url,json,headers=headers)
+            HttpData = post(Url,json,headers=headers) 
         else:
-            HttpData = get(Url,proxies=Proxy,headers=headers) if Proxy != {} else get(Url,headers=headers)
+            HttpData = get(Url,headers=headers)
     except exceptions.ConnectionError:
         Auxiliary_Exit(f'访问 {Url} 失败,未能获取到内容,请检查您是否启用了系统代理,如是则您应该在此工具中配置代理信息,否则您则需要检查您的网络能否访问')
-    except:
-        Auxiliary_Exit(f'访问 {Url} 失败,未能获取到内容,请检查您的网络')
+    except Exception as err:
+        Auxiliary_Exit(f'访问 {Url} 失败,未能获取到内容,请检查您的网络 {err}')
     if HttpData.status_code == 200:
         return HttpData.text
     else:
         Auxiliary_Exit('HttpData Status Code != 200')
-
-def Auxiliary_TgBot(Msg=None):# TgBot相关
-    if USEBOTFLAG == True and TGBOTTOKEN != '':
-        if Msg == None:# 注册模式
-            RegistrationCode = randint(1,10000*10000)
-            Auxiliary_Log(f'您现在在进行TgBot通知的注册,您的注册码为：{RegistrationCode}',flag='PRINT')
-            UserId = ''
-            while True: 
-                # 清空消息
-                Auxiliary_Http(f'https://api.telegram.org/bot{TGBOTTOKEN}/getupdates',json={"offset": -1,"limit": 100,"timeout": 'None'},flag='POST')
-                Auxiliary_Log('请将您的注册码发送给AutoAnimeMv_Bot(在群组和PM里均可)后再按下回车',flag='PRINT')
-                Auxiliary_Log('',flag='PRINT',end="")
-                system("pause")
-                #sleep(2)
-                TgBotData = literal_eval(Auxiliary_Http(f'https://api.telegram.org/bot{TGBOTTOKEN}/getupdates').replace(':false', ':False').replace(':true', ':True'))['result']
-                for i in range(len(TgBotData),0,-1):
-                    if 'message' in TgBotData[i-1]:
-                        flag = 'message'
-                    elif 'my_chat_member' in TgBotData[i-1]:
-                        flag = 'my_chat_member'
-                    elif 'edited_message' in TgBotData[i-1]:
-                        flag = 'edited_message'
-                    else:
-                        continue
-                    if 'text' in TgBotData[i-1][flag]:           
-                        if TgBotData[i-1][flag]['text'].strip(' ') == str(RegistrationCode):
-                            ChatId = TgBotData[i-1][flag]['chat']['id']
-                            UserId = str(TgBotData[i-1][flag]['from']['username'])
-                            TestText = f'@{UserId} 您已成功注册,我们会在您选择的群组/PM进行通知'
-                            Auxiliary_Log(TestText,flag='PRINT')
-                            Auxiliary_Http(f'https://api.telegram.org/bot{TGBOTTOKEN}/sendMessage',json={"chat_id":ChatId,"text":TestText},flag='POST')
-                            break
-                    else:
-                        continue
-                if UserId != '':
-                    if {"UserId":UserId,"ChatId":str(ChatId)} not in BOTUSERIDLIST:
-                        BOTUSERIDLIST2 = BOTUSERIDLIST.copy()
-                        BOTUSERIDLIST2.append({"UserId":UserId,"ChatId":str(ChatId)})
-                        with open('config.ini','r+',encoding='UTF-8') as File:
-                            Config = File.read()
-                            NewConfig  = Config.replace(f'BOTUSERIDLIST = {BOTUSERIDLIST}',f'BOTUSERIDLIST = {BOTUSERIDLIST2}')
-                            File.seek(0)
-                            File.truncate()
-                            File.write(NewConfig)
-            
-                        Auxiliary_Exit('工作已完成')
-                    else:
-                        Auxiliary_Exit('注册信息重复')
-                else:
-                    Auxiliary_Log('没有您的注册申请,可能网络有所延迟','WARNING',flag='PRINT')
-        elif USEBOTFLAG == True and BOTUSERIDLIST != []:
-            for User in BOTUSERIDLIST:
-                Auxiliary_Http(f'https://api.telegram.org/bot{TGBOTTOKEN}/sendMessage',json={f"chat_id":User['ChatId'],"text":f"@{User['UserId']} 您的番剧已处理完成 \n ``` \n {Msg} ```"},flag='POST')
-    else:
-        if USEBOTFLAG != False:
-            Auxiliary_Exit('TgBot不可用,请检查您的配置')
-
 
 def Auxiliary_Updata():# 更新
     Updata = Auxiliary_Http('https://raw.githubusercontent.com/Abcuders/AutoAnimeMv/main/AutoAnimeMv.py')
@@ -456,7 +430,7 @@ def Auxiliary_Exit(LogMsg):# 因可预见错误离场
     Auxiliary_Log(LogMsg,'EXIT',flag='PRINT')
     exit()
 # Colored Eggs
-def COE():# 
+def COE():#
     Auxiliary_Log('你的存在千真万确毋需置疑,我们一直都在这里,我们一直会爱你,愿每一个人都能自由的生活在阳光下','AAM')
 
 if __name__ == '__main__':
@@ -470,6 +444,7 @@ if __name__ == '__main__':
     else:
         end = time()
         Auxiliary_Log(f'一切工作已经完成,用时{end - start}','INFO',flag='PRINT')
-        Auxiliary_TgBot(TgBotMsgData)
+        if 'PIPE' in globals():
+            Auxiliary_PIPE('WRITE','新的番剧已处理完成')
     finally:
         Auxiliary_WriteLog()

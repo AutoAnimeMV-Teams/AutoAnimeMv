@@ -1,11 +1,16 @@
 #Config
-PRINTLOGFLAG = False # 打印log开关
+PRINTLOGFLAG = True # 打印log开关
 HTTPPROXY = '' # Http代理
-HTTPSPROXY = '' # Https代理
+HTTPSPROXY = 'http://192.168.1.1:7890' # Https代理
 ALLPROXY = '' # 全部代理
-USELINK = False # 使用硬链接开关
+USELINK = True # 使用硬链接开关
 LINKFAILSUSEMOVEFLAGS = False #硬链接失败时使用MOVE
 RMLOGSFLAG = '7' # 日志文件超时删除
-USEBOTFLAG = False # 使用TgBot通知,下面是接受TgBot通知的用户或群组
-TGBOTTOKEN = '' # TgBot Token
-BOTUSERIDLIST = [{'UserId': 'kenrst', 'ChatId': '-1001980615541'}, {'UserId': 'kenrst', 'ChatId': '2008923248'}]
+USERTGBOT = False # 使用TgBot进行远程管理
+TGBOTDEVICESFLAG = '' # 您的注册码
+USERBOTNOTICE = False # 使用TgBot进行通知
+USERQBAPI = False # 使用QBApi
+QBIP = '192.168.1.1' # QB的ip
+QBPORT = 8080 # QBApi端口
+QBUSERNAME = '' # Qb账号
+QBPASSWORD = '' # Qb密码
