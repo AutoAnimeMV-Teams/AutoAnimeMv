@@ -122,6 +122,7 @@ QBPASSWORD = '' # Qb密码
 ## pip安装出现问题
 *   如果您直接使用pip进行install遇到 `❗Fatal error in launcher: Unable to create process using pip问题`
 请使用`python3 -m pip install` 尝试安装
+如无法安装 请使用仓库中 `get-pip.py` 安装 
 
 ## 群晖NAS使用Python出现奇怪的问题
 * 在群晖NAS中，套件中心安装的`🐍python3`环境可能出现奇奇怪怪的问题，请使用第三方套件源(第三方源需要手动为`🐍python3`创建软连接至/usr/local/bin/python3)
