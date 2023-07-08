@@ -1,6 +1,7 @@
 from socket import socket,timeout,SOL_SOCKET,SO_KEEPALIVE
 from ast import literal_eval
-from os import environ,path,name,getcwd
+from sys import argv
+from os import environ,path,name
 from Crypto.PublicKey import RSA
 from Crypto.Cipher import AES,PKCS1_v1_5
 from base64 import b64encode,b64decode
@@ -137,21 +138,19 @@ def Auxiliary_AddMsgNotice(Msg:bytes):
     Auxiliary_Log('Notice消息已发出')
     C2.close()
 
-def Auxiliary_PIPE():
-    from win32pipe import CreateNamedPipe,ConnectNamedPipe,PIPE_ACCESS_DUPLEX,PIPE_TYPE_MESSAGE,PIPE_WAIT,PIPE_READMODE_MESSAGE,PIPE_UNLIMITED_INSTANCES
-    from win32file import ReadFile
-    PIPEName = r'\\.\pipe\AutoAnimeMvPIPE'
-    PIPE_BUFFER_SIZE = 65535
+def Auxiliary_NoticeS():
+    from mmap import mmap,ACCESS_WRITE
+    from contextlib import closing
+    with open(f"{PyPath}{Separator}CS.dat", "w") as f:
+        f.write('\x00' * 1024)
     while True:
-        try:
-            PIPE = CreateNamedPipe(PIPEName,PIPE_ACCESS_DUPLEX,PIPE_TYPE_MESSAGE | PIPE_WAIT | PIPE_READMODE_MESSAGE,PIPE_UNLIMITED_INSTANCES,PIPE_BUFFER_SIZE,PIPE_BUFFER_SIZE,500,None)
-            Auxiliary_Log('等待PIPE消息')
-            ConnectNamedPipe(PIPE,None)
-            data = ReadFile(PIPE,PIPE_BUFFER_SIZE)
-            if data != None:
-                Auxiliary_AddMsgNotice(data[1])
-        except:
-            sleep(5)
+        with open(f"{PyPath}{Separator}CS.dat", 'r+') as f:
+            with closing(mmap(f.fileno(), 1024, access=ACCESS_WRITE)) as m:
+                data = m.read(1024).replace(b'\x00',b'')
+                if data != b'':
+                    f.write('\x00' * 1024)
+                    Auxiliary_AddMsgNotice(data)
+                sleep(5)
 
 def Auxiliary_Log(Msg,MsgFlag='INFO',flag=None,end='\n'):# 日志
     global LogData,PRINTLOGFLAG
@@ -167,7 +166,7 @@ def Auxiliary_Exit(LogMsg):# 因可预见错误离场
     exit()
 
 def Auxiliary_READConfig():
-    global PRINTLOGFLAG,TGBOTDEVICESFLAG,USERBOTNOTICE,USERQBAPI,QBIP,QBPORT,QBUSERNAME,QBPASSWORD,Separator,QbClient
+    global PyPath,PRINTLOGFLAG,TGBOTDEVICESFLAG,USERBOTNOTICE,USERQBAPI,QBIP,QBPORT,QBUSERNAME,QBPASSWORD,Separator,QbClient
     PRINTLOGFLAG = None
     USERTGBOT = False # 使用TgBot进行远程管理
     TGBOTDEVICESFLAG = '' # 您的注册码
@@ -177,7 +176,7 @@ def Auxiliary_READConfig():
     QBPORT = 8080 # QBApi端口
     QBUSERNAME = '' # Qb账号
     QBPASSWORD = '' # Qb密码
-    PyPath = getcwd()
+    PyPath = argv[0].replace('Client.py','').strip(' ')
     Separator = '\\' if name == 'nt' else '/'
     if path.isfile(f'{PyPath}{Separator}config.ini'):
         with open(f'{PyPath}{Separator}config.ini','r',encoding='UTF-8') as ff:
@@ -204,11 +203,13 @@ def Auxiliary_READConfig():
 
             if 'USERQBAPI' in globals() and USERQBAPI == True:
                 QbClient = QbInit(QBIP,QBPORT,QBUSERNAME,QBPASSWORD)
+                Auxiliary_Log('QB 已连接')
             while True:
                 try:
                     DistributeData = DistributeClient(Ip,DefaultPort)
                     if 'USERBOTNOTICE' in globals() and USERBOTNOTICE == True:
-                        Thread(target=Auxiliary_PIPE).start()
+                        Auxiliary_Log('共享内存正在监听')
+                        Thread(target=Auxiliary_NoticeS).start()
                     ConnectClient(DistributeData)
                 except Exception as err:
                     Auxiliary_Log(f'连接失败重试{err}')
@@ -217,9 +218,11 @@ def Auxiliary_READConfig():
         Auxiliary_Log('不存在config.ini,使用内置变量')   
 
 if __name__ == '__main__':
+    Versions = '0.1.0'
     Ip = '103.101.204.76'
     #Ip = '127.0.0.1'
-    DefaultPort = 9999
+    DefaultPort = 13324
     PubilcKey = '-----BEGIN RSA PUBLIC KEY-----\nMIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCs64eLxnwfTGW1DEfnbWj5f2clEKPovMdhtxsANwNHIneJoehULfndt64wZDSOY+YvkHhCnK3O4U3+EJhY404PInmoWRqcaDfQi2jzNqfSiUL7Njww0ikSX0Mv+Y+KSSDzqC0SeDoeZo9HvOz5m08098WfvKPcyGzEDIYqFbXK5wIDAQAB\n-----END RSA PUBLIC KEY-----'
     LogData = f'\n\n[{strftime("%Y-%m-%d %H:%M:%S",localtime(time()))}] INFO: Running....'
+    Auxiliary_Log((f'当前工具版本为{Versions}',f'当前操作系统识别码为{name},posix/nt/java对应linux/windows/java虚拟机'),'INFO')
     Auxiliary_READConfig()

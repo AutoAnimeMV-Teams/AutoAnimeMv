@@ -61,7 +61,7 @@
     - [ ] 本地番剧信息缓存
     - [ ] 完全番剧特典支持 
     - [x] 清理过时日志
-    - [x] Telegram 机器人通知(win)
+    - [x] Telegram 机器人通知(win/linux)
     - [x] Telegram 机器人远程管理 Qb
     - [x] 🔥 彩蛋
 
@@ -70,16 +70,21 @@
 要使用本工具您必须需要`🐍Python3环境`支持,我们建议您搭配`🔵Qbittorrent`下载工具和 `🟩Emby`/`🎶Jellyfin`等媒体库使用
 >  🐍Python使用的依赖库:`sys` `os` `time` `datetime` `re` `ast` `shutil`  `requests` `zhconv`
 
->以上`requests`(网络访问),`zhconv`(简繁互化)需要您进行安装,如没有 `pip` 请参考 [详细文档](#-详细的文档)
+>以上`requests`(网络访问),`zhconv`(简繁互化)需要您进行安装,如没有 `pip`,可以使用仓库中的 `get-pip.py` 安装
 ```shell
-pip install requests
-pip install zhconv
+python3 -m pip install requests
+python3 -m pip install zhconv
 ```
+> `requirements-AAM.txt` 文件是 `AutoAnimeMv.py` 的依赖库安装描述文件
+
+> `requirements.txt` 文件是项目的全部依赖库安装描述文件
+
+* **更多解释请参考 [详细文档](#-详细的文档)**
 
 ## 使用介绍
 * `AutoAnimeMv.py`是核心处理程序,它有两种处理方式,模式的切换靠的是传参数量 [点我开始下载`AutoAnimeMv.py`](https://raw.githubusercontent.com/Abcuders/AutoAnimeMv/main/AutoAnimeMv.py) 
-* 同时工具自己拥有一些可配置项,详情见 [详细文档](#-详细的文档)
-* 本工具默认不打印任何信息,如果您有需要,可在配置文件中进行配置,请参考 [详细文档](#-详细的文档)
+* 同时工具自己拥有一些可配置项,详情见 [详细文档#配置](/DOCS.md/#配置)
+* 本工具默认不打印任何信息,如果您有需要,可在配置文件中进行配置,请参考 [详细文档#配置](/DOCS.md/#配置)
 
     ## QB下载模式
     > 在此模式下`AutoAnimeMv.py`支持 3~4 个参数,`下载路径` `下载文件名` `下载文件数` `文件分类`(可选) 

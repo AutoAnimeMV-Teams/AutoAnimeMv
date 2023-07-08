@@ -17,7 +17,7 @@ from threading import Thread # 多线程
 def Start_PATH():# 初始化
     # 版本 数据库缓存 Api数据缓存 Log数据集 分隔符
     global Versions,AimeListCache,BgmAPIDataCache,LogData,Separator,Proxy,TgBotMsgData,PyPath
-    Versions = '2.3.1'
+    Versions = '2.(3.5).1'
     AimeListCache = None
     BgmAPIDataCache = {}
     LogData = f'\n\n[{strftime("%Y-%m-%d %H:%M:%S",localtime(time()))}] INFO: Running....'
@@ -163,31 +163,22 @@ def Sorting_Mv(FileName,RAWFile,SE,EP,ASSList,BgmApiName):# 文件处理
         Auxiliary_Log(f'{NewDir}{NewName}{FileType}已存在,故跳过','WARNING')
 
 # Auxiliary 其他辅助
-def Auxiliary_PIPE(Flag,Msg=None):# 管道
-    if Flag == 'INIT':
-        if 'USERTGBOT' in globals():
-            global USERTGBOT
-            if USERTGBOT == True:
-                global PIPEName
-                PIPEName = r'\\.\pipe\AutoAnimeMvPIPE'
-                if 'USERBOTNOTICE' in globals():
-                    global USERBOTNOTICE
-                    if USERBOTNOTICE == True: 
-                        if name == 'nt':
-                            global PIPE,WritePIPE,ClosePIPE
-                            #from win32pipe import 
-                            from win32file import CreateFile,WriteFile as WritePIPE,CloseHandle as ClosePIPE,GENERIC_READ,GENERIC_WRITE,FILE_SHARE_WRITE,OPEN_EXISTING
-                            try:
-                                PIPE = CreateFile(PIPEName,GENERIC_READ | GENERIC_WRITE,FILE_SHARE_WRITE,None,OPEN_EXISTING, 0, None)
-                            except Exception as err:
-                                print(err)  
-                        else:
-                            pass
-    elif Flag == 'WRITE':
-        WritePIPE(PIPE,Msg.encode())
-        Auxiliary_Log('PIPE消息已发送')
-    elif Flag == 'CLONSE':
-        ClosePIPE(PIPE)
+def Auxiliary_Notice(Msg):# 管道
+    if 'USERTGBOT' in globals():
+        global USERTGBOT
+        if USERTGBOT == True:
+            if 'USERBOTNOTICE' in globals():
+                global USERBOTNOTICE
+                if USERBOTNOTICE == True: 
+                    from mmap import mmap,ACCESS_WRITE
+                    from contextlib import closing
+                    with open(f'{PyPath}{Separator}CS.dat', 'r+') as f:
+                        with closing(mmap(f.fileno(), 1024, access=ACCESS_WRITE)) as m:
+                            m.seek(0)
+                            Msg.rjust(1024,'\x00')
+                            m.write(bytearray(Msg.encode()))
+                            Auxiliary_Log('Notice消息已发送')
+                            m.flush()
 
 def Auxiliary_READConfig():# 读取外置Config.ini文件并更新
     global HTTPPROXY,HTTPSPROXY,ALLPROXY,USELINK,LINKFAILSUSEMOVEFLAGS,PRINTLOGFLAG,RMLOGSFLAG,USEBOTFLAG,TGBOTTOKEN,BOTUSERIDLIST
@@ -219,7 +210,6 @@ def Auxiliary_READConfig():# 读取外置Config.ini文件并更新
                 Auxiliary_Log('外置ini文件没有配置','WARNING')
             elif COEFLAG == True:
                 COE()
-            Auxiliary_PIPE('INIT')
             Auxiliary_PROXY()
 
 def Auxiliary_Log(Msg,MsgFlag='INFO',flag=None,end='\n'):# 日志
@@ -444,7 +434,6 @@ if __name__ == '__main__':
     else:
         end = time()
         Auxiliary_Log(f'一切工作已经完成,用时{end - start}','INFO',flag='PRINT')
-        if 'PIPE' in globals():
-            Auxiliary_PIPE('WRITE','新的番剧已处理完成')
+        Auxiliary_Notice('新的番剧已处理完成')
     finally:
         Auxiliary_WriteLog()

@@ -122,7 +122,6 @@ QBPASSWORD = '' # Qb密码
 ## pip安装出现问题
 *   如果您直接使用pip进行install遇到 `❗Fatal error in launcher: Unable to create process using pip问题`
 请使用`python3 -m pip install` 尝试安装
-如无法安装 请使用仓库中 `get-pip.py` 安装 
 
 ## 群晖NAS使用Python出现奇怪的问题
 * 在群晖NAS中，套件中心安装的`🐍python3`环境可能出现奇奇怪怪的问题，请使用第三方套件源(第三方源需要手动为`🐍python3`创建软连接至/usr/local/bin/python3)
@@ -162,24 +161,8 @@ QBPASSWORD = '' # Qb密码
 ### Log 保存位置的解释
 * 默认情况下,Log文件会保存在传入的`保存路径`下,当无法访问此路径时,Log保存在工具目录下
 
-## Telegram Bot通知功能
-* 您需要自己创建一个机器人,并在配置中开启bot通知,填入您机器人的Token
-* 启动`AutoAnimeMv.py` 并进入注册模式
-```
-python3 AutoAnimeMv.py tgbot
-```
-> print
-```
-[2023-06-21 22:02:10] INFO: 当前操作系统识别码为nt,posix/nt/java对应linux/windows/java虚拟机
-[2023-06-21 22:02:10] INFO: 接受到的参数 > ['E:\\D\\fork\\AutoAnimeMv\\AutoAnimeMv.py ', 'tgbot']
-[2023-06-21 22:02:10] INFO: 您现在在进行TgBot通知的注册,您的注册码为：61949712
-[2023-06-21 22:02:11] INFO: 请将您的注册码发送给AutoAnimeMv_Bot(在群组和PM里均可)后再按下回车
-[2023-06-21 22:02:11] INFO: 请按任意键继续. . .
-```
-* 按照提示在 [AutoAnimeMv_Bot](https://t.me/AutoAnimeMv_Bot) 机器人中发送注册码,当然您可以在群组中邀请机器人,并直接发送注册码 即可注册
-```
-[2023-06-21 22:02:24] INFO: @kenrst 您已成功注册,我们会在您选择的群组/PM进行通知
-```
+## Telegram Bot通知功能(old 版本已废弃,New 版本开发中)
+* **内测功能，您可以来Tg群体验**
 
 # 🔥 彩蛋 
 * 在配置文件中填上 `#mtf` 或 `#ftm`,再运行工具
