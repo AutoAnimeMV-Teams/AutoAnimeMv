@@ -17,7 +17,7 @@ from threading import Thread # 多线程
 def Start_PATH():# 初始化
     # 版本 数据库缓存 Api数据缓存 Log数据集 分隔符
     global Versions,AimeListCache,BgmAPIDataCache,LogData,Separator,Proxy,TgBotMsgData,PyPath
-    Versions = '2.(3.5).2'
+    Versions = '2.(3.75).3'
     AimeListCache = None
     BgmAPIDataCache = {}
     LogData = f'\n\n[{strftime("%Y-%m-%d %H:%M:%S",localtime(time()))}] INFO: Running....'
@@ -122,7 +122,7 @@ def Processing_Identification(File:str):# 识别
         Auxiliary_Log(f'当前文件属于{AnimeFileCheckFlag},跳过处理','INFO')
 
 # Sorting 进行整理工作
-def Sorting_Mv(FileName,RAWFile,SE,EP,ASSList,BgmApiName):# 文件处理
+def Sorting_Mv(FileName,RAWName,SE,EP,ASSList,BgmApiName):# 文件处理
     def FileML(src,dst):
         global TgBotMsgData
         if USELINK == True:
@@ -143,7 +143,7 @@ def Sorting_Mv(FileName,RAWFile,SE,EP,ASSList,BgmApiName):# 文件处理
             move(src,dst)
             Auxiliary_Log(f'Move-{dst} << {src}')
             TgBotMsgData = TgBotMsgData + (f'Move-{src} << {dst}\n')
-    NewDir = f'{Path}{Separator}{CategoryName}{Separator}{BgmApiName}{Separator}Season{SE}{Separator}'
+    NewDir = f'{Path}{Separator}{CategoryName}{Separator}{BgmApiName}{Separator}Season{SE}{Separator}' if BgmApiName != None else f'{Path}{Separator}{CategoryName}{Separator}{RAWName}{Separator}Season{SE}{Separator}'
     NewName = f'S{SE}E{EP}'
     if path.exists(NewDir) == False:
         makedirs(NewDir)
@@ -165,7 +165,7 @@ def Sorting_Mv(FileName,RAWFile,SE,EP,ASSList,BgmApiName):# 文件处理
         Auxiliary_Log(f'{NewDir}{NewName}{FileType}已存在,故跳过','WARNING')
 
 # Auxiliary 其他辅助
-def Auxiliary_Notice(Msg):# 管道
+def Auxiliary_Notice(Msg):# 共享内存
     if 'USERTGBOT' in globals():
         global USERTGBOT
         if USERTGBOT == True:
@@ -183,10 +183,11 @@ def Auxiliary_Notice(Msg):# 管道
                             m.flush()
 
 def Auxiliary_READConfig():# 读取外置Config.ini文件并更新
-    global HTTPPROXY,HTTPSPROXY,ALLPROXY,USELINK,LINKFAILSUSEMOVEFLAGS,PRINTLOGFLAG,RMLOGSFLAG,USEBOTFLAG,TGBOTTOKEN,BOTUSERIDLIST
+    global HTTPPROXY,HTTPSPROXY,ALLPROXY,USEBGMAPI,USELINK,LINKFAILSUSEMOVEFLAGS,PRINTLOGFLAG,RMLOGSFLAG,USEBOTFLAG,TGBOTTOKEN,BOTUSERIDLIST
     HTTPPROXY = '' # Http代理
     HTTPSPROXY = '' # Https代理
     ALLPROXY = '' # 全部代理
+    USEBGMAPI = True # 使用BgmApi
     USELINK = False # 使用硬链接开关
     LINKFAILSUSEMOVEFLAGS = False #硬链接失败时使用MOVE
     PRINTLOGFLAG = False # 打印log开关
@@ -412,11 +413,21 @@ def Auxiliary_Updata():# 更新
         Auxiliary_Exit('更新数据存在问题')
 
 def Auxiliary_BgmApi(Name):# BgmApi相关,返回一个标准的中文名称
-    BgmApiData = literal_eval(Auxiliary_Http(f"https://api.bgm.tv/search/subject/{Name}?type=2&responseGroup=small&max_results=1"))
-    ApiName = unquote(BgmApiData['list'][0]['name_cn'],encoding='UTF-8',errors='replace')  
-    ApiName = sub('第\d{1,2}季','',ApiName,flags=I).strip('- []【】 ')
-    Auxiliary_Log(f'{ApiName} << bgmApi查询结果')
-    return ApiName
+    global USEBGMAPI
+    if USEBGMAPI == True:
+        try:
+            BgmApiData = literal_eval(Auxiliary_Http(f"https://api.bgm.tv/search/subject/{Name}?type=2&responseGroup=small&max_results=1"))
+        except:
+            Auxiliary_Log('BgmApi无法检索到内容','WARNING')
+            return None
+        else:
+            ApiName = unquote(BgmApiData['list'][0]['name_cn'],encoding='UTF-8',errors='replace')
+            ApiName = sub('第\d{1,2}季','',ApiName,flags=I).strip('- []【】 ')
+            Auxiliary_Log(f'{ApiName} << bgmApi查询结果')
+            return ApiName
+    else:
+        Auxiliary_Log('没有使用BgmApi进行检索')
+        return None
 
 def Auxiliary_Exit(LogMsg):# 因可预见错误离场
     Auxiliary_Log(LogMsg,'EXIT',flag='PRINT')

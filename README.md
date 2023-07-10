@@ -100,7 +100,7 @@ python3 -m pip install zhconv
     ```shell
     python3 /dir/to/AAM.py "%D" "%N" "%C" "%L"
     ```
-     > <img src="./Image/Example/two.jpg" width="400" height="300"> <img src="./Image/Example/three.jpg" width="400" height="300">
+     > <img src="./Image/Example/two.jpg" width="300" height="300"> <img src="./Image/Example/three.jpg" width="300" height="300">
      * 4.取消做种，修改qb配置: 将`🔵QBitTorrent `的`做种限制`改成`当分享率达到0当做种时间达到0分钟然后暂停torrent`
 
 
