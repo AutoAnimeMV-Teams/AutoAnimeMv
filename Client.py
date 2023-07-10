@@ -1,7 +1,7 @@
 from socket import socket,timeout,SOL_SOCKET,SO_KEEPALIVE
 from ast import literal_eval
 from sys import argv
-from os import environ,path,name
+from os import environ,path,name,getcwd
 from Crypto.PublicKey import RSA
 from Crypto.Cipher import AES,PKCS1_v1_5
 from base64 import b64encode,b64decode
@@ -167,7 +167,6 @@ def Auxiliary_Exit(LogMsg):# 因可预见错误离场
 
 def Auxiliary_READConfig():
     global PyPath,PRINTLOGFLAG,TGBOTDEVICESFLAG,USERBOTNOTICE,USERQBAPI,QBIP,QBPORT,QBUSERNAME,QBPASSWORD,Separator,QbClient
-    PRINTLOGFLAG = None
     USERTGBOT = False # 使用TgBot进行远程管理
     TGBOTDEVICESFLAG = '' # 您的注册码
     USERBOTNOTICE = False # 使用TgBot进行通知
@@ -176,7 +175,8 @@ def Auxiliary_READConfig():
     QBPORT = 8080 # QBApi端口
     QBUSERNAME = '' # Qb账号
     QBPASSWORD = '' # Qb密码
-    PyPath = argv[0].replace('Client.py','').strip(' ')
+    #PyPath = argv[0].replace('Client.py','').strip(' ')
+    PyPath = getcwd()
     Separator = '\\' if name == 'nt' else '/'
     if path.isfile(f'{PyPath}{Separator}config.ini'):
         with open(f'{PyPath}{Separator}config.ini','r',encoding='UTF-8') as ff:
@@ -218,11 +218,12 @@ def Auxiliary_READConfig():
         Auxiliary_Log('不存在config.ini,使用内置变量')   
 
 if __name__ == '__main__':
-    Versions = '0.1.0'
+    Versions = '0.1.1'
     Ip = '103.101.204.76'
     #Ip = '127.0.0.1'
     DefaultPort = 13324
     PubilcKey = '-----BEGIN RSA PUBLIC KEY-----\nMIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCs64eLxnwfTGW1DEfnbWj5f2clEKPovMdhtxsANwNHIneJoehULfndt64wZDSOY+YvkHhCnK3O4U3+EJhY404PInmoWRqcaDfQi2jzNqfSiUL7Njww0ikSX0Mv+Y+KSSDzqC0SeDoeZo9HvOz5m08098WfvKPcyGzEDIYqFbXK5wIDAQAB\n-----END RSA PUBLIC KEY-----'
     LogData = f'\n\n[{strftime("%Y-%m-%d %H:%M:%S",localtime(time()))}] INFO: Running....'
+    PRINTLOGFLAG = True
     Auxiliary_Log((f'当前工具版本为{Versions}',f'当前操作系统识别码为{name},posix/nt/java对应linux/windows/java虚拟机'),'INFO')
     Auxiliary_READConfig()

@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 #coding:utf-8
 from sys import argv,executable #获取外部传参和外置配置更新
-from os import environ,path,name,makedirs,listdir,link,remove,system # os操作
+from os import environ,path,name,getcwd,makedirs,listdir,link,remove,system # os操作
 from time import sleep,strftime,localtime,time # 时间相关
 from datetime import datetime # 时间相减用
 from re import findall,match,search,sub,I # 匹配相关
@@ -17,14 +17,14 @@ from threading import Thread # 多线程
 def Start_PATH():# 初始化
     # 版本 数据库缓存 Api数据缓存 Log数据集 分隔符
     global Versions,AimeListCache,BgmAPIDataCache,LogData,Separator,Proxy,TgBotMsgData,PyPath
-    Versions = '2.(3.5).1'
+    Versions = '2.(3.5).2'
     AimeListCache = None
     BgmAPIDataCache = {}
     LogData = f'\n\n[{strftime("%Y-%m-%d %H:%M:%S",localtime(time()))}] INFO: Running....'
     Separator = '\\' if name == 'nt' else '/'
     TgBotMsgData = ''
-    PyPath = argv[0].replace('AutoAnimeMv.py','').strip(' ')
-    print(PyPath)
+    #PyPath = argv[0].replace('AutoAnimeMv.py','').strip(' ')
+    PyPath = getcwd()
     Auxiliary_READConfig()
     Auxiliary_Log((f'当前工具版本为{Versions}',f'当前操作系统识别码为{name},posix/nt/java对应linux/windows/java虚拟机'),'INFO')
 
@@ -39,6 +39,8 @@ def Start_GetArgv():# 获取参数,判断处理模式
                 return argv[1], #待扫描目录
             else:
                 return argv[1],argv[2] #待扫描目录和文件分类
+        else:
+            Auxiliary_Exit('参数出错')
     elif 4 <= ArgvNumber <= 5: #接受3-4参数
             if path.exists(argv[1]) == True:
                 if ArgvNumber == 4: # 保存目录 种子名称 文件个数
@@ -192,8 +194,8 @@ def Auxiliary_READConfig():# 读取外置Config.ini文件并更新
     USEBOTFLAG = True # 使用TgBot进行通知
     TGBOTTOKEN = '' # TgBot Token
     BOTUSERIDLIST = [] # 使用TgBot的用户列表
-    if path.isfile(f'{PyPath}config.ini'):
-        with open(f'{PyPath}config.ini','r',encoding='UTF-8') as ff:
+    if path.isfile(f'{PyPath}{Separator}config.ini'):
+        with open(f'{PyPath}{Separator}config.ini','r',encoding='UTF-8') as ff:
             Auxiliary_Log('正在读取外置ini文件','INFO')
             T = 0
             COEFLAG = False
@@ -279,7 +281,7 @@ def Auxiliary_IDESE(File):# 识别剧季并截断Name
         for i in SENamelist:# 截断Name
             File = sub(r'%s.*'%i[::-1],'',File,flags=I).strip('-') #通过剧季截断文件名
         for i in range(len(SEList)):
-            if SEList[i].isnumeric() == True:
+            if SEList[i].isdecimal() == True:
                 SE = SEList[i]
             elif '\u0e00' <= SEList[i] <= '\u9fa5':# 中文剧季转化
                 digit = {'一':'01', '二':'02', '三':'03', '四':'04', '五':'05', '六':'06', '七':'07', '八':'08', '九':'09','壹':'01','贰':'02','叁':'03','肆':'04','伍':'05','陆':'06','柒':'07','捌':'08','玖':'09'}
