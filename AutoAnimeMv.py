@@ -17,7 +17,7 @@ from threading import Thread # 多线程
 def Start_PATH():# 初始化
     # 版本 数据库缓存 Api数据缓存 Log数据集 分隔符
     global Versions,AimeListCache,BgmAPIDataCache,LogData,Separator,Proxy,TgBotMsgData,PyPath
-    Versions = '2.(3.75).3'
+    Versions = '2.4.1'
     AimeListCache = None
     BgmAPIDataCache = {}
     LogData = f'\n\n[{strftime("%Y-%m-%d %H:%M:%S",localtime(time()))}] INFO: Running....'
@@ -415,16 +415,29 @@ def Auxiliary_Updata():# 更新
 def Auxiliary_BgmApi(Name):# BgmApi相关,返回一个标准的中文名称
     global USEBGMAPI
     if USEBGMAPI == True:
-        try:
-            BgmApiData = literal_eval(Auxiliary_Http(f"https://api.bgm.tv/search/subject/{Name}?type=2&responseGroup=small&max_results=1"))
-        except:
-            Auxiliary_Log('BgmApi无法检索到内容','WARNING')
-            return None
-        else:
+        if findall(r'[\u4e00-\u9fa5]+',Name,flags=I) != []: # 获取匹配到的汉字
+            NameList = findall(r'[\u4e00-\u9fa5]+',Name,flags=I) 
+        else:# 匹配其他语言
+            NameList = Name.split('-')
+            for i in range(NameList.count('')):
+                NameList.remove('')
+        Auxiliary_Log(f'待查询的番剧名称列表 >> {NameList}')
+
+        for Name in NameList:
+            try:
+                BgmApiData = literal_eval(Auxiliary_Http(f"https://api.bgm.tv/search/subject/{Name}?type=2&responseGroup=small&max_results=1"))
+            except:
+                Auxiliary_Log(f'BgmApi无法检索到关于 {Name} 内容','WARNING')
+            else:
+                break
+
+        if 'BgmApiData' in locals():
             ApiName = unquote(BgmApiData['list'][0]['name_cn'],encoding='UTF-8',errors='replace')
             ApiName = sub('第\d{1,2}季','',ApiName,flags=I).strip('- []【】 ')
             Auxiliary_Log(f'{ApiName} << bgmApi查询结果')
             return ApiName
+        else:
+            return None
     else:
         Auxiliary_Log('没有使用BgmApi进行检索')
         return None
