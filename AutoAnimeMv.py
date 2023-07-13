@@ -17,7 +17,7 @@ from threading import Thread # 多线程
 def Start_PATH():# 初始化
     # 版本 数据库缓存 Api数据缓存 Log数据集 分隔符
     global Versions,AimeListCache,BgmAPIDataCache,LogData,Separator,Proxy,TgBotMsgData,PyPath
-    Versions = '2.4.1'
+    Versions = '2.4.2'
     AimeListCache = None
     BgmAPIDataCache = {}
     LogData = f'\n\n[{strftime("%Y-%m-%d %H:%M:%S",localtime(time()))}] INFO: Running....'
@@ -415,21 +415,30 @@ def Auxiliary_Updata():# 更新
 def Auxiliary_BgmApi(Name):# BgmApi相关,返回一个标准的中文名称
     global USEBGMAPI
     if USEBGMAPI == True:
-        if findall(r'[\u4e00-\u9fa5]+',Name,flags=I) != []: # 获取匹配到的汉字
-            NameList = findall(r'[\u4e00-\u9fa5]+',Name,flags=I) 
-        else:# 匹配其他语言
-            NameList = Name.split('-')
-            for i in range(NameList.count('')):
-                NameList.remove('')
-        Auxiliary_Log(f'待查询的番剧名称列表 >> {NameList}')
-
-        for Name in NameList:
-            try:
-                BgmApiData = literal_eval(Auxiliary_Http(f"https://api.bgm.tv/search/subject/{Name}?type=2&responseGroup=small&max_results=1"))
-            except:
-                Auxiliary_Log(f'BgmApi无法检索到关于 {Name} 内容','WARNING')
-            else:
-                break
+        def NameSplit(Name):
+            if findall(r'[\u4e00-\u9fa5]+',Name,flags=I) != []: # 获取匹配到的汉字
+                NameList = findall(r'[\u4e00-\u9fa5]+',Name,flags=I) 
+            else:# 匹配其他语言
+                NameList = Name.split('-')
+                for i in range(NameList.count('')):
+                    NameList.remove('')
+            Auxiliary_Log(f'番剧名称分段 待查询的番剧名称列表 >> {NameList}')
+            return NameList
+        
+        NameList = [Name]
+        i = 0
+        while True:
+            for Name in NameList:
+                try:
+                    BgmApiData = literal_eval(Auxiliary_Http(f"https://api.bgm.tv/search/subject/{Name}?type=2&responseGroup=small&max_results=1"))
+                except:
+                    Auxiliary_Log(f'BgmApi无法检索到关于 {Name} 内容','WARNING')
+                    if i == 0:
+                        NameList = NameSplit(Name)
+                        i = 1
+                else:
+                    break
+            break
 
         if 'BgmApiData' in locals():
             ApiName = unquote(BgmApiData['list'][0]['name_cn'],encoding='UTF-8',errors='replace')
