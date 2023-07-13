@@ -1,4 +1,4 @@
-pycryptodome==3.18.0
-qbittorrent_api==2023.6.50
-Requests==2.31.0
-zhconv==1.4.3
+pycryptodome
+qbittorrent_api
+Requests
+zhconv
