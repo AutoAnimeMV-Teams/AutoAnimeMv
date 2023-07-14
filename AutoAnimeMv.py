@@ -362,14 +362,16 @@ def Auxiliary_AnimeFileCheck(File):# 检查番剧文件
     return True         
 
 def Auxiliary_ASSFileCA(ASSFile):# 字幕文件的语言分类
-    SubtitleList = [['简','sc','chs'],['繁','tc','chi']]
+    SubtitleList = [['简','sc','chs','GB'],['繁','tc','cht','BIG5'],['日','jp']]
     for i in range(len(SubtitleList)):
         for ii in SubtitleList[i]:
             if search(ii[::-1],ASSFile[::-1],flags=I) != None:
                 if i == 0:
                     return '.chs'
                 elif i == 1:
-                    return '.chi'
+                    return '.cht'
+                elif i == 2:
+                    return '.jp'
     return '.other'
 def Auxiliary_PROXY(): # 代理
     if 'HTTPPROXY' in globals():
