@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 #coding:utf-8
 from sys import argv,executable #获取外部传参和外置配置更新
-from os import environ,path,name,getcwd,makedirs,listdir,link,remove,system # os操作
+from os import environ,path,name,makedirs,listdir,link,remove # os操作
 from time import sleep,strftime,localtime,time # 时间相关
 from datetime import datetime # 时间相减用
 from re import findall,match,search,sub,I # 匹配相关
@@ -17,14 +17,13 @@ from threading import Thread # 多线程
 def Start_PATH():# 初始化
     # 版本 数据库缓存 Api数据缓存 Log数据集 分隔符
     global Versions,AimeListCache,BgmAPIDataCache,LogData,Separator,Proxy,TgBotMsgData,PyPath
-    Versions = '2.4.2'
+    Versions = '2.5.3'
     AimeListCache = None
     BgmAPIDataCache = {}
     LogData = f'\n\n[{strftime("%Y-%m-%d %H:%M:%S",localtime(time()))}] INFO: Running....'
     Separator = '\\' if name == 'nt' else '/'
     TgBotMsgData = ''
-    #PyPath = argv[0].replace('AutoAnimeMv.py','').strip(' ')
-    PyPath = getcwd()
+    PyPath = __file__.replace('AutoAnimeMv.py','').strip(' ')
     Auxiliary_READConfig()
     Auxiliary_Log((f'当前工具版本为{Versions}',f'当前操作系统识别码为{name},posix/nt/java对应linux/windows/java虚拟机'),'INFO')
 
@@ -154,12 +153,12 @@ def Sorting_Mv(FileName,RAWName,SE,EP,ASSList,BgmApiName):# 文件处理
             FileType = path.splitext(ASSFile)[1].lower()
             NewASSName = NewName + Auxiliary_ASSFileCA(ASSFile)
             if path.isfile(f'{NewDir}{NewASSName}{FileType}') == False:
-                FileML(f'{Path}{Separator}{FileName}',f'{NewDir}{NewASSName}{FileType}')
+                FileML(f'{Path}{Separator}{ASSFile}',f'{NewDir}{NewASSName}{FileType}')
             else:
                 Auxiliary_Log(f'{NewDir}{NewASSName}{FileType}已存在,故跳过','WARNING')
     FileType = path.splitext(FileName)[1].lower()
     if path.isfile(f'{NewDir}{NewName}{FileType}') == False:
-        NewName = NewName + Auxiliary_ASSFileCA(FileName) if FileType == ('.ass' or '.str') else NewName
+        NewName = NewName + Auxiliary_ASSFileCA(FileName) if FileType == '.ass' or FileType == '.str' else NewName
         FileML(f'{Path}{Separator}{FileName}',f'{NewDir}{NewName}{FileType}')
     else: 
         Auxiliary_Log(f'{NewDir}{NewName}{FileType}已存在,故跳过','WARNING')
@@ -249,7 +248,7 @@ def Auxiliary_UniformOTSTR(File):# 统一意外字符
     NewUSTRFile = sub(r',|，| ','-',NewFile,flags=I) 
     NewUSTRFile = sub('[^a-z0-9\s&/\-:：.\(\)（）《》\u4e00-\u9fa5\u3040-\u309F\u30A0-\u30FF\u31F0-\u31FF]','=',NewUSTRFile,flags=I)
     #异种剧集统一
-    OtEpisodesMatchData = ['第(\d{1,4})集','(\d{1,4})集','(\d{1,4})END','(\d{1,4}) END','(\d{1,4})E']
+    OtEpisodesMatchData = ['第(\d{1,4})集','(\d{1,4})集','第(\d{1,4})话','(\d{1,4})END','(\d{1,4}) END','(\d{1,4})E']
     for i in OtEpisodesMatchData:
         if search(i,NewUSTRFile,flags=I) != None:
             a = search(i,NewUSTRFile,flags=I)
@@ -371,8 +370,7 @@ def Auxiliary_ASSFileCA(ASSFile):# 字幕文件的语言分类
                     return '.chs'
                 elif i == 1:
                     return '.chi'
-            else:
-                return '.other'
+    return '.other'
 def Auxiliary_PROXY(): # 代理
     if 'HTTPPROXY' in globals():
         global HTTPPROXY
@@ -413,40 +411,46 @@ def Auxiliary_Updata():# 更新
         Auxiliary_Exit('更新数据存在问题')
 
 def Auxiliary_BgmApi(Name):# BgmApi相关,返回一个标准的中文名称
-    global USEBGMAPI
+    global USEBGMAPI,BgmAPIDataCache
     if USEBGMAPI == True:
-        def NameSplit(Name):
-            if findall(r'[\u4e00-\u9fa5]+',Name,flags=I) != []: # 获取匹配到的汉字
-                NameList = findall(r'[\u4e00-\u9fa5]+',Name,flags=I) 
-            else:# 匹配其他语言
-                NameList = Name.split('-')
-                for i in range(NameList.count('')):
-                    NameList.remove('')
-            Auxiliary_Log(f'番剧名称分段 待查询的番剧名称列表 >> {NameList}')
-            return NameList
-        
-        NameList = [Name]
-        i = 0
-        while True:
-            for Name in NameList:
+        if Name not in BgmAPIDataCache:
+            def NameSplit(Name):
+                if findall(r'[\u4e00-\u9fa5]+',Name,flags=I) != []: # 获取匹配到的汉字
+                    NameList = findall(r'[\u4e00-\u9fa5]+',Name,flags=I) 
+                else:# 匹配其他语言
+                    NameList = Name.split('-')
+                    for i in range(NameList.count('')):
+                        NameList.remove('')
+                Auxiliary_Log(f'番剧名称分段 待查询的番剧名称列表 >> {NameList}')
+                return NameList
+            def BgmApi(Name):
                 try:
                     BgmApiData = literal_eval(Auxiliary_Http(f"https://api.bgm.tv/search/subject/{Name}?type=2&responseGroup=small&max_results=1"))
                 except:
                     Auxiliary_Log(f'BgmApi无法检索到关于 {Name} 内容','WARNING')
-                    if i == 0:
-                        NameList = NameSplit(Name)
-                        i = 1
+                    return None
                 else:
-                    break
-            break
+                    return BgmApiData
+                
+            BgmApiData = BgmApi(Name)
+            if BgmApiData == None:
+                NameList = NameSplit(Name)
+                for i in NameList:
+                    BgmApiData = BgmApi(i)
+                    if BgmApiData != None:
+                        break
 
-        if 'BgmApiData' in locals():
-            ApiName = unquote(BgmApiData['list'][0]['name_cn'],encoding='UTF-8',errors='replace')
-            ApiName = sub('第\d{1,2}季','',ApiName,flags=I).strip('- []【】 ')
-            Auxiliary_Log(f'{ApiName} << bgmApi查询结果')
-            return ApiName
+            if 'BgmApiData' != None:
+                ApiName = unquote(BgmApiData['list'][0]['name_cn'],encoding='UTF-8',errors='replace')
+                ApiName = sub('第.*?季','',ApiName,flags=I).strip('- []【】 ')
+                Auxiliary_Log(f'{ApiName} << bgmApi查询结果')
+                BgmAPIDataCache[Name] = ApiName
+                return ApiName
+            else:
+                return None
         else:
-            return None
+            Auxiliary_Log(f'{BgmAPIDataCache[Name]} << bgmApi缓存查询结果')
+            return BgmAPIDataCache[Name]
     else:
         Auxiliary_Log('没有使用BgmApi进行检索')
         return None
@@ -465,7 +469,7 @@ if __name__ == '__main__':
         ArgvData = Start_GetArgv()
         Processing_Main(Processing_Mode(ArgvData))
     except Exception as err:
-        Auxiliary_Log(f'没有预料到的错误 > {err}','ERROR')
+        Auxiliary_Log(f'没有预料到的错误 > {err}','ERROR',flag='PRINT')
     else:
         end = time()
         Auxiliary_Log(f'一切工作已经完成,用时{end - start}','INFO',flag='PRINT')

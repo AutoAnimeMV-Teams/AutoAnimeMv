@@ -1,7 +1,7 @@
 from socket import socket,timeout,SOL_SOCKET,SO_KEEPALIVE
 from ast import literal_eval
 from sys import argv
-from os import environ,path,name,getcwd
+from os import environ,path,name
 from Crypto.PublicKey import RSA
 from Crypto.Cipher import AES,PKCS1_v1_5
 from base64 import b64encode,b64decode
@@ -175,8 +175,8 @@ def Auxiliary_READConfig():
     QBPORT = 8080 # QBApi端口
     QBUSERNAME = '' # Qb账号
     QBPASSWORD = '' # Qb密码
-    #PyPath = argv[0].replace('Client.py','').strip(' ')
-    PyPath = getcwd()
+    PyPath = __file__.replace('Client.py','').strip(' ')
+    
     Separator = '\\' if name == 'nt' else '/'
     if path.isfile(f'{PyPath}{Separator}config.ini'):
         with open(f'{PyPath}{Separator}config.ini','r',encoding='UTF-8') as ff:
