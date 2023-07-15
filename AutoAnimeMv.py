@@ -17,7 +17,7 @@ from threading import Thread # 多线程
 def Start_PATH():# 初始化
     # 版本 数据库缓存 Api数据缓存 Log数据集 分隔符
     global Versions,AimeListCache,BgmAPIDataCache,TMDBAPIDataCache,LogData,Separator,Proxy,TgBotMsgData,PyPath
-    Versions = '2.6.0'
+    Versions = '2.6.4'
     AimeListCache = None
     BgmAPIDataCache = {}
     TMDBAPIDataCache = {}
@@ -183,7 +183,7 @@ def Auxiliary_Notice(Msg):# 共享内存
                             m.flush()
 
 def Auxiliary_READConfig():# 读取外置Config.ini文件并更新
-    global HTTPPROXY,HTTPSPROXY,ALLPROXY,USEBGMAPI,USELINK,LINKFAILSUSEMOVEFLAGS,PRINTLOGFLAG,RMLOGSFLAG,USEBOTFLAG,TGBOTTOKEN,BOTUSERIDLIST
+    global HTTPPROXY,HTTPSPROXY,ALLPROXY,USEBGMAPI,USETMDBAPI,USELINK,LINKFAILSUSEMOVEFLAGS,PRINTLOGFLAG,RMLOGSFLAG,USEBOTFLAG,TGBOTTOKEN,BOTUSERIDLIST
     HTTPPROXY = '' # Http代理
     HTTPSPROXY = '' # Https代理
     ALLPROXY = '' # 全部代理
@@ -258,12 +258,13 @@ def Auxiliary_UniformOTSTR(File):# 统一意外字符
     return NewUSTRFile
 
 def Auxiliary_RMOTSTR(File):# 剔除意外字符
+    NewPSTRFile = File
     #匹配待去除列表
     FuzzyMatchData = [r'=.?月新番.?=',r'\d{4}.\d{2}.\d{2}',r'20\d{2}',r'v\d{1}',r'\d{4}年\d{1,2}月番']
     #精准待去除列表
     PreciseMatchData = ['仅限港澳台地区','国漫','x264','1080p','720p','4k','\(-\)','（-）']
     for i in PreciseMatchData:
-        NewPSTRFile = sub(r'%s'%i,'-',File,flags=I)
+        NewPSTRFile = sub(r'%s'%i,'-',NewPSTRFile,flags=I)
     for i in FuzzyMatchData:
         NewPSTRFile = sub(i,'-',NewPSTRFile,flags=I)
     return NewPSTRFile
@@ -276,14 +277,16 @@ def Auxiliary_IDESE(File):# 识别剧季并截断Name
         SEList = []
         for sedata in SEData:
             for se in sedata:# 取值
-                if se != '' and len(se) != 1:
+                if se != '' and se.isnumeric() == False:
                     SENamelist.append(se)
-                elif len(se) == 1:
+                #elif len(se) == 1:
+                #    SEList.append(se)
+                elif se.isnumeric() == True: # 判断数字
                     SEList.append(se)
         for i in SENamelist:# 截断Name
             File = sub(r'%s.*'%i[::-1],'',File,flags=I).strip('-') #通过剧季截断文件名
         for i in range(len(SEList)):
-            if SEList[i].isdecimal() == True:
+            if SEList[i].isdecimal() == True: # 判断纯数字
                 SE = SEList[i]
             elif '\u0e00' <= SEList[i] <= '\u9fa5':# 中文剧季转化
                 digit = {'一':'01', '二':'02', '三':'03', '四':'04', '五':'05', '六':'06', '七':'07', '八':'08', '九':'09','壹':'01','贰':'02','叁':'03','肆':'04','伍':'05','陆':'06','柒':'07','捌':'08','玖':'09'}
@@ -313,7 +316,7 @@ def Auxiliary_RMSubtitlingTeam(File):# 剔除字幕组信息
     return File
 
 def Auxiliary_IDEVDName(File,RAWEP):# 识别剧名
-    VDName = sub(r'%s.*'%RAWEP,'',File,flags=I).strip('=-=-')
+    VDName = sub(r'%s.*'%RAWEP,'',File,flags=I).strip('=-=-=-')
     Auxiliary_Log(f'通过剧集截断文件名 ==> {VDName}','INFO')
     return VDName
 
@@ -446,13 +449,14 @@ def Auxiliary_Api(Name):
         global USETMDBAPI,TMDBAPIDataCache
         if USETMDBAPI == True:
             if Name not in TMDBAPIDataCache:
-                TMDBApiData = literal_eval(Auxiliary_Http(f'https://api.themoviedb.org/3/search/tv?query={Name}&include_adult=true&language=zh&page=1').replace('false','False').replace('true','True'))
+                TMDBApiData = literal_eval(Auxiliary_Http(f'https://api.themoviedb.org/3/search/tv?query={Name}&include_adult=true&language=zh&page=1').replace('false','False').replace('true','True').replace('null','None'))
                 if TMDBApiData['results'] != []:
-                    ApiName = TMDBApiData['results'][0]['name']
-                    ApiName = sub('第.*?季','',ApiName,flags=I).strip('- []【】 ')
-                    Auxiliary_Log(f'{ApiName} << TMDBApi查询结果')
-                    TMDBAPIDataCache[Name] = ApiName
-                    return ApiName
+                    for MDBApiTV in TMDBApiData['results']:
+                        ApiName = MDBApiTV['name']
+                        ApiName = sub('第.*?季','',ApiName,flags=I).strip('- []【】 ')
+                        Auxiliary_Log(f'{ApiName} << TMDBApi查询结果')
+                        TMDBAPIDataCache[Name] = ApiName
+                        return ApiName
                 else:
                     Auxiliary_Log(f'TMDBApi没有检索到关于 {Name} 内容','WARNING')
                     return None
@@ -463,8 +467,9 @@ def Auxiliary_Api(Name):
             Auxiliary_Log('没有使用TMDBApi进行检索')
             return None
 
-    if search(r'[\u4e00-\u9fa5]+',Name,flags=I) != None: # 获取匹配到的汉字
-        Name = search(r'[\u4e00-\u9fa5]+',Name,flags=I).group(1)
+    if search(r'[\u4e00-\u9fa5]+',Name.replace('-',''),flags=I) != None: # 获取匹配到的汉字
+        Name = search(r'[\u4e00-\u9fa5]+',Name.replace('-',''),flags=I).string
+        #Name = search(r'[\u4e00-\u9fa5]+',Name.replace('-',''),flags=I).group()
         ApiName = BgmApi(Name)
     else:
         ApiName = TMDBApi(Name)
