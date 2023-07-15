@@ -92,6 +92,7 @@ HTTPPROXY = '' # Http代理
 HTTPSPROXY = 'http://192.168.1.1:7890' # Https代理
 ALLPROXY = '' # 全部代理
 USEBGMAPI = True # 使用BgmApi
+USETMDBAPI = True #使用TMDBApi
 USELINK = True # 使用硬链接开关
 LINKFAILSUSEMOVEFLAGS = False #硬链接失败时使用MOVE
 RMLOGSFLAG = '7' # 日志文件超时删除
@@ -123,7 +124,6 @@ QBPASSWORD = '' # Qb密码
 
 * `RMLOGSFLAG` 配置项是用来控制工具删除保存天数达到和超过 `RMLOGSFLAG` 的值的配置,默认为 7 天,如果您不想删除请设置为 `False`
 
-* `USEBOTFLAG`用来开启TgBot通知的开关
 
 * **注意如果有部分新配置没有解释，那么此配置即是内测功能，您可以来Tg群体验**
 
@@ -154,16 +154,16 @@ QBPASSWORD = '' # Qb密码
 [2023-06-19 18:24:47] INFO: 匹配出的剧集 ==> 01
 [2023-06-19 18:24:47] INFO: 通过剧集截断文件名 ==> Made-in-Abyss
 [2023-06-19 18:24:47] INFO: D:\D\Test\\Made-in-Abyss\Season01\已存在
-[2023-06-19 18:24:49] INFO: Link-D:\D\Test\[Airota][Made in Abyss][01][BDRip 1080p HEVC-10bit FLAC].CHS.ass << D:\D\Test\\Made-in-Abyss\Season01\S01E01.other.ass
+[2023-06-19 18:24:49] INFO: Link-D:\D\Test\\Made-in-Abyss\Season01\S01E01.chs.ass << D:\D\Test\[Airota][Made in Abyss][01][BDRip 1080p HEVC-10bit FLAC].CHS.ass 
 [2023-06-19 18:24:49] INFO: --------------------------------------------------------------------------------
 [2023-06-19 18:24:49] INFO: 匹配出的剧集 ==> 01
 [2023-06-19 18:24:49] INFO: 通过剧集截断文件名 ==> Jigokuraku
-[2023-06-19 18:24:53] INFO: Link-D:\D\Test\[BeanSub&FZSD&LoliHouse] Jigokuraku - 01 [WebRip 1080p HEVC-10bit AAC ASSx2].简体中文.ass << D:\D\Test\\Jigokuraku\Season01\S01E01.chs.ass
+[2023-06-19 18:24:53] INFO: Link-D:\D\Test\\Jigokuraku\Season01\S01E01.chs.ass << D:\D\Test\[BeanSub&FZSD&LoliHouse] Jigokuraku - 01 [WebRip 1080p HEVC-10bit AAC ASSx2].简体中文.ass
 [2023-06-19 18:24:53] INFO: --------------------------------------------------------------------------------
 [2023-06-19 18:24:53] INFO: 匹配出的剧集 ==> 09
 [2023-06-19 18:24:53] INFO: 通过剧集截断文件名 ==> Jigokuraku
 [2023-06-19 18:24:53] INFO: D:\D\Test\\Jigokuraku\Season01\已存在
-[2023-06-19 18:24:54] INFO: Link-D:\D\Test\[BeanSub&FZSD&LoliHouse] Jigokuraku - 09 [WebRip 1080p HEVC-10bit AAC ASSx2].简体中文.ass << D:\D\Test\\Jigokuraku\Season01\S01E09.chs.ass
+[2023-06-19 18:24:54] INFO: Link-D:\D\Test\\Jigokuraku\Season01\S01E09.chs.ass << D:\D\Test\[BeanSub&FZSD&LoliHouse] Jigokuraku - 09 [WebRip 1080p HEVC-10bit AAC ASSx2].简体中文.ass
 [2023-06-19 18:24:54] INFO: 一切工作已经完成,用时7.112677097320557
 ```
 

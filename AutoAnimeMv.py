@@ -16,10 +16,11 @@ from threading import Thread # 多线程
 
 def Start_PATH():# 初始化
     # 版本 数据库缓存 Api数据缓存 Log数据集 分隔符
-    global Versions,AimeListCache,BgmAPIDataCache,LogData,Separator,Proxy,TgBotMsgData,PyPath
-    Versions = '2.5.3'
+    global Versions,AimeListCache,BgmAPIDataCache,TMDBAPIDataCache,LogData,Separator,Proxy,TgBotMsgData,PyPath
+    Versions = '2.6.0'
     AimeListCache = None
     BgmAPIDataCache = {}
+    TMDBAPIDataCache = {}
     LogData = f'\n\n[{strftime("%Y-%m-%d %H:%M:%S",localtime(time()))}] INFO: Running....'
     Separator = '\\' if name == 'nt' else '/'
     TgBotMsgData = ''
@@ -87,16 +88,16 @@ def Processing_Main(LorT):# 核心处理
                     break
                 SE,EP,RAWSE,RAWEP,RAWName = flag
                 ASSList = Auxiliary_IDEASS(RAWName,RAWSE,RAWEP,LorT[1])
-                BgmApiName = Auxiliary_BgmApi(RAWName)
-                Sorting_Mv(File,RAWName,SE,EP,ASSList,BgmApiName)
+                ApiName = Auxiliary_Api(RAWName)
+                Sorting_Mv(File,RAWName,SE,EP,ASSList,ApiName)
     else:# 唯一有效的文件列表
         for File in LorT:
             flag = Processing_Identification(File)
             if flag == None:
                 break
             SE,EP,RAWSE,RAWEP,RAWName = flag
-            BgmApiName = Auxiliary_BgmApi(RAWName)
-            Sorting_Mv(File,RAWName,SE,EP,None,BgmApiName)
+            ApiName = Auxiliary_Api(RAWName)
+            Sorting_Mv(File,RAWName,SE,EP,None,ApiName)
 
 def Processing_Identification(File:str):# 识别
     AnimeFileCheckFlag = Auxiliary_AnimeFileCheck(File)
@@ -121,7 +122,7 @@ def Processing_Identification(File:str):# 识别
         Auxiliary_Log(f'当前文件属于{AnimeFileCheckFlag},跳过处理','INFO')
 
 # Sorting 进行整理工作
-def Sorting_Mv(FileName,RAWName,SE,EP,ASSList,BgmApiName):# 文件处理
+def Sorting_Mv(FileName,RAWName,SE,EP,ASSList,ApiName):# 文件处理
     def FileML(src,dst):
         global TgBotMsgData
         if USELINK == True:
@@ -142,7 +143,7 @@ def Sorting_Mv(FileName,RAWName,SE,EP,ASSList,BgmApiName):# 文件处理
             move(src,dst)
             Auxiliary_Log(f'Move-{dst} << {src}')
             TgBotMsgData = TgBotMsgData + (f'Move-{src} << {dst}\n')
-    NewDir = f'{Path}{Separator}{CategoryName}{Separator}{BgmApiName}{Separator}Season{SE}{Separator}' if BgmApiName != None else f'{Path}{Separator}{CategoryName}{Separator}{RAWName}{Separator}Season{SE}{Separator}'
+    NewDir = f'{Path}{Separator}{CategoryName}{Separator}{ApiName}{Separator}Season{SE}{Separator}' if ApiName != None else f'{Path}{Separator}{CategoryName}{Separator}{RAWName}{Separator}Season{SE}{Separator}'
     NewName = f'S{SE}E{EP}'
     if path.exists(NewDir) == False:
         makedirs(NewDir)
@@ -187,6 +188,7 @@ def Auxiliary_READConfig():# 读取外置Config.ini文件并更新
     HTTPSPROXY = '' # Https代理
     ALLPROXY = '' # 全部代理
     USEBGMAPI = True # 使用BgmApi
+    USETMDBAPI = True #使用TMDBApi
     USELINK = False # 使用硬链接开关
     LINKFAILSUSEMOVEFLAGS = False #硬链接失败时使用MOVE
     PRINTLOGFLAG = False # 打印log开关
@@ -386,6 +388,8 @@ def Auxiliary_PROXY(): # 代理
 
 def Auxiliary_Http(Url,flag='GET',json=None):# 网络
     headers = {'User-Agent':f'Abcuders/AutoAnimeMv/{Versions}(https://github.com/Abcuders/AutoAnimeMv)'}
+    if 'themoviedb' in Url:
+        headers['Authorization'] = "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI0MjkxYzA0NGYyZTNmMThhYzQ3NzNjNzU1YzM3NzA5OSIsInN1YiI6IjY0MjZlMTg1YTNlNGJhMDExMTQ5OGI2MSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.Q0Rn4QdnCelhzozE07jgUQwJFzdJrLXGhaSBphnzYuQ"
     try:
         if flag != 'GET':
             HttpData = post(Url,json,headers=headers) 
@@ -412,50 +416,59 @@ def Auxiliary_Updata():# 更新
     else:
         Auxiliary_Exit('更新数据存在问题')
 
-def Auxiliary_BgmApi(Name):# BgmApi相关,返回一个标准的中文名称
-    global USEBGMAPI,BgmAPIDataCache
-    if USEBGMAPI == True:
-        if Name not in BgmAPIDataCache:
-            def NameSplit(Name):
-                if findall(r'[\u4e00-\u9fa5]+',Name,flags=I) != []: # 获取匹配到的汉字
-                    NameList = findall(r'[\u4e00-\u9fa5]+',Name,flags=I) 
-                else:# 匹配其他语言
-                    NameList = Name.split('-')
-                    for i in range(NameList.count('')):
-                        NameList.remove('')
-                Auxiliary_Log(f'番剧名称分段 待查询的番剧名称列表 >> {NameList}')
-                return NameList
-            def BgmApi(Name):
+def Auxiliary_Api(Name):   
+    def BgmApi(Name):# BgmApi相关,返回一个标准的中文名称
+        global USEBGMAPI,BgmAPIDataCache
+        if USEBGMAPI == True:
+            if Name not in BgmAPIDataCache:
                 try:
                     BgmApiData = literal_eval(Auxiliary_Http(f"https://api.bgm.tv/search/subject/{Name}?type=2&responseGroup=small&max_results=1"))
                 except:
-                    Auxiliary_Log(f'BgmApi无法检索到关于 {Name} 内容','WARNING')
+                    Auxiliary_Log(f'BgmApi没有检索到关于 {Name} 内容','WARNING')
                     return None
                 else:
-                    return BgmApiData
-                
-            BgmApiData = BgmApi(Name)
-            if BgmApiData == None:
-                NameList = NameSplit(Name)
-                for i in NameList:
-                    BgmApiData = BgmApi(i)
-                    if BgmApiData != None:
-                        break
-
-            if 'BgmApiData' != None:
-                ApiName = unquote(BgmApiData['list'][0]['name_cn'],encoding='UTF-8',errors='replace')
-                ApiName = sub('第.*?季','',ApiName,flags=I).strip('- []【】 ')
-                Auxiliary_Log(f'{ApiName} << bgmApi查询结果')
-                BgmAPIDataCache[Name] = ApiName
-                return ApiName
+                    if 'BgmApiData' != None:
+                        ApiName = unquote(BgmApiData['list'][0]['name_cn'],encoding='UTF-8',errors='replace')
+                        ApiName = sub('第.*?季','',ApiName,flags=I).strip('- []【】 ')
+                        Auxiliary_Log(f'{ApiName} << bgmApi查询结果')
+                        BgmAPIDataCache[Name] = ApiName
+                        return ApiName
+                    else:
+                        return None
             else:
-                return None
+                Auxiliary_Log(f'{BgmAPIDataCache[Name]} << bgmApi缓存查询结果')
+                return BgmAPIDataCache[Name]
         else:
-            Auxiliary_Log(f'{BgmAPIDataCache[Name]} << bgmApi缓存查询结果')
-            return BgmAPIDataCache[Name]
+            Auxiliary_Log('没有使用BgmApi进行检索')
+            return None
+
+    def TMDBApi(Name):# TMDBApi相关,返回一个标准的中文名称
+        global USETMDBAPI,TMDBAPIDataCache
+        if USETMDBAPI == True:
+            if Name not in TMDBAPIDataCache:
+                TMDBApiData = literal_eval(Auxiliary_Http(f'https://api.themoviedb.org/3/search/tv?query={Name}&include_adult=true&language=zh&page=1').replace('false','False').replace('true','True'))
+                if TMDBApiData['results'] != []:
+                    ApiName = TMDBApiData['results'][0]['name']
+                    ApiName = sub('第.*?季','',ApiName,flags=I).strip('- []【】 ')
+                    Auxiliary_Log(f'{ApiName} << TMDBApi查询结果')
+                    TMDBAPIDataCache[Name] = ApiName
+                    return ApiName
+                else:
+                    Auxiliary_Log(f'TMDBApi没有检索到关于 {Name} 内容','WARNING')
+                    return None
+            else:
+                Auxiliary_Log(f'{TMDBAPIDataCache[Name]} << TMDBApi缓存查询结果')
+                return TMDBAPIDataCache[Name]
+        else:
+            Auxiliary_Log('没有使用TMDBApi进行检索')
+            return None
+
+    if search(r'[\u4e00-\u9fa5]+',Name,flags=I) != None: # 获取匹配到的汉字
+        Name = search(r'[\u4e00-\u9fa5]+',Name,flags=I).group(1)
+        ApiName = BgmApi(Name)
     else:
-        Auxiliary_Log('没有使用BgmApi进行检索')
-        return None
+        ApiName = TMDBApi(Name)
+    return ApiName
 
 def Auxiliary_Exit(LogMsg):# 因可预见错误离场
     Auxiliary_Log(LogMsg,'EXIT',flag='PRINT')

@@ -18,8 +18,8 @@ def QbInit(QbIp,QbPort,QbUserName,QbPassword):
         VERIFY_WEBUI_CERTIFICATE=False,# 关闭ssl验证
         RAISE_NOTIMPLEMENTEDERROR_FOR_UNIMPLEMENTED_API_ENDPOINTS=True,# 无Api功能时引发NotImplementedError
     )
-    QbClient = Client(**QbInfo)
     try:
+        QbClient = Client(**QbInfo)
         QbClient.auth_log_in()
     except LoginFailed as err:
         Auxiliary_Exit(f'qb登录失败 >> {err}')
@@ -82,6 +82,7 @@ def DistributeClient(Ip,DefaultPort):# 分发端口
     while True:
         try:
             DClient.sendall(RASEncrypt(TGBOTDEVICESFLAG))
+            sleep(3)
             Data = AESDEncrypt(DClient.recv(1024))
         except timeout:
             Auxiliary_Log('连接超时重试')
@@ -203,7 +204,8 @@ def Auxiliary_READConfig():
 
             if 'USERQBAPI' in globals() and USERQBAPI == True:
                 QbClient = QbInit(QBIP,QBPORT,QBUSERNAME,QBPASSWORD)
-                Auxiliary_Log('QB 已连接')
+                if 'QbClient' in locals():
+                    Auxiliary_Log('QB 已连接')
             while True:
                 try:
                     DistributeData = DistributeClient(Ip,DefaultPort)
@@ -218,7 +220,7 @@ def Auxiliary_READConfig():
         Auxiliary_Log('不存在config.ini,使用内置变量')   
 
 if __name__ == '__main__':
-    Versions = '0.1.1'
+    Versions = '0.1.2'
     Ip = '103.101.204.76'
     #Ip = '127.0.0.1'
     DefaultPort = 13324

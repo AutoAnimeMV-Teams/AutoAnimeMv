@@ -57,7 +57,7 @@
 
     ## 待更新的功能
     - [x] BgmApi支持
-    - [ ] TMDBApi支持
+    - [x] TMDBApi支持
     - [ ] 本地番剧信息缓存
     - [ ] 完全番剧特典支持 
     - [x] 清理过时日志
@@ -160,4 +160,11 @@ python3 -m pip install zhconv
 </a>
 
 # Star History
-[![Star History Chart](https://api.star-history.com/svg?repos=Abcuders/AutoAnimeMv&type=Date)](https://star-history.com/#Abcuders/AutoAnimeMv)
+<a href="https://star-history.com/#Abcuders/AutoAnimeMv">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=Abcuders/AutoAnimeMv&type=Date&theme=dark" />
+    <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=Abcuders/AutoAnimeMv&type=Date" />
+    <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=Abcuders/AutoAnimeMv&type=Date" />
+  </picture>
+</a>
+
