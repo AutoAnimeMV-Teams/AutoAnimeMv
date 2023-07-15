@@ -17,7 +17,7 @@ from threading import Thread # 多线程
 def Start_PATH():# 初始化
     # 版本 数据库缓存 Api数据缓存 Log数据集 分隔符
     global Versions,AimeListCache,BgmAPIDataCache,TMDBAPIDataCache,LogData,Separator,Proxy,TgBotMsgData,PyPath
-    Versions = '2.6.4'
+    Versions = '2.6.5'
     AimeListCache = None
     BgmAPIDataCache = {}
     TMDBAPIDataCache = {}
@@ -287,7 +287,7 @@ def Auxiliary_IDESE(File):# 识别剧季并截断Name
             File = sub(r'%s.*'%i[::-1],'',File,flags=I).strip('-') #通过剧季截断文件名
         for i in range(len(SEList)):
             if SEList[i].isdecimal() == True: # 判断纯数字
-                SE = SEList[i]
+                SE = SEList[i][::-1]
             elif '\u0e00' <= SEList[i] <= '\u9fa5':# 中文剧季转化
                 digit = {'一':'01', '二':'02', '三':'03', '四':'04', '五':'05', '六':'06', '七':'07', '八':'08', '九':'09','壹':'01','贰':'02','叁':'03','肆':'04','伍':'05','陆':'06','柒':'07','捌':'08','玖':'09'}
                 SE = digit[SEList[i]]
@@ -473,7 +473,7 @@ def Auxiliary_Api(Name):
         ApiName = BgmApi(Name)
     else:
         ApiName = TMDBApi(Name)
-    return ApiName
+    return ApiName.replace(' ','')
 
 def Auxiliary_Exit(LogMsg):# 因可预见错误离场
     Auxiliary_Log(LogMsg,'EXIT',flag='PRINT')
