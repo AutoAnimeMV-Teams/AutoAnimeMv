@@ -17,7 +17,7 @@ from threading import Thread # 多线程
 def Start_PATH():# 初始化
     # 版本 数据库缓存 Api数据缓存 Log数据集 分隔符
     global Versions,AimeListCache,BgmAPIDataCache,TMDBAPIDataCache,LogData,Separator,Proxy,TgBotMsgData,PyPath
-    Versions = '2.6.5'
+    Versions = '2.6.6'
     AimeListCache = None
     BgmAPIDataCache = {}
     TMDBAPIDataCache = {}
@@ -431,7 +431,7 @@ def Auxiliary_Api(Name):
                     return None
                 else:
                     if 'BgmApiData' != None:
-                        ApiName = unquote(BgmApiData['list'][0]['name_cn'],encoding='UTF-8',errors='replace')
+                        ApiName = unquote(BgmApiData['list'][0]['name_cn'],encoding='UTF-8',errors='replace') if unquote(BgmApiData['list'][0]['name_cn'],encoding='UTF-8',errors='replace') != '' else unquote(BgmApiData['list'][0]['name'],encoding='UTF-8',errors='replace')
                         ApiName = sub('第.*?季','',ApiName,flags=I).strip('- []【】 ')
                         Auxiliary_Log(f'{ApiName} << bgmApi查询结果')
                         BgmAPIDataCache[Name] = ApiName
@@ -467,9 +467,8 @@ def Auxiliary_Api(Name):
             Auxiliary_Log('没有使用TMDBApi进行检索')
             return None
 
-    if search(r'[\u4e00-\u9fa5]+',Name.replace('-',''),flags=I) != None: # 获取匹配到的汉字
-        Name = search(r'[\u4e00-\u9fa5]+',Name.replace('-',''),flags=I).string
-        #Name = search(r'[\u4e00-\u9fa5]+',Name.replace('-',''),flags=I).group()
+    if search(r'([\u4e00-\u9fa5]+)',Name.replace('-',''),flags=I) != None: # 获取匹配到的汉字
+        Name = search(r'([\u4e00-\u9fa5]+)',Name.replace('-',''),flags=I).group(1) 
         ApiName = BgmApi(Name)
     else:
         ApiName = TMDBApi(Name)
