@@ -17,7 +17,7 @@ from threading import Thread # 多线程
 def Start_PATH():# 初始化
     # 版本 数据库缓存 Api数据缓存 Log数据集 分隔符
     global Versions,AimeListCache,BgmAPIDataCache,TMDBAPIDataCache,LogData,Separator,Proxy,TgBotMsgData,PyPath
-    Versions = '2.6.7'
+    Versions = '2.7.0'
     AimeListCache = None
     BgmAPIDataCache = {}
     TMDBAPIDataCache = {}
@@ -470,8 +470,17 @@ def Auxiliary_Api(Name):
     if search(r'([\u4e00-\u9fa5]+)',Name.replace('-',''),flags=I) != None: # 获取匹配到的汉字
         Name = search(r'([\u4e00-\u9fa5]+)',Name.replace('-',''),flags=I).group(1) 
         ApiName = BgmApi(Name)
+        if ApiName != None:
+            TMDBApiName = TMDBApi(ApiName)
+            if TMDBApiName != None:
+                ApiName = TMDBApiName
+        else:
+            ApiName = TMDBApi(Name)
     else:
-        ApiName = TMDBApi(Name)
+        if USETMDBAPI == False:
+            ApiName = BgmApi(Name)
+        else:
+            ApiName = TMDBApi(Name)
     return ApiName.replace(' ','') if ApiName != None else ApiName
 
 def Auxiliary_Exit(LogMsg):# 因可预见错误离场
