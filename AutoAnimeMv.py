@@ -17,7 +17,7 @@ from threading import Thread # 多线程
 def Start_PATH():# 初始化
     # 版本 数据库缓存 Api数据缓存 Log数据集 分隔符
     global Versions,AimeListCache,BgmAPIDataCache,TMDBAPIDataCache,LogData,Separator,Proxy,TgBotMsgData,PyPath
-    Versions = '2.6.6'
+    Versions = '2.6.7'
     AimeListCache = None
     BgmAPIDataCache = {}
     TMDBAPIDataCache = {}
@@ -472,7 +472,7 @@ def Auxiliary_Api(Name):
         ApiName = BgmApi(Name)
     else:
         ApiName = TMDBApi(Name)
-    return ApiName.replace(' ','')
+    return ApiName.replace(' ','') if ApiName != None else ApiName
 
 def Auxiliary_Exit(LogMsg):# 因可预见错误离场
     Auxiliary_Log(LogMsg,'EXIT',flag='PRINT')
