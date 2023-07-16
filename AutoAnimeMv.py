@@ -17,7 +17,7 @@ from threading import Thread # 多线程
 def Start_PATH():# 初始化
     # 版本 数据库缓存 Api数据缓存 Log数据集 分隔符
     global Versions,AimeListCache,BgmAPIDataCache,TMDBAPIDataCache,LogData,Separator,Proxy,TgBotMsgData,PyPath
-    Versions = '2.7.0'
+    Versions = '2.7.1'
     AimeListCache = None
     BgmAPIDataCache = {}
     TMDBAPIDataCache = {}
@@ -111,10 +111,12 @@ def Processing_Identification(File:str):# 识别
         if '.' in RAWEP or RAWEP == '0' or RAWEP == '00':
             SE = '00'
             RAWSE = ''
+            Auxiliary_Log(f'特殊剧季 ==> {SE}','INFO')
             SeasonMatchData = r'(季(.*?)第)|(([0-9]{0,1}[0-9]{1})S)|(([0-9]{0,1}[0-9]{1})nosaeS)|(([0-9]{0,1}[0-9]{1}) nosaeS)|(([0-9]{0,1}[0-9]{1})-nosaeS)|(nosaeS-dn([0-9]{1}))'
             RAWName = sub(SeasonMatchData,'',RAWName[::-1],flags=I)[::-1].strip('-')
         else:
             SE,Name,RAWSE = Auxiliary_IDESE(RAWName)
+            Auxiliary_Log(f'匹配出的剧季 ==> {RAWSE}','INFO')
             RAWName = RAWName if Name == None else Name
             SE = '0' + SE if len(SE) == 1 else SE
         return SE,EP,RAWSE,RAWEP,RAWName
@@ -278,13 +280,13 @@ def Auxiliary_IDESE(File):# 识别剧季并截断Name
         for sedata in SEData:
             for se in sedata:# 取值
                 if se != '' and se.isnumeric() == False:
-                    SENamelist.append(se)
+                    SENamelist.append(se[::-1])
                 #elif len(se) == 1:
                 #    SEList.append(se)
                 elif se.isnumeric() == True: # 判断数字
                     SEList.append(se)
         for i in SENamelist:# 截断Name
-            File = sub(r'%s.*'%i[::-1],'',File,flags=I).strip('-') #通过剧季截断文件名
+            File = sub(r'%s.*'%i,'',File,flags=I).strip('-') #通过剧季截断文件名
         for i in range(len(SEList)):
             if SEList[i].isdecimal() == True: # 判断纯数字
                 SE = SEList[i][::-1]
@@ -316,7 +318,8 @@ def Auxiliary_RMSubtitlingTeam(File):# 剔除字幕组信息
     return File
 
 def Auxiliary_IDEVDName(File,RAWEP):# 识别剧名
-    VDName = sub(r'%s.*'%RAWEP,'',File,flags=I).strip('=-=-=-')
+    #VDName = sub(r'.*%s'%RAWEP[::-1],'',File[::-1],count=0,flags=I).strip('=-=-=-')[::-1]
+    VDName = search(r'%s(.*)'%RAWEP[::-1],File[::-1],flags=I).group(1).strip('=-=-=-')[::-1]
     Auxiliary_Log(f'通过剧集截断文件名 ==> {VDName}','INFO')
     return VDName
 
