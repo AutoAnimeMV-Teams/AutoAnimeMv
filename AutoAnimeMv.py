@@ -17,7 +17,7 @@ from threading import Thread # 多线程
 def Start_PATH():# 初始化
     # 版本 数据库缓存 Api数据缓存 Log数据集 分隔符
     global Versions,AimeListCache,BgmAPIDataCache,TMDBAPIDataCache,LogData,Separator,Proxy,TgBotMsgData,PyPath
-    Versions = '2.7.1'
+    Versions = '2.7.2'
     AimeListCache = None
     BgmAPIDataCache = {}
     TMDBAPIDataCache = {}
@@ -30,9 +30,9 @@ def Start_PATH():# 初始化
 
 def Start_GetArgv():# 获取参数,判断处理模式
     ArgvNumber = len(argv)
-    Auxiliary_Log(f'接受到的参数 > {argv}',)
+    Auxiliary_Log(f'接受到的参数 > {argv}')
     if 2 <= ArgvNumber <= 3:# 接受1-2个参数
-        if argv[1] == ('update' or 'updata'):# 更新模式
+        if argv[1] == 'update' or argv[1] == 'updata':# 更新模式
             Auxiliary_Updata()
         elif path.exists(argv[1]) == True:# 批处理模式
             if ArgvNumber == 2:
@@ -185,7 +185,7 @@ def Auxiliary_Notice(Msg):# 共享内存
                             m.flush()
 
 def Auxiliary_READConfig():# 读取外置Config.ini文件并更新
-    global HTTPPROXY,HTTPSPROXY,ALLPROXY,USEBGMAPI,USETMDBAPI,USELINK,LINKFAILSUSEMOVEFLAGS,PRINTLOGFLAG,RMLOGSFLAG,USEBOTFLAG,TGBOTTOKEN,BOTUSERIDLIST
+    global HTTPPROXY,HTTPSPROXY,ALLPROXY,USEBGMAPI,USETMDBAPI,USELINK,LINKFAILSUSEMOVEFLAGS,PRINTLOGFLAG,RMLOGSFLAG,USEBOTFLAG
     HTTPPROXY = '' # Http代理
     HTTPSPROXY = '' # Https代理
     ALLPROXY = '' # 全部代理
@@ -195,9 +195,7 @@ def Auxiliary_READConfig():# 读取外置Config.ini文件并更新
     LINKFAILSUSEMOVEFLAGS = False #硬链接失败时使用MOVE
     PRINTLOGFLAG = False # 打印log开关
     RMLOGSFLAG = '7' # 日志文件超时删除
-    USEBOTFLAG = True # 使用TgBot进行通知
-    TGBOTTOKEN = '' # TgBot Token
-    BOTUSERIDLIST = [] # 使用TgBot的用户列表
+    USEBOTFLAG = False # 使用TgBot进行通知
     if path.isfile(f'{PyPath}{Separator}config.ini'):
         with open(f'{PyPath}{Separator}config.ini','r',encoding='UTF-8') as ff:
             Auxiliary_Log('正在读取外置ini文件','INFO')
@@ -381,6 +379,7 @@ def Auxiliary_ASSFileCA(ASSFile):# 字幕文件的语言分类
                 elif i == 2:
                     return '.jp'
     return '.other'
+
 def Auxiliary_PROXY(): # 代理
     if 'HTTPPROXY' in globals():
         global HTTPPROXY
