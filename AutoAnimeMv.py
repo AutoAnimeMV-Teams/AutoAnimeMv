@@ -17,7 +17,7 @@ from threading import Thread # 多线程
 def Start_PATH():# 初始化
     # 版本 数据库缓存 Api数据缓存 Log数据集 分隔符
     global Versions,AimeListCache,BgmAPIDataCache,TMDBAPIDataCache,LogData,Separator,Proxy,TgBotMsgData,PyPath
-    Versions = '2.7.2'
+    Versions = '2.7.3'
     AimeListCache = None
     BgmAPIDataCache = {}
     TMDBAPIDataCache = {}
@@ -260,7 +260,7 @@ def Auxiliary_UniformOTSTR(File):# 统一意外字符
 def Auxiliary_RMOTSTR(File):# 剔除意外字符
     NewPSTRFile = File
     #匹配待去除列表
-    FuzzyMatchData = [r'=.?月新番.?=',r'\d{4}.\d{2}.\d{2}',r'20\d{2}',r'v\d{1}',r'\d{4}年\d{1,2}月番']
+    FuzzyMatchData = [r'=.?月新番.?=',r'\d{4}.\d{2}.\d{2}',r'20\d{2}',r'v[2-9]',r'\d{4}年\d{1,2}月番']
     #精准待去除列表
     PreciseMatchData = ['仅限港澳台地区','国漫','x264','1080p','720p','4k','\(-\)','（-）']
     for i in PreciseMatchData:
@@ -471,18 +471,22 @@ def Auxiliary_Api(Name):
 
     if search(r'([\u4e00-\u9fa5]+)',Name.replace('-',''),flags=I) != None: # 获取匹配到的汉字
         Name = search(r'([\u4e00-\u9fa5]+)',Name.replace('-',''),flags=I).group(1) 
-        ApiName = BgmApi(Name)
-        if ApiName != None:
-            TMDBApiName = TMDBApi(ApiName)
-            if TMDBApiName != None:
-                ApiName = TMDBApiName
-        else:
-            ApiName = TMDBApi(Name)
+        BGMApiName = BgmApi(Name)
+        TMDBApiName = TMDBApi(BGMApiName if BGMApiName != None else Name)
+               
     else:
-        if USETMDBAPI == False:
-            ApiName = BgmApi(Name)
-        else:
-            ApiName = TMDBApi(Name)
+        BGMApiName = BgmApi(Name)
+        TMDBApiName = TMDBApi(BGMApiName if BGMApiName != None else Name)
+
+    if BGMApiName == None and TMDBApiName == None:
+        if USEBGMAPI == True or USETMDBAPI == True:
+    #        Auxiliary_Log('Api识别失败现在进行额外的API识别')
+            Auxiliary_Exit('Api识别失败')
+    #        StrList = Name.split('-')
+    #    else:
+    #        ApiName = None
+    else:
+        ApiName = TMDBApiName
     return ApiName.replace(' ','') if ApiName != None else ApiName
 
 def Auxiliary_Exit(LogMsg):# 因可预见错误离场
