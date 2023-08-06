@@ -92,13 +92,13 @@ python3 -m pip install zhconv
     #### QB下载模式
     > 在此模式下`AutoAnimeMv.py`支持 3~4 个参数,`下载路径` `下载文件名` `下载文件数` `文件分类`(可选) 
     
-    * 1.将`AutoAnimeMv.py`上传至`🔵QBittorrent`能访问的路径下
-    
-    * 2.在`🔵Qbittorrent`中创建`动漫`分类(非必须)
+    1.将`AutoAnimeMv.py`上传至`🔵QBittorrent`能访问的路径下  
+  
+    2.在`🔵Qbittorrent`中创建`动漫`分类(非必须)  
+ 
+    3.修改qb配置: `下载`切换`Torrent 内容布局`为`不创建子文件夹`  
 
-    * 3.修改qb配置: `下载`切换`Torrent 内容布局`为`不创建子文件夹`
-
-    * 4.修改qb配置: `下载`勾选 `Torrent 完成时运行外部程序`, 在输入框填入如下内容(参数顺序不可更改且参数要用`""`包裹,其中 `/dir/to/AAM.py` 更换为步骤一中脚本放置的绝对路径,如没有配置`分类`,请删除`"%L"`)
+    4.修改qb配置: `下载`勾选 `Torrent 完成时运行外部程序`, 在输入框填入如下内容(参数顺序不可更改且参数要用`""`包裹,其中 `/dir/to/AAM.py` 更换为步骤一中脚本放置的绝对路径,如没有配置`分类`,请删除`"%L"`)  
 
     ```shell
     python3 /dir/to/AAM.py "%D" "%N" "%C" "%L"
@@ -110,13 +110,13 @@ python3 -m pip install zhconv
     #### 批处理模式
     > 在此模式下`AutoAnimeMv.py`支持 1~2 个参数,`需要整理的番剧所在路径` `文件分类`(可选) 
     
-    * 传入参数顺序不可更改且参数要用`""`包裹
+    传入参数顺序不可更改且参数要用`""`包裹
     ```
     python3 AutoAnimeMv.py "需要整理的番剧所在路径" "文件分类(可选)"
     ```
     
     #### 更新模式
-    * 使用`updata`/`update`来更新`AutoAnimeMv.py`
+    使用`updata`/`update`来更新`AutoAnimeMv.py`
     ```
     python3 AutoAnimeMv.py updata
     ```
