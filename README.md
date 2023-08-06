@@ -55,9 +55,10 @@
 * **本地批处理和QB下载模式任君选择**
 * **快速更新,享受更多新体验**
 
-    ### 待更新的功能
-    - [x] BgmApi支持
+    ## 待更新的功能
+    - [x] BgmApi支持 
     - [x] TMDBApi支持
+    - [ ] 番剧订阅
     - [ ] 本地番剧信息缓存
     - [ ] 完全番剧特典支持 
     - [x] 清理过时日志
@@ -152,16 +153,19 @@ python3 -m pip install zhconv
 > 如果您也想要为这个项目添砖加瓦,可以直接来[Issues](https://github.com/Abcuders/AutoAnimeMv/issues)提出您宝贵的建议或者@我问一下能做些什么
 
 <a href="https://github.com/wzfdgh">
-<img src="https://avatars.githubusercontent.com/u/93830081?s=96&v=4"  width="100px" height="100px"> 
+<img src="https://avatars.githubusercontent.com/u/93830081?s=96&v=4"  width="80px" height="80px"> 
 </a>
 <a href="https://github.com/Nanako718">
-<img src="https://avatars.githubusercontent.com/u/60038246?s=96&v=4"  width="100px" height="100px">
+<img src="https://avatars.githubusercontent.com/u/60038246?s=96&v=4"  width="80px" height="80px">
 </a>
 <a href="https://github.com/star-cheat">
-<img src="https://avatars.githubusercontent.com/u/124486654?v=4"  width="100px" height="100px">
+<img src="https://avatars.githubusercontent.com/u/124486654?v=4"  width="80px" height="80px">
 </a>
 <a href="https://github.com/zerodoge">
-<img src="https://avatars.githubusercontent.com/u/126881933?v=4"  width="100px" height="100px">
+<img src="https://avatars.githubusercontent.com/u/126881933?v=4"  width="80px" height="80px">
+</a>
+<a href="https://github.com/ProbiusOfficial">
+<img src="https://avatars.githubusercontent.com/u/41804496?v=4"  width="80px" height="80px">
 </a>
 
 ## Star History
