@@ -15,7 +15,7 @@
 
 ***
 
- 😊这是一个**番剧自动识别**`剧名剧集+自动重命名+自动整理的工具`,**具有部署方便,开箱即用的特点**,用来配合QBittorrent实现Rss订阅下载Emby全自动刮削一条龙到家式爽歪歪服务!
+ 😊这是一个**番剧自动识别**`剧名剧集+自动重命名+自动整理的工具`,**具有部署方便,开箱即用的特点**,用来配合qBittorrent实现Rss订阅下载Emby全自动刮削一条龙到家式爽歪歪服务!
 
  </div>
 
@@ -92,10 +92,10 @@ python3 -m pip install zhconv
     #### QB下载模式
     > 在此模式下`AutoAnimeMv.py`支持 3~4 个参数,`下载路径` `下载文件名` `下载文件数` `文件分类`(可选) 
     
-    1.将`AutoAnimeMv.py`上传至`🔵QBittorrent`能访问的路径下  
+    1.将`AutoAnimeMv.py`上传至`🔵qBittorrent`能访问的路径下  
   
-    2.在`🔵Qbittorrent`中创建`动漫`分类(非必须)  
- 
+    2.在`🔵qBittorrent`中创建`动漫`分类(非必须)  
+
     3.修改qb配置: `下载`切换`Torrent 内容布局`为`不创建子文件夹`  
 
     4.修改qb配置: `下载`勾选 `Torrent 完成时运行外部程序`, 在输入框填入如下内容(参数顺序不可更改且参数要用`""`包裹,其中 `/dir/to/AAM.py` 更换为步骤一中脚本放置的绝对路径,如没有配置`分类`,请删除`"%L"`)  
@@ -104,8 +104,8 @@ python3 -m pip install zhconv
     python3 /dir/to/AAM.py "%D" "%N" "%C" "%L"
     ```
      > <img src="./Image/Example/two.jpg" width="300" height="300"> <img src="./Image/Example/three.jpg" width="300" height="300">
-     * 4.取消做种，修改qb配置: 将`🔵QBitTorrent `的`做种限制`改成`当分享率达到0当做种时间达到0分钟然后暂停torrent`
 
+     5.取消做种，修改qb配置: 将`🔵qBittorrent `的`做种限制`改成`当分享率达到0当做种时间达到0分钟然后暂停torrent`
 
     #### 批处理模式
     > 在此模式下`AutoAnimeMv.py`支持 1~2 个参数,`需要整理的番剧所在路径` `文件分类`(可选) 
@@ -113,8 +113,7 @@ python3 -m pip install zhconv
     传入参数顺序不可更改且参数要用`""`包裹
     ```
     python3 AutoAnimeMv.py "需要整理的番剧所在路径" "文件分类(可选)"
-    ```
-    
+    ```  
     #### 更新模式
     使用`updata`/`update`来更新`AutoAnimeMv.py`
     ```
@@ -125,11 +124,11 @@ python3 -m pip install zhconv
 
 ## 📝 详细的文档
 
-docs.md 提供一个更详细的文档([点我到详细文档](./DOCS.md)),如果您想要了解更多,可选择参考该文档
+**[docs.md](./DOCS.md) 提供一个更详细的文档,如果您想要了解更多,可选择参考该文档**
 
 ### 目录
- + [❓ 什么样的番剧能够被识别?](/DOCS.md/##-什么样的番剧能够被识别)
- + ❓ 什么样的字幕能够被识别?
+ + [什么样的番剧能够被识别?](/DOCS.md/##-什么样的番剧能够被识别)
+ + 什么样的字幕能够被识别?
 
  + [配置](/DOCS.md/##配置)
     - 配置介绍
@@ -140,7 +139,7 @@ docs.md 提供一个更详细的文档([点我到详细文档](./DOCS.md)),如�
     - Log相关
     - Log 保存位置的解释
     - Telegram Bot通知功能
- + [🔥 彩蛋](/DOCS.md/##-彩蛋)
+ + [彩蛋](/DOCS.md/##-彩蛋)
  + [早期版本代码](/DOCS.md/##想要学习早期版本代码)
 
 ## 相关群组
