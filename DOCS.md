@@ -96,6 +96,7 @@ USETMDBAPI = True #使用TMDBApi
 USELINK = True # 使用硬链接开关
 LINKFAILSUSEMOVEFLAGS = False #硬链接失败时使用MOVE
 RMLOGSFLAG = '7' # 日志文件超时删除
+TIMELAPSE = 0 # 延时处理番剧
 USERTGBOT = False # 使用TgBot进行远程管理
 TGBOTDEVICESFLAG = '' # 您的注册码
 USERBOTNOTICE = False # 使用TgBot进行通知
@@ -107,7 +108,7 @@ QBPASSWORD = '' # Qb密码
 ```
 * `config.ini.Template`是配置文件的模板,内容如上
 
-* **请注意！config.ini.Template内容已更新，目前模板版本为2.3.1**
+* **请注意！config.ini.Template内容已更新，目前模板版本为 *2.8.0***
 
 ***
 ## 配置介绍

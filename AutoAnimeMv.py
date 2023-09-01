@@ -17,7 +17,7 @@ from threading import Thread # 多线程
 def Start_PATH():# 初始化
     # 版本 数据库缓存 Api数据缓存 Log数据集 分隔符
     global Versions,AimeListCache,BgmAPIDataCache,TMDBAPIDataCache,LogData,Separator,Proxy,TgBotMsgData,PyPath
-    Versions = '2.7.3'
+    Versions = '2.8.0'
     AimeListCache = None
     BgmAPIDataCache = {}
     TMDBAPIDataCache = {}
@@ -185,7 +185,7 @@ def Auxiliary_Notice(Msg):# 共享内存
                             m.flush()
 
 def Auxiliary_READConfig():# 读取外置Config.ini文件并更新
-    global HTTPPROXY,HTTPSPROXY,ALLPROXY,USEBGMAPI,USETMDBAPI,USELINK,LINKFAILSUSEMOVEFLAGS,PRINTLOGFLAG,RMLOGSFLAG,USEBOTFLAG
+    global HTTPPROXY,HTTPSPROXY,ALLPROXY,USEBGMAPI,USETMDBAPI,USELINK,LINKFAILSUSEMOVEFLAGS,PRINTLOGFLAG,RMLOGSFLAG,USEBOTFLAG,TIMELAPSE
     HTTPPROXY = '' # Http代理
     HTTPSPROXY = '' # Https代理
     ALLPROXY = '' # 全部代理
@@ -196,6 +196,7 @@ def Auxiliary_READConfig():# 读取外置Config.ini文件并更新
     PRINTLOGFLAG = False # 打印log开关
     RMLOGSFLAG = '7' # 日志文件超时删除
     USEBOTFLAG = False # 使用TgBot进行通知
+    TIMELAPSE = 0 # 延时处理番剧
     if path.isfile(f'{PyPath}{Separator}config.ini'):
         with open(f'{PyPath}{Separator}config.ini','r',encoding='UTF-8') as ff:
             Auxiliary_Log('正在读取外置ini文件','INFO')
@@ -215,6 +216,10 @@ def Auxiliary_READConfig():# 读取外置Config.ini文件并更新
             elif COEFLAG == True:
                 COE()
             Auxiliary_PROXY()
+
+    if int(TIMELAPSE) != 0:
+        Auxiliary_Log(f'正在{TIMELAPSE}秒延时中')
+        sleep(int(TIMELAPSE))
 
 def Auxiliary_Log(Msg,MsgFlag='INFO',flag=None,end='\n'):# 日志
     global LogData,PRINTLOGFLAG
@@ -486,7 +491,7 @@ def Auxiliary_Api(Name):
     #    else:
     #        ApiName = None
     else:
-        ApiName = TMDBApiName
+        ApiName = TMDBApiName if TMDBApiName != None else BGMApiName
     return ApiName.replace(' ','') if ApiName != None else ApiName
 
 def Auxiliary_Exit(LogMsg):# 因可预见错误离场
