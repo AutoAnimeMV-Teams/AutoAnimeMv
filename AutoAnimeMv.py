@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 #coding:utf-8
 from sys import argv,executable #获取外部传参和外置配置更新
-from os import environ,path,name,makedirs,listdir,link,remove # os操作
+from os import environ,path,name,makedirs,listdir,link,remove,removedirs,renames # os操作
 from time import sleep,strftime,localtime,time # 时间相关
 from datetime import datetime # 时间相减用
 from re import findall,match,search,sub,I # 匹配相关
@@ -17,7 +17,7 @@ from threading import Thread # 多线程
 def Start_PATH():# 初始化
     # 版本 数据库缓存 Api数据缓存 Log数据集 分隔符
     global Versions,AimeListCache,BgmAPIDataCache,TMDBAPIDataCache,LogData,Separator,Proxy,TgBotMsgData,PyPath
-    Versions = '2.8.0'
+    Versions = '2.9.0'
     AimeListCache = None
     BgmAPIDataCache = {}
     TMDBAPIDataCache = {}
@@ -32,8 +32,10 @@ def Start_GetArgv():# 获取参数,判断处理模式
     ArgvNumber = len(argv)
     Auxiliary_Log(f'接受到的参数 > {argv}')
     if 2 <= ArgvNumber <= 3:# 接受1-2个参数
-        if argv[1] == 'update' or argv[1] == 'updata':# 更新模式
+        if argv[1] == 'update' or argv[1] == 'updata': # 更新模式
             Auxiliary_Updata()
+        elif argv[1] == 'help': #help
+            Auxiliary_Help()
         elif path.exists(argv[1]) == True:# 批处理模式
             if ArgvNumber == 2:
                 return argv[1], #待扫描目录
@@ -47,7 +49,10 @@ def Start_GetArgv():# 获取参数,判断处理模式
                     return argv[1],argv[2],argv[3]
                 else:# + 文件分类
                     return argv[1],argv[2],argv[3],argv[4]
-
+            elif argv[1] == 'fixSE':
+                    Auxiliary_FixSE(argv[2],argv[3],argv[4])# 需要修复的动漫目录 需要修复的剧季 修复之后的剧季
+    else:
+        Auxiliary_Help()
 # Processing 进行程序的开始工作,进行核心处理
 def Processing_Mode(ArgvData:list):# 模式选择
     ArgvNumber = len(ArgvData)
@@ -78,7 +83,7 @@ def Processing_Mode(ArgvData:list):# 模式选择
                 return FileListTuporList  # 元组中唯一有效的文件列表
             Auxiliary_Exit('没有有效的番剧文件')
     else:
-        Auxiliary_Exit(f'不存在{Path}目录')
+        Auxiliary_Exit(f'不存在 {Path} 目录')
    
 def Processing_Main(LorT):# 核心处理
     if type(LorT) == tuple: # (视频文件列表,字幕文件列表)
@@ -167,7 +172,52 @@ def Sorting_Mv(FileName,RAWName,SE,EP,ASSList,ApiName):# 文件处理
         Auxiliary_Log(f'{NewDir}{NewName}{FileType}已存在,故跳过','WARNING')
 
 # Auxiliary 其他辅助
-def Auxiliary_Notice(Msg):# 共享内存
+def Auxiliary_Help(): # Help 
+    global HELP
+    Logo = '''     
+     █████╗ ██╗   ██╗████████╗ ██████╗  █████╗ ███╗   ██╗██╗███╗   ███╗███████╗███╗   ███╗██╗   ██╗
+    ██╔══██╗██║   ██║╚══██╔══╝██╔═══██╗██╔══██╗████╗  ██║██║████╗ ████║██╔════╝████╗ ████║██║   ██║
+    ███████║██║   ██║   ██║   ██║   ██║███████║██╔██╗ ██║██║██╔████╔██║█████╗  ██╔████╔██║██║   ██║
+    ██╔══██║██║   ██║   ██║   ██║   ██║██╔══██║██║╚██╗██║██║██║╚██╔╝██║██╔══╝  ██║╚██╔╝██║╚██╗ ██╔╝
+    ██║  ██║╚██████╔╝   ██║   ╚██████╔╝██║  ██║██║ ╚████║██║██║ ╚═╝ ██║███████╗██║ ╚═╝ ██║ ╚████╔╝ 
+    ╚═╝  ╚═╝ ╚═════╝    ╚═╝    ╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═══╝╚═╝╚═╝     ╚═╝╚══════╝╚═╝     ╚═╝  ╚═══╝                                                                                            
+    '''
+    HELP = '\n* 欢迎使用AutoAnimeMv，这是一个番剧自动识别剧名剧集+自动重命名+自动整理的工具\n* Github URL：https://github.com/Abcuders/AutoAnimeMv\n* 一般使用方法请见Github Docs，以下是不常用的使用方法：\n    python3 AutoAnimeMv.py [help] [updata] [fixSE]\n* 参数解释：\n    help 打印出Help {help}\n    updata,update  更新AutoAnimeMv.py {updata}\n    fixSE 修复错乱的剧季 {fixSE 需要修复的番剧目录 需要修复的剧季 修复之后的剧季}'
+    print(Logo + '\n' + '-'*100 +  HELP)
+    quit()
+
+def Auxiliary_FixSE(Path,OLDSE,NEWSE):
+    OLDSE = '0' + OLDSE if len(OLDSE) == 1 else OLDSE
+    NEWSE = '0' + NEWSE if len(NEWSE) == 1 else NEWSE
+    FilePath = f'{Path}{Separator}Season{OLDSE}{Separator}'
+    NewPath = f'{Path}{Separator}Season{NEWSE}{Separator}'
+    if path.exists(FilePath) == True:
+        if path.exists(NewPath) == True:
+            print(listdir(NewPath))
+            if listdir(NewPath) == []:
+                Auxiliary_Log(f'存在剧季{NEWSE},但内容为空','WARNING')
+                removedirs(NewPath)
+            else:
+                Auxiliary_Exit(f'存在剧季{NEWSE},内容不为空')
+        Auxiliary_Log('开始进行番剧剧季的纠错')
+        FileListTuporList = Auxiliary_ScanDIR(FilePath,1)
+        if type(FileListTuporList[0]) == list:
+            for Filelist in FileListTuporList:
+                for File in Filelist:
+                    NewFile = NewPath + File.replace(f'S{OLDSE}',f'S{NEWSE}')
+                    renames(FilePath + File,NewFile)
+                    Auxiliary_Log(f'{NewFile} << {File}')
+        else:
+            for File in FileListTuporList:
+                NewFile = NewPath + File.replace(f'S{OLDSE}',f'S{NEWSE}')
+                renames(FilePath + File,NewFile)
+                Auxiliary_Log(f'{NewFile} << {File}')
+        Auxiliary_Exit('番剧纠错完毕')
+
+    else:
+        Auxiliary_Exit(f'不存在 {Path} 目录')
+
+def Auxiliary_Notice(Msg): # 共享内存
     if 'USERTGBOT' in globals():
         global USERTGBOT
         if USERTGBOT == True:
@@ -185,7 +235,7 @@ def Auxiliary_Notice(Msg):# 共享内存
                             m.flush()
 
 def Auxiliary_READConfig():# 读取外置Config.ini文件并更新
-    global HTTPPROXY,HTTPSPROXY,ALLPROXY,USEBGMAPI,USETMDBAPI,USELINK,LINKFAILSUSEMOVEFLAGS,PRINTLOGFLAG,RMLOGSFLAG,USEBOTFLAG,TIMELAPSE
+    global HTTPPROXY,HTTPSPROXY,ALLPROXY,USEBGMAPI,USETMDBAPI,USELINK,LINKFAILSUSEMOVEFLAGS,PRINTLOGFLAG,RMLOGSFLAG,USEBOTFLAG,TIMELAPSE,HELP
     HTTPPROXY = '' # Http代理
     HTTPSPROXY = '' # Https代理
     ALLPROXY = '' # 全部代理
@@ -197,6 +247,7 @@ def Auxiliary_READConfig():# 读取外置Config.ini文件并更新
     RMLOGSFLAG = '7' # 日志文件超时删除
     USEBOTFLAG = False # 使用TgBot进行通知
     TIMELAPSE = 0 # 延时处理番剧
+    HELP = None # HELP 
     if path.isfile(f'{PyPath}{Separator}config.ini'):
         with open(f'{PyPath}{Separator}config.ini','r',encoding='UTF-8') as ff:
             Auxiliary_Log('正在读取外置ini文件','INFO')
@@ -336,15 +387,9 @@ def Auxiliary_IDEASS(File,SE,EP,ASSList):# 识别当前番剧视频的所属字�
     ASSFileList = None if ASSFileList == [] else ASSFileList
     return ASSFileList
 
-def Auxiliary_ScanDIR(Dir):# 扫描文件目录,返回文件列表
-    global LogsFileList
-    SuffixList = ['.ass','.srt','.mp4','mkv','.log']
-    AssFileList = []
-    VDFileList = []
-    LogsFileList = []
-    for File in listdir(Dir):# 扫描目录,并按文件类型分类
-        if search(r'S\d{1,2}E\d{1,4}',File,flags=I) == None:
-            for ii in SuffixList:
+def Auxiliary_ScanDIR(Dir,Flag=0):# 扫描文件目录,返回文件列表
+    def Scan(Dir,File):
+        for ii in SuffixList:
                 if match(ii[::-1],File[::-1],flags=I) != None:
                     if ii == '.ass' or ii == '.srt':
                         AssFileList.append(File)
@@ -352,6 +397,18 @@ def Auxiliary_ScanDIR(Dir):# 扫描文件目录,返回文件列表
                         LogsFileList.append(File)
                     else:
                         VDFileList.append(File)
+
+    global LogsFileList
+    SuffixList = ['.ass','.srt','.mp4','mkv','.log']
+    AssFileList = []
+    VDFileList = []
+    LogsFileList = []
+    for File in listdir(Dir):# 扫描目录,并按文件类型分类
+        if Flag == 0 and search(r'S\d{1,2}E\d{1,4}',File,flags=I) == None:
+            Scan(Dir,File)
+        elif Flag == 1 and search(r'S\d{1,2}E\d{1,4}',File,flags=I) != None:
+            Scan(Dir,File)
+
     if  VDFileList != []:# 判断模式,处理字幕还是视频
         if AssFileList != []:
             Auxiliary_Log((f'发现{len(AssFileList)}个字幕文件 ==> {AssFileList}',f'发现{len(VDFileList)}个视频文件 ==> {VDFileList}'),'INFO')
@@ -366,8 +423,8 @@ def Auxiliary_ScanDIR(Dir):# 扫描文件目录,返回文件列表
         Auxiliary_Exit('没有任何番剧文件')
 
 def Auxiliary_AnimeFileCheck(File):# 检查番剧文件
-    list = ['OP','CM','SP','PV']
-    for i in list:
+    Checklist = ['OP','CM','SP','PV']
+    for i in Checklist:
         if search(i,File,flags=I) != None:
             return i
     return True         
@@ -514,4 +571,5 @@ if __name__ == '__main__':
         Auxiliary_Log(f'一切工作已经完成,用时{end - start}','INFO',flag='PRINT')
         Auxiliary_Notice('新的番剧已处理完成')
     finally:
-        Auxiliary_WriteLog()
+        if HELP == None:
+            Auxiliary_WriteLog()
