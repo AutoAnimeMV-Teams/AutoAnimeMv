@@ -175,6 +175,16 @@ QBPASSWORD = '' # Qb密码
 > Api功能默认开启,在一般情况下我们不建议关闭
 * 当您同时启用 `BGMAPI` 和 `TMDBAPI`时,如果匹配出的是中文,将会优先交给 `BGMAPI` 识别,如果有返回值再把返回值交给 `TMDBAPI` 识别,如果没有则让 `TMDBAPI` 识别原匹配
 
+## 油猴脚本扩展
+* `Tampermonkey/main.js` 是给 `mikanani` 提供 `快速添加到qb下载的脚本`
+* 要使用此脚本，您需要 `Tampermonkey` 的支持
+* 使用效果
+
+><img src="./Image/Example/Tone.jpg" width="600" height="300">
+><img src="./Image/Example/Ttwo.jpg" width="600" height="300"> 
+* 注意第一次使用您需要脚本的跨域申请
+><img src="./Image/Example/Tthree.jpg" width="600" height="300">
+
 ## Telegram Bot通知功能(old 版本已废弃,New 版本开发中)
 * **内测功能，您可以来Tg群体验**
 
