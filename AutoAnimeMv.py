@@ -17,7 +17,7 @@ from threading import Thread # 多线程
 def Start_PATH():# 初始化
     # 版本 数据库缓存 Api数据缓存 Log数据集 分隔符
     global Versions,AimeListCache,BgmAPIDataCache,TMDBAPIDataCache,LogData,Separator,Proxy,TgBotMsgData,PyPath
-    Versions = '2.9.0'
+    Versions = '2.10.0'
     AimeListCache = None
     BgmAPIDataCache = {}
     TMDBAPIDataCache = {}
@@ -105,10 +105,10 @@ def Processing_Main(LorT):# 核心处理
             Sorting_Mv(File,RAWName,SE,EP,None,ApiName)
 
 def Processing_Identification(File:str):# 识别
-    AnimeFileCheckFlag = Auxiliary_AnimeFileCheck(File)
+    NewFile = Auxiliary_RMSubtitlingTeam(Auxiliary_RMOTSTR(Auxiliary_UniformOTSTR(File)))# 字符的统一加剔除
+    AnimeFileCheckFlag = Auxiliary_AnimeFileCheck(NewFile)
     if AnimeFileCheckFlag == True:
         Auxiliary_Log('-'*80,'INFO')
-        NewFile = Auxiliary_RMSubtitlingTeam(Auxiliary_RMOTSTR(Auxiliary_UniformOTSTR(File)))# 字符的统一加剔除
         RAWEP = Auxiliary_IDEEP(NewFile)
         Auxiliary_Log(f'匹配出的剧集 ==> {RAWEP}','INFO')
         RAWName = Auxiliary_IDEVDName(NewFile,RAWEP)
@@ -425,7 +425,7 @@ def Auxiliary_ScanDIR(Dir,Flag=0):# 扫描文件目录,返回文件列表
 def Auxiliary_AnimeFileCheck(File):# 检查番剧文件
     Checklist = ['OP','CM','SP','PV']
     for i in Checklist:
-        if search(i,File,flags=I) != None:
+        if search(f'[-=]{i}[-=]',File,flags=I) != None:
             return i
     return True         
 
