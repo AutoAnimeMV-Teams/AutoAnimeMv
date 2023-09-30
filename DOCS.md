@@ -180,10 +180,10 @@ QBPASSWORD = '' # Qb密码
 * 要使用此脚本，您需要 `Tampermonkey` 的支持
 * 使用效果
 
-><img src="./Image/Example/Tone.jpg" width="600" height="300">
-><img src="./Image/Example/Ttwo.jpg" width="600" height="300"> 
+><img src="./Image/Example/TKone.jpg" width="600" height="300">
+><img src="./Image/Example/TKtwo.jpg" width="600" height="300"> 
 * 注意第一次使用您需要脚本的跨域申请
-><img src="./Image/Example/Tthree.jpg" width="600" height="300">
+><img src="./Image/Example/TKthree.jpg" width="600" height="300">
 
 ## Telegram Bot通知功能(old 版本已废弃,New 版本开发中)
 * **内测功能，您可以来Tg群体验**
