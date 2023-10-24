@@ -112,9 +112,13 @@ def Processing_Identification(File:str):# 识别
         RAWEP = Auxiliary_IDEEP(NewFile)
         Auxiliary_Log(f'匹配出的剧集 ==> {RAWEP}','INFO')
         RAWName = Auxiliary_IDEVDName(NewFile,RAWEP)
-        EP = '0' + RAWEP if len(RAWEP) < 2 or ( '.' in RAWEP and RAWEP[0] != '0') else RAWEP# 美化剧集
+        if SINGLE_CHARACTER:
+            EP = RAWEP.lstrip('0') # 去除前置0
+        else:
+            EP = '0' + RAWEP if len(RAWEP) < 2 or ( '.' in RAWEP and RAWEP[0] != '0') else RAWEP# 美化剧集
+
         if '.' in RAWEP or RAWEP == '0' or RAWEP == '00':
-            SE = '00'
+            SE = '00' if not SINGLE_CHARACTER else '0'
             RAWSE = ''
             Auxiliary_Log(f'特殊剧季 ==> {SE}','INFO')
             SeasonMatchData = r'(季(.*?)第)|(([0-9]{0,1}[0-9]{1})S)|(([0-9]{0,1}[0-9]{1})nosaeS)|(([0-9]{0,1}[0-9]{1}) nosaeS)|(([0-9]{0,1}[0-9]{1})-nosaeS)|(nosaeS-dn([0-9]{1}))'
@@ -123,7 +127,10 @@ def Processing_Identification(File:str):# 识别
             SE,Name,RAWSE = Auxiliary_IDESE(RAWName)
             Auxiliary_Log(f'匹配出的剧季 ==> {RAWSE}','INFO')
             RAWName = RAWName if Name == None else Name
-            SE = '0' + SE if len(SE) == 1 else SE
+            if SINGLE_CHARACTER:
+                SE = SE.lstrip('0')
+            else:
+                SE = '0' + SE if len(SE) == 1 else SE
         return SE,EP,RAWSE,RAWEP,RAWName
     else:
         Auxiliary_Log(f'当前文件属于{AnimeFileCheckFlag},跳过处理','INFO')
@@ -150,7 +157,7 @@ def Sorting_Mv(FileName,RAWName,SE,EP,ASSList,ApiName):# 文件处理
             move(src,dst)
             Auxiliary_Log(f'Move-{dst} << {src}')
             TgBotMsgData = TgBotMsgData + (f'Move-{src} << {dst}\n')
-    NewDir = f'{Path}{Separator}{CategoryName}{Separator}{ApiName}{Separator}Season{SE}{Separator}' if ApiName != None else f'{Path}{Separator}{CategoryName}{Separator}{RAWName}{Separator}Season{SE}{Separator}'
+    NewDir = f'{Path}{Separator}{CategoryName}{Separator}{ApiName}{Separator}{SeasonStr}{SE}{Separator}' if ApiName != None else f'{Path}{Separator}{CategoryName}{Separator}{RAWName}{Separator}{SeasonStr}{SE}{Separator}'
     NewName = f'S{SE}E{EP}'
     if path.exists(NewDir) == False:
         makedirs(NewDir)
@@ -187,10 +194,11 @@ def Auxiliary_Help(): # Help
     quit()
 
 def Auxiliary_FixSE(Path,OLDSE,NEWSE):
-    OLDSE = '0' + OLDSE if len(OLDSE) == 1 else OLDSE
-    NEWSE = '0' + NEWSE if len(NEWSE) == 1 else NEWSE
-    FilePath = f'{Path}{Separator}Season{OLDSE}{Separator}'
-    NewPath = f'{Path}{Separator}Season{NEWSE}{Separator}'
+    if not JELLYFIN_FORMAT:
+        OLDSE = '0' + OLDSE if len(OLDSE) == 1 else OLDSE
+        NEWSE = '0' + NEWSE if len(NEWSE) == 1 else NEWSE
+    FilePath = f'{Path}{Separator}{SeasonStr}{OLDSE}{Separator}'
+    NewPath = f'{Path}{Separator}{SeasonStr}{NEWSE}{Separator}'
     if path.exists(FilePath) == True:
         if path.exists(NewPath) == True:
             print(listdir(NewPath))
@@ -235,7 +243,7 @@ def Auxiliary_Notice(Msg): # 共享内存
                             m.flush()
 
 def Auxiliary_READConfig():# 读取外置Config.ini文件并更新
-    global HTTPPROXY,HTTPSPROXY,ALLPROXY,USEBGMAPI,USETMDBAPI,USELINK,LINKFAILSUSEMOVEFLAGS,PRINTLOGFLAG,RMLOGSFLAG,USEBOTFLAG,TIMELAPSE,HELP
+    global HTTPPROXY,HTTPSPROXY,ALLPROXY,USEBGMAPI,USETMDBAPI,USELINK,LINKFAILSUSEMOVEFLAGS,PRINTLOGFLAG,RMLOGSFLAG,USEBOTFLAG,TIMELAPSE,HELP,JELLYFIN_FORMAT,SINGLE_CHARACTER
     HTTPPROXY = '' # Http代理
     HTTPSPROXY = '' # Https代理
     ALLPROXY = '' # 全部代理
@@ -247,7 +255,9 @@ def Auxiliary_READConfig():# 读取外置Config.ini文件并更新
     RMLOGSFLAG = '7' # 日志文件超时删除
     USEBOTFLAG = False # 使用TgBot进行通知
     TIMELAPSE = 0 # 延时处理番剧
-    HELP = None # HELP 
+    HELP = None # HELP
+    JELLYFIN_FORMAT = False # jellyfin 使用 ISO/639 标准 简体和繁体都使用chi做标识
+    SINGLE_CHARACTER = False # 尽量使用单字符
     if path.isfile(f'{PyPath}{Separator}config.ini'):
         with open(f'{PyPath}{Separator}config.ini','r',encoding='UTF-8') as ff:
             Auxiliary_Log('正在读取外置ini文件','INFO')
@@ -267,7 +277,8 @@ def Auxiliary_READConfig():# 读取外置Config.ini文件并更新
             elif COEFLAG == True:
                 COE()
             Auxiliary_PROXY()
-
+    global SeasonStr
+    SeasonStr = 'S' if SINGLE_CHARACTER else'Season'
     if int(TIMELAPSE) != 0:
         Auxiliary_Log(f'正在{TIMELAPSE}秒延时中')
         sleep(int(TIMELAPSE))
@@ -435,9 +446,9 @@ def Auxiliary_ASSFileCA(ASSFile):# 字幕文件的语言分类
         for ii in SubtitleList[i]:
             if search(ii[::-1],ASSFile[::-1],flags=I) != None:
                 if i == 0:
-                    return '.chs'
+                    return '.简体中文.chi' if JELLYFIN_FORMAT else '.chs'
                 elif i == 1:
-                    return '.cht'
+                    return '.繁体中文.chi' if JELLYFIN_FORMAT else 'cht'
                 elif i == 2:
                     return '.jp'
     return '.other'
