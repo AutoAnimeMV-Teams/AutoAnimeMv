@@ -366,7 +366,7 @@ def Auxiliary_IDEEP(File):# 识别剧集
 def Auxiliary_RMSubtitlingTeam(File):# 剔除字幕组信息
     File = File.strip('-')
     if File[0] == '《':# 判断有无字幕组信息
-        ile = sub(r'《|》','',File,flags=I) 
+        File = sub(r'《|》','',File,flags=I) 
     else:
         File = sub(r'^=.*?=','',File,flags=I)
     return File
