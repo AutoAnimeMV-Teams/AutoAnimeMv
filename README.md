@@ -52,6 +52,7 @@
 * **快速更新,享受更多新体验**
 
     ## 待更新的功能
+    - [x] 扩展模块功能
     - [x] BgmApi支持 
     - [x] TMDBApi支持
     - [ ] WEB管理
@@ -93,7 +94,7 @@ python3 -m pip install zhconv
 
 * `AutoAnimeMv.py`是核心处理程序,它有两种核心处理方式,模式的切换靠的是传参数量 
 * 同时工具自己拥有一些可配置项,详情见 [详细文档##配置](/DOCS.md/##配置)
-* 本工具默认不打印任何信息,如果您有需要,可在配置文件中进行配置,请参考 [详细文档##配置](/DOCS.md/##配置)
+* 本工具默认不打印任何信息,如果您有需要,可在配置文件中进行配置,请参考 [详细文档](##-详细的文档)
 
     #### QB下载模式
     > 在此模式下`AutoAnimeMv.py`支持 3~4 个参数,`下载路径` `下载文件名` `下载文件数` `文件分类`(可选) 
@@ -154,29 +155,13 @@ python3 -m pip install zhconv
     ```
     python3 AutoAnimeMv.py fixSE 需要修复的番剧目录 需要修复的剧季 修复之后的剧季
     ```
-    
-  ### 注意 !!! 傻瓜教程点这里 >> [傻瓜教程](./TutorialsforDummies.md)
-
 ## 📝 详细的文档
 
-**[docs.md](./DOCS.md) 提供一个更详细的文档,如果您想要了解更多,可选择参考该文档**
+* **[FirstReadMe.md](./Docs/FirstReadMe.md) 提供一个更详细的文档,如果您想要了解更多,可选择参考该文档**
 
-### 目录
- + [什么样的番剧能够被识别?](/DOCS.md/##-什么样的番剧能够被识别)
-    - 什么样的字幕能够被识别?
- + [配置](/DOCS.md/##配置)
-    - 配置介绍
- + [常见问题](/DOCS.md/##常见问题)
-    - pip安装出现问题
-    - 群晖NAS使用Python出现奇怪的问题
- + [一些介绍说明](/DOCS.md/##一些介绍说明)
-    - Log相关
-    - Log 保存位置的解释
-    - 油猴脚本扩展
-    - Telegram Bot通知功能
- + [彩蛋](/DOCS.md/##-彩蛋)
- + [早期版本代码](/DOCS.md/##想要学习早期版本代码)
+* **[FAQ.md](./Docs/FAQ.md) 包含一些常见问题供您查阅**
 
+* **[傻瓜教程](./TutorialsforDummies.md)**
 ## 相关群组
 
 交流/工作群: [Telegram](https://t.me/AutoAnimeMv)
@@ -200,6 +185,9 @@ python3 -m pip install zhconv
 </a>
 <a href="https://github.com/ProbiusOfficial">
 <img src="https://avatars.githubusercontent.com/u/41804496?v=4"  width="80px" height="80px">
+</a>
+<a href="https://github.com/Qs315490">
+<img src="https://avatars.githubusercontent.com/u/40908389?v=4"  width="80px" height="80px">
 </a>
 
 ## Star History

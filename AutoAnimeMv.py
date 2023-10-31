@@ -12,12 +12,13 @@ from urllib.parse import quote,unquote # url encode
 from requests import get,post,exceptions # 网络部分
 from random import randint # 随机数生成
 from threading import Thread # 多线程
+from importlib import import_module # 动态加载模块
 #Start 开始部分进行程序的初始化 
 
 def Start_PATH():# 初始化
     # 版本 数据库缓存 Api数据缓存 Log数据集 分隔符
     global Versions,AimeListCache,BgmAPIDataCache,TMDBAPIDataCache,LogData,Separator,Proxy,TgBotMsgData,PyPath
-    Versions = '2.10.0'
+    Versions = '2.11.0'
     AimeListCache = None
     BgmAPIDataCache = {}
     TMDBAPIDataCache = {}
@@ -27,6 +28,7 @@ def Start_PATH():# 初始化
     PyPath = __file__.replace('AutoAnimeMv.py','').strip(' ')
     Auxiliary_READConfig()
     Auxiliary_Log((f'当前工具版本为{Versions}',f'当前操作系统识别码为{name},posix/nt/java对应linux/windows/java虚拟机'),'INFO')
+    Auxiliary_LoadModule()
 
 def Start_GetArgv():# 获取参数,判断处理模式
     ArgvNumber = len(argv)
@@ -112,9 +114,9 @@ def Processing_Identification(File:str):# 识别
         RAWEP = Auxiliary_IDEEP(NewFile)
         Auxiliary_Log(f'匹配出的剧集 ==> {RAWEP}','INFO')
         RAWName = Auxiliary_IDEVDName(NewFile,RAWEP)
-        EP = '0' + RAWEP if len(RAWEP) < 2 or ( '.' in RAWEP and RAWEP[0] != '0') else RAWEP# 美化剧集
+        EP = '0' + RAWEP if (len(RAWEP) < 2 or ( '.' in RAWEP and RAWEP[0] != '0')) and (SEEPSINGLECHARACTER == False) else RAWEP# 美化剧集
         if '.' in RAWEP or RAWEP == '0' or RAWEP == '00':
-            SE = '00'
+            SE = '00' if SEEPSINGLECHARACTER == False else '0'
             RAWSE = ''
             Auxiliary_Log(f'特殊剧季 ==> {SE}','INFO')
             SeasonMatchData = r'(季(.*?)第)|(([0-9]{0,1}[0-9]{1})S)|(([0-9]{0,1}[0-9]{1})nosaeS)|(([0-9]{0,1}[0-9]{1}) nosaeS)|(([0-9]{0,1}[0-9]{1})-nosaeS)|(nosaeS-dn([0-9]{1}))'
@@ -123,7 +125,10 @@ def Processing_Identification(File:str):# 识别
             SE,Name,RAWSE = Auxiliary_IDESE(RAWName)
             Auxiliary_Log(f'匹配出的剧季 ==> {RAWSE}','INFO')
             RAWName = RAWName if Name == None else Name
-            SE = '0' + SE if len(SE) == 1 else SE
+            SE = '0' + SE if len(SE) == 1 and SEEPSINGLECHARACTER == False else SE
+        if SEEPSINGLECHARACTER == True:
+            SE = SE.lstrip('0')
+            EP = EP.lstrip('0')
         return SE,EP,RAWSE,RAWEP,RAWName
     else:
         Auxiliary_Log(f'当前文件属于{AnimeFileCheckFlag},跳过处理','INFO')
@@ -151,7 +156,7 @@ def Sorting_Mv(FileName,RAWName,SE,EP,ASSList,ApiName):# 文件处理
             Auxiliary_Log(f'Move-{dst} << {src}')
             TgBotMsgData = TgBotMsgData + (f'Move-{src} << {dst}\n')
     NewDir = f'{Path}{Separator}{CategoryName}{Separator}{ApiName}{Separator}Season{SE}{Separator}' if ApiName != None else f'{Path}{Separator}{CategoryName}{Separator}{RAWName}{Separator}Season{SE}{Separator}'
-    NewName = f'S{SE}E{EP}'
+    NewName = f'S{SE}E{EP}' if USETITLTOEP != True else f'S{SE}E{EP}.{ApiName}'
     if path.exists(NewDir) == False:
         makedirs(NewDir)
     else:
@@ -187,8 +192,8 @@ def Auxiliary_Help(): # Help
     quit()
 
 def Auxiliary_FixSE(Path,OLDSE,NEWSE):
-    OLDSE = '0' + OLDSE if len(OLDSE) == 1 else OLDSE
-    NEWSE = '0' + NEWSE if len(NEWSE) == 1 else NEWSE
+    OLDSE = '0' + OLDSE if len(OLDSE) == 1 and SEEPSINGLECHARACTER == False else OLDSE
+    NEWSE = '0' + NEWSE if len(NEWSE) == 1 and SEEPSINGLECHARACTER == False else NEWSE
     FilePath = f'{Path}{Separator}Season{OLDSE}{Separator}'
     NewPath = f'{Path}{Separator}Season{NEWSE}{Separator}'
     if path.exists(FilePath) == True:
@@ -234,19 +239,40 @@ def Auxiliary_Notice(Msg): # 共享内存
                             Auxiliary_Log('Notice消息已发送')
                             m.flush()
 
+def Auxiliary_LoadModule():
+    ModuleFileList = []
+    for FileName in listdir('./Ext'):
+        File = path.splittext(FileName)
+        if File[-1] == '.py' or File[-1] == '.PY':
+            ModuleFileList.append(File[0])
+        #elif File[-1] == '.ini' or File[-1] == '.INI':
+    if ModuleFileList != []:
+        Auxiliary_Log(f'存在{len(ModuleFileList)}个模块 >> {ModuleFileList}')
+        for ModuleName in ModuleFileList:
+            Module = import_module(f'Ext.{ModuleName}')
+            #[[FuncName,Func],]
+            for func in Module.func:
+                globals()[func[0]] = func[1]
+                Auxiliary_Log(f'模块 << {func[0]}')
+    
+
 def Auxiliary_READConfig():# 读取外置Config.ini文件并更新
-    global HTTPPROXY,HTTPSPROXY,ALLPROXY,USEBGMAPI,USETMDBAPI,USELINK,LINKFAILSUSEMOVEFLAGS,PRINTLOGFLAG,RMLOGSFLAG,USEBOTFLAG,TIMELAPSE,HELP
+    global USEMODULE,HTTPPROXY,HTTPSPROXY,ALLPROXY,USEBGMAPI,USETMDBAPI,USELINK,LINKFAILSUSEMOVEFLAGS,USETITLTOEP,PRINTLOGFLAG,RMLOGSFLAG,USEBOTFLAG,TIMELAPSE,SEEPSINGLECHARACTER,JELLYFINFORMAT,HELP
+    USEMODULE = None
     HTTPPROXY = '' # Http代理
     HTTPSPROXY = '' # Https代理
     ALLPROXY = '' # 全部代理
     USEBGMAPI = True # 使用BgmApi
-    USETMDBAPI = True #使用TMDBApi
+    USETMDBAPI = True # 使用TMDBApi
     USELINK = False # 使用硬链接开关
+    JELLYFINFORMAT = False # jellyfin 使用 ISO/639 标准 简体和繁体都使用chi做标识\
+    USETITLTOEP = False # 给每个番剧视频加上番剧Title 
     LINKFAILSUSEMOVEFLAGS = False #硬链接失败时使用MOVE
     PRINTLOGFLAG = False # 打印log开关
-    RMLOGSFLAG = '7' # 日志文件超时删除
+    RMLOGSFLAG = '7' # 日志文件超时删除,填数字代表删除多久前的
     USEBOTFLAG = False # 使用TgBot进行通知
     TIMELAPSE = 0 # 延时处理番剧
+    SEEPSINGLECHARACTER = False
     HELP = None # HELP 
     if path.isfile(f'{PyPath}{Separator}config.ini'):
         with open(f'{PyPath}{Separator}config.ini','r',encoding='UTF-8') as ff:
@@ -255,10 +281,11 @@ def Auxiliary_READConfig():# 读取外置Config.ini文件并更新
             COEFLAG = False
             for i in ff.readlines():
                 i = i.strip('\n') 
-                if i[0] != '#' and i != '':
+                if i != '' and i[0] != '#':
                     ii = i.split("=",1)[0].strip('- ')
-                    Auxiliary_Log(f'配置 < {i}','INFO')
-                    exec(f'global {ii};{i}')
+                    if ii in globals():
+                        Auxiliary_Log(f'配置 < {i}','INFO')
+                        exec(f'global {ii};{i}')
                     T = T + 1
                 elif i == '#mtf' or i == '#ftm':
                     COEFLAG = True
@@ -266,7 +293,11 @@ def Auxiliary_READConfig():# 读取外置Config.ini文件并更新
                 Auxiliary_Log('外置ini文件没有配置','WARNING')
             elif COEFLAG == True:
                 COE()
-            Auxiliary_PROXY()
+
+        Auxiliary_PROXY()
+
+        if USEMODULE == True:
+            Auxiliary_LoadModule()
 
     if int(TIMELAPSE) != 0:
         Auxiliary_Log(f'正在{TIMELAPSE}秒延时中')
@@ -366,7 +397,7 @@ def Auxiliary_IDEEP(File):# 识别剧集
 def Auxiliary_RMSubtitlingTeam(File):# 剔除字幕组信息
     File = File.strip('-')
     if File[0] == '《':# 判断有无字幕组信息
-        ile = sub(r'《|》','',File,flags=I) 
+        File = sub(r'《|》','',File,flags=I) 
     else:
         File = sub(r'^=.*?=','',File,flags=I)
     return File
@@ -435,9 +466,9 @@ def Auxiliary_ASSFileCA(ASSFile):# 字幕文件的语言分类
         for ii in SubtitleList[i]:
             if search(ii[::-1],ASSFile[::-1],flags=I) != None:
                 if i == 0:
-                    return '.chs'
+                    return '.chs' if JELLYFINFORMAT == False else '.简体中文.chi'
                 elif i == 1:
-                    return '.cht'
+                    return '.cht' if JELLYFINFORMAT == False else '.繁体中文.chi'
                 elif i == 2:
                     return '.jp'
     return '.other'
@@ -554,6 +585,10 @@ def Auxiliary_Api(Name):
 def Auxiliary_Exit(LogMsg):# 因可预见错误离场
     Auxiliary_Log(LogMsg,'EXIT',flag='PRINT')
     exit()
+
+# 模块路标
+#def Signpost_():
+
 # Colored Eggs
 def COE():#
     Auxiliary_Log('你的存在千真万确毋需置疑,我们一直都在这里,我们一直会爱你,愿每一个人都能自由的生活在阳光下','AAM')

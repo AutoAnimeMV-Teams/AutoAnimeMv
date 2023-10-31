@@ -1,21 +1,4 @@
-# | AutoAnimeMV: 这里是更详细的帮助文档(仓库2.0版本的)
-<div align="center">
-  <a href="https://github.com/Abcuders/AutoAnimeMV">
-    <img src="./Image/logo.png">
-  </a>
 
-**全自动追番新时代！不动手才是硬道理！**
-
-
-**简体中文 | [English](./DOCSE_en.md)**
-
-*! En-README.md 由于我精力不够所以有太多落后未更新的地方,如果您感兴趣并且有时间的希望您能帮助一下我✊*
-
-[![ GitHub 许可证](https://img.shields.io/github/license/Abcuders/AutoAnimeMv)](https://github.com/Abcuders/AutoCartoonMv/LICENSE) [![GitHub release](https://img.shields.io/github/v/release/Abcuders/AutoAnimeMv)](https://github.com/Abcuders/AutoAnimeMv/releases/) [![telegram](https://img.shields.io/badge/telegram-AutoAnimeMv-blue?style=flat&logo=telegram)](https://t.me/+3q1JuBrrPkJkOWJl)
-
-</div>
-
-***
 > `工具更新较快,用法和功能都会更新,建议多来看看` 
 
 > **🚀点击左上角打开目录，选择您要阅读的部分**
@@ -76,39 +59,55 @@
 
 ## ❓ 什么样的字幕能够被识别?
 * 工具目前只支持识别 `简繁日` 字幕，多语种字幕按 `简繁日` 顺序识别一个语种
-> 包含 `简` `sc` `chs` `GB` 的会被识别成 `chi`
+> 包含 `简` `sc` `chs` `GB` 的会被识别成 `简体字幕`
 
-> 包含 `繁` `tc` `cht` `BIG5` 的会被识别成 `cht`
+> 包含 `繁` `tc` `cht` `BIG5` 的会被识别成 `繁体字幕`
 
-> 包含 `日` `jp` 的会被识别成 `jp`
+> 包含 `日` `jp` 的会被识别成 `日文字幕`
 
 # 配置
 * 没有配置文件时工具使用默认配置,存在配置文件时,配置文件会自行加载
 * 以下是工具的默认配置信息,也是工具的所有可配置项,您可以在工具目录下的`config.ini`中进行自由配置,
 ```ini
-#Config
+# Config
 PRINTLOGFLAG = True # 打印log开关
+USEMODULE = False # 使用模块
+
+# NetConfig
 HTTPPROXY = '' # Http代理
-HTTPSPROXY = 'http://192.168.1.1:7890' # Https代理
+HTTPSPROXY = 'http://10.0.0.1:7890' # Https代理
 ALLPROXY = '' # 全部代理
 USEBGMAPI = True # 使用BgmApi
 USETMDBAPI = True #使用TMDBApi
+
+# File处理Config
 USELINK = True # 使用硬链接开关
 LINKFAILSUSEMOVEFLAGS = False #硬链接失败时使用MOVE
-RMLOGSFLAG = '7' # 日志文件超时删除
-TIMELAPSE = 0 # 延时处理番剧
-USERTGBOT = False # 使用TgBot进行远程管理
-TGBOTDEVICESFLAG = '' # 您的注册码
+RMLOGSFLAG = False # 日志文件超时删除,填数字代表删除多久前的
+
+# FileName处理Config
+JELLYFINFORMAT = False # jellyfin 使用 ISO/639 标准 简体和繁体都使用chi做标识
+USETITLTOEP = False # 给每个番剧视频加上番剧Title 
+
+# TgBotConfig
+USERTGBOT = True # 使用TgBot进行远程管理
+TGBOTDEVICESFLAG = 'qfgXFISHUXMsEycnjqz9' # 您的注册码
 USERBOTNOTICE = False # 使用TgBot进行通知
-USERQBAPI = False # 使用QBApi
-QBIP = '192.168.1.1' # QB的ip
-QBPORT = 8080 # QBApi端口
-QBUSERNAME = '' # Qb账号
-QBPASSWORD = '' # Qb密码
+
+# QBConfig
+USERQBAPI = True # 使用QBApi
+QBIP = '192.168.1.112' # QB的ip
+QBPORT = 8081 # QBApi端口
+QBUSERNAME = 'admin' # Qb账号
+QBPASSWORD = 'Syn123456!' # Qb密码
+
+# 附加Config
+TIMELAPSE = 0 # 延时处理番剧
+SEEPSINGLECHARACTER =False # SE EP单字符模式
+
 ```
 * `config.ini.Template`是配置文件的模板,内容如上
 
-* **请注意！config.ini.Template内容已更新，目前模板版本为 *2.8.0***
 
 ***
 ## 配置介绍
@@ -128,13 +127,6 @@ QBPASSWORD = '' # Qb密码
 
 * **注意如果有部分新配置没有解释，那么此配置即是内测功能，您可以来Tg群体验**
 
-# 常见问题
-## pip安装出现问题
-*   如果您直接使用pip进行install遇到 `❗Fatal error in launcher: Unable to create process using pip问题`
-请使用`python3 -m pip install` 尝试安装
-
-## 群晖NAS使用Python出现奇怪的问题
-* 在群晖NAS中，套件中心安装的`🐍python3`环境可能出现奇奇怪怪的问题，请使用第三方套件源(第三方源需要手动为`🐍python3`创建软连接至/usr/local/bin/python3)
 
 # 一些介绍说明
 ## Log相关
@@ -179,11 +171,13 @@ QBPASSWORD = '' # Qb密码
 * `Tampermonkey/main.js` 是给 `mikanani` 提供 `快速添加到qb下载的脚本`
 * 要使用此脚本，您需要 `Tampermonkey` 的支持
 * 使用效果
-
 ><img src="./Image/Example/TKone.jpg" width="600" height="300">
 ><img src="./Image/Example/TKtwo.jpg" width="600" height="300"> 
 * 注意第一次使用您需要脚本的跨域申请
 ><img src="./Image/Example/TKthree.jpg" width="600" height="300">
+
+## 模块扩展
+* 啊吧吧...
 
 ## Telegram Bot通知功能(old 版本已废弃,New 版本开发中)
 * **内测功能，您可以来Tg群体验**
@@ -193,4 +187,4 @@ QBPASSWORD = '' # Qb密码
 
 
 # 想要学习早期版本代码
-* 仓库`/Backups`存放着`1.0`版本的全部仓库内容,有需求的可以前去查看
+* 仓库`/Backups`存放着`1.0`版本的全部仓库内容，写得烂死了 :( ,有需求的可以前去查看

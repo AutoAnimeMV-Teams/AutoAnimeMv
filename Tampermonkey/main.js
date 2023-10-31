@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         AAM的qb扩展脚本
 // @namespace    http://tampermonkey.net/
-// @version      0.1.0
+// @version      0.1.1
 // @description  I want sleep I sole want sleep a nd I like sleep
 // @author       github/Abcuders
 // @supportURL   https://github.com/Abcuders/AutoAnimeMv
@@ -23,7 +23,7 @@ function updata(){
     var item = document.querySelectorAll('.js-magnet');
     for (var i=0;i<item.length;i++)
     {
-        var URL = $(item[i]).attr('data-clipboard-text');
+        let URL = $(item[i]).attr('data-clipboard-text');
         //console.log(item[i].parentElement);
         var a = document.createElement('a');
         //a.className = 'btn logmod-submit js-subscribe_bangumi_page';
@@ -68,13 +68,20 @@ function updata(){
                            headers: {"Content-Type": "application/x-www-form-urlencoded"},
                            onload: function(rec) {
                                console.log(rec);
+                               console.log(URL);
                                ToQBDownload(URL);
                            }
                        });
                     }
                 }else if (rec.status == 200){
                     $.alert('添加成功');
+                }else{
+                    $.alert('添加失败');
                 }
+            },
+            timeout:5000,
+            ontimeout: function(){
+                $.slert('连接超时');
             }
         });
     }
@@ -104,9 +111,9 @@ function OpenConfig(){
                 text: '完成',
                 btnClass: 'btn-blue',
                 action: function () {
-                    var address = this.$content.find('.address').val();
-                    var username = this.$content.find('.username').val();
-                    var password = this.$content.find('.password').val();
+                    let address = this.$content.find('.address').val();
+                    let username = this.$content.find('.username').val();
+                    let password = this.$content.find('.password').val();
                     if(!address || !username || !password){
                         $.alert('配置不能为空');
                         return false;
@@ -134,10 +141,18 @@ function OpenConfig(){
                         headers: {"Content-Type": "application/x-www-form-urlencoded"},
                         onload: function(rec) {
                             console.log(rec);
-                            if (rec.status == 200){
+                            if (rec.responseText == 'Ok.'){
                                 $.alert('测试通过');
                                 //var Cookie = rec.responseHeaders
+                            }else if (rec.responseText == 'Fails.'){
+                                $.alert('帐户或密码错误');
+                            }else{
+                                $.alert('？');
                             }
+                        },
+                        timeout:5000,
+                        ontimeout: function(){
+                            $.slert('连接超时');
                         }
                     });
                     return false;

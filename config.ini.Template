@@ -1,19 +1,35 @@
-#Config
+# Config
 PRINTLOGFLAG = True # 打印log开关
+USEMODULE = False # 使用模块
+
+# NetConfig
 HTTPPROXY = '' # Http代理
-HTTPSPROXY = 'http://192.168.1.1:7890' # Https代理
+HTTPSPROXY = 'http://10.0.0.1:7890' # Https代理
 ALLPROXY = '' # 全部代理
 USEBGMAPI = True # 使用BgmApi
 USETMDBAPI = True #使用TMDBApi
+
+# File处理Config
 USELINK = True # 使用硬链接开关
 LINKFAILSUSEMOVEFLAGS = False #硬链接失败时使用MOVE
-RMLOGSFLAG = '7' # 日志文件超时删除
-TIMELAPSE = 0 # 延时处理番剧
-USERTGBOT = False # 使用TgBot进行远程管理
-TGBOTDEVICESFLAG = '' # 您的注册码
+RMLOGSFLAG = False # 日志文件超时删除,填数字代表删除多久前的
+
+# FileName处理Config
+JELLYFINFORMAT = False # jellyfin 使用 ISO/639 标准 简体和繁体都使用chi做标识
+USETITLTOEP = False # 给每个番剧视频加上番剧Title 
+
+# TgBotConfig
+USERTGBOT = True # 使用TgBot进行远程管理
+TGBOTDEVICESFLAG = 'qfgXFISHUXMsEycnjqz9' # 您的注册码
 USERBOTNOTICE = False # 使用TgBot进行通知
-USERQBAPI = False # 使用QBApi
-QBIP = '192.168.1.1' # QB的ip
-QBPORT = 8080 # QBApi端口
-QBUSERNAME = '' # Qb账号
-QBPASSWORD = '' # Qb密码
+
+# QBConfig
+USERQBAPI = True # 使用QBApi
+QBIP = '192.168.1.112' # QB的ip
+QBPORT = 8081 # QBApi端口
+QBUSERNAME = 'admin' # Qb账号
+QBPASSWORD = 'Syn123456!' # Qb密码
+
+# 附加Config
+TIMELAPSE = 0 # 延时处理番剧
+SEEPSINGLECHARACTER =False # SE EP单字符模式
