@@ -524,7 +524,7 @@ def Auxiliary_Api(Name):
                     Auxiliary_Log(f'BgmApi没有检索到关于 {Name} 内容','WARNING')
                     return None
                 else:
-                    if 'BgmApiData' != None:
+                    if BgmApiData != None:
                         ApiName = unquote(BgmApiData['list'][0]['name_cn'],encoding='UTF-8',errors='replace') if unquote(BgmApiData['list'][0]['name_cn'],encoding='UTF-8',errors='replace') != '' else unquote(BgmApiData['list'][0]['name'],encoding='UTF-8',errors='replace')
                         ApiName = sub('第.*?季','',ApiName,flags=I).strip('- []【】 ')
                         Auxiliary_Log(f'{ApiName} << bgmApi查询结果')
