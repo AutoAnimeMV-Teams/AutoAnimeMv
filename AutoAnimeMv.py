@@ -18,7 +18,7 @@ from importlib import import_module # 动态加载模块
 def Start_PATH():# 初始化
     # 版本 数据库缓存 Api数据缓存 Log数据集 分隔符
     global Versions,AimeListCache,BgmAPIDataCache,TMDBAPIDataCache,LogData,Separator,Proxy,TgBotMsgData,PyPath
-    Versions = '2.11.0'
+    Versions = '2.(11.5).0'
     AimeListCache = None
     BgmAPIDataCache = {}
     TMDBAPIDataCache = {}
@@ -28,7 +28,6 @@ def Start_PATH():# 初始化
     PyPath = __file__.replace('AutoAnimeMv.py','').strip(' ')
     Auxiliary_READConfig()
     Auxiliary_Log((f'当前工具版本为{Versions}',f'当前操作系统识别码为{name},posix/nt/java对应linux/windows/java虚拟机'),'INFO')
-    Auxiliary_LoadModule()
 
 def Start_GetArgv():# 获取参数,判断处理模式
     ArgvNumber = len(argv)
@@ -242,7 +241,7 @@ def Auxiliary_Notice(Msg): # 共享内存
 def Auxiliary_LoadModule():
     ModuleFileList = []
     for FileName in listdir('./Ext'):
-        File = path.splittext(FileName)
+        File = path.splitext(FileName)
         if File[-1] == '.py' or File[-1] == '.PY':
             ModuleFileList.append(File[0])
         #elif File[-1] == '.ini' or File[-1] == '.INI':
@@ -251,7 +250,7 @@ def Auxiliary_LoadModule():
         for ModuleName in ModuleFileList:
             Module = import_module(f'Ext.{ModuleName}')
             #[[FuncName,Func],]
-            for func in Module.func:
+            for func in Module.func(globals()):
                 globals()[func[0]] = func[1]
                 Auxiliary_Log(f'模块 << {func[0]}')
     
@@ -347,7 +346,7 @@ def Auxiliary_UniformOTSTR(File):# 统一意外字符
 def Auxiliary_RMOTSTR(File):# 剔除意外字符
     NewPSTRFile = File
     #匹配待去除列表
-    FuzzyMatchData = [r'=.?月新番.?=',r'\d{4}.\d{2}.\d{2}',r'20\d{2}',r'v[2-9]',r'\d{4}年\d{1,2}月番']
+    FuzzyMatchData = [r'(.*?|=)月新番(.*?|=)',r'\d{4}.\d{2}.\d{2}',r'20\d{2}',r'v[2-9]',r'\d{4}年\d{1,2}月番']
     #精准待去除列表
     PreciseMatchData = ['仅限港澳台地区','国漫','x264','1080p','720p','4k','\(-\)','（-）']
     for i in PreciseMatchData:

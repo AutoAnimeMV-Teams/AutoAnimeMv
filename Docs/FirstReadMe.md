@@ -171,10 +171,10 @@ SEEPSINGLECHARACTER =False # SE EP单字符模式
 * `Tampermonkey/main.js` 是给 `mikanani` 提供 `快速添加到qb下载的脚本`
 * 要使用此脚本，您需要 `Tampermonkey` 的支持
 * 使用效果
-><img src="./Image/Example/TKone.jpg" width="600" height="300">
-><img src="./Image/Example/TKtwo.jpg" width="600" height="300"> 
-* 注意第一次使用您需要脚本的跨域申请
-><img src="./Image/Example/TKthree.jpg" width="600" height="300">
+><img src="../Image/Example/TKone.jpg" width="600" height="300">
+><img src="../Image/Example/TKtwo.jpg" width="600" height="300"> 
+* 注意第一次使用您需要同意脚本的跨域申请
+><img src="../Image/Example/TKthree.jpg" width="600" height="300">
 
 ## 模块扩展
 * 啊吧吧...
