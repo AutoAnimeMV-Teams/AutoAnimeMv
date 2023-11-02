@@ -371,13 +371,15 @@ def Auxiliary_IDESE(File):# 识别剧季并截断Name
                     SEList.append(se)
         for i in SENamelist:# 截断Name
             File = sub(r'%s.*'%i,'',File,flags=I).strip('-') #通过剧季截断文件名
+        SE = None
         for i in range(len(SEList)):
             if SEList[i].isdecimal() == True: # 判断纯数字
                 SE = SEList[i][::-1]
             elif '\u0e00' <= SEList[i] <= '\u9fa5':# 中文剧季转化
                 digit = {'一':'01', '二':'02', '三':'03', '四':'04', '五':'05', '六':'06', '七':'07', '八':'08', '九':'09','壹':'01','贰':'02','叁':'03','肆':'04','伍':'05','陆':'06','柒':'07','捌':'08','玖':'09'}
                 SE = digit[SEList[i]]
-            return SE,File,SENamelist[0]
+            if SE is not None:
+                return SE,File,SENamelist[0]
     else:
         return '01',File,''
 
