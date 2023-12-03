@@ -1,5 +1,5 @@
 name: Bug反馈
-description: 在使用中遇到的任何Bug都可以来反馈捏~
+description: Bug Report
 labels: [bug]
 body:
   - type: input
