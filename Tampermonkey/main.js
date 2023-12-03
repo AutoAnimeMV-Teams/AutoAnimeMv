@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         AAM的qb扩展脚本
 // @namespace    http://tampermonkey.net/
-// @version      0.1.1
+// @version      0.2.1
 // @description  I want sleep I sole want sleep a nd I like sleep
 // @author       github/Abcuders
 // @supportURL   https://github.com/Abcuders/AutoAnimeMv
@@ -20,22 +20,32 @@
 // ==/UserScript==
 
 function updata(){
-    var item = document.querySelectorAll('.js-magnet');
-    for (var i=0;i<item.length;i++)
-    {
-        let URL = $(item[i]).attr('data-clipboard-text');
-        //console.log(item[i].parentElement);
-        var a = document.createElement('a');
-        //a.className = 'btn logmod-submit js-subscribe_bangumi_page';
-        a.className = 'js-magnet magnet-link';
-        a.innerText = '[发送给qB下载]';
-        //a.style.width = '55px';
-        //a.style.height = '35px';
-        a.onclick = function(){
-        ToQBDownload(URL);
-        };
-        item[i].parentElement.appendChild(a);
-   }
+    function AddHtml(item){
+        for (var i=0;i<item.length;i++)
+        {
+            let URL = $(item[i]).attr('data-clipboard-text');
+            console.log(URL);
+            if(URL){
+                //console.log(item[i].parentElement);
+                let a = document.createElement('a');
+                //a.className = 'btn logmod-submit js-subscribe_bangumi_page';
+                a.className = 'js-magnet magnet-link';
+                a.innerText = '[发送给qB下载]';
+                //a.style.width = '55px';
+                //a.style.height = '35px';
+                a.onclick = function(){
+                    ToQBDownload(URL);
+                };
+                item[i].parentElement.appendChild(a);
+            }
+        }
+    }
+    let item = document.querySelectorAll('.magnet-link-wrap');
+    AddHtml(item);
+    console.log('ok');
+    item = document.querySelectorAll('.js-magnet');
+    AddHtml(item);
+
    function ToQBDownload(URL){
         if (!GM_getValue('address')){
             $.alert({title: 'Erorr!',content: '您还没有配置脚本',type: 'red'});

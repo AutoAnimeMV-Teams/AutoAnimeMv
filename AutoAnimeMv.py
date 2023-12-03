@@ -11,14 +11,14 @@ from zhconv import convert # 繁化简
 from urllib.parse import quote,unquote # url encode
 from requests import get,post,exceptions # 网络部分
 from random import randint # 随机数生成
-from threading import Thread # 多线程
+#from threading import Thread # 多线程
 from importlib import import_module # 动态加载模块
 #Start 开始部分进行程序的初始化 
 
 def Start_PATH():# 初始化
     # 版本 数据库缓存 Api数据缓存 Log数据集 分隔符
     global Versions,AimeListCache,BgmAPIDataCache,TMDBAPIDataCache,LogData,Separator,Proxy,TgBotMsgData,PyPath
-    Versions = '2.(11.5).0'
+    Versions = '2.(11.5).1'
     AimeListCache = None
     BgmAPIDataCache = {}
     TMDBAPIDataCache = {}
@@ -119,7 +119,7 @@ def Processing_Identification(File:str):# 识别
             RAWSE = ''
             Auxiliary_Log(f'特殊剧季 ==> {SE}','INFO')
             SeasonMatchData = r'(季(.*?)第)|(([0-9]{0,1}[0-9]{1})S)|(([0-9]{0,1}[0-9]{1})nosaeS)|(([0-9]{0,1}[0-9]{1}) nosaeS)|(([0-9]{0,1}[0-9]{1})-nosaeS)|(nosaeS-dn([0-9]{1}))'
-            RAWName = sub(SeasonMatchData,'',RAWName[::-1],flags=I)[::-1].strip('-')
+            RAWName = sub(SeasonMatchData,'',RAWName[::-1],flags=I)[::-1].strip('-=')
         else:
             SE,Name,RAWSE = Auxiliary_IDESE(RAWName)
             Auxiliary_Log(f'匹配出的剧季 ==> {RAWSE}','INFO')
@@ -240,20 +240,22 @@ def Auxiliary_Notice(Msg): # 共享内存
 
 def Auxiliary_LoadModule():
     ModuleFileList = []
-    for FileName in listdir('./Ext'):
-        File = path.splitext(FileName)
-        if File[-1] == '.py' or File[-1] == '.PY':
-            ModuleFileList.append(File[0])
-        #elif File[-1] == '.ini' or File[-1] == '.INI':
-    if ModuleFileList != []:
-        Auxiliary_Log(f'存在{len(ModuleFileList)}个模块 >> {ModuleFileList}')
-        for ModuleName in ModuleFileList:
-            Module = import_module(f'Ext.{ModuleName}')
-            #[[FuncName,Func],]
-            for func in Module.func(globals()):
-                globals()[func[0]] = func[1]
-                Auxiliary_Log(f'模块 << {func[0]}')
-    
+    if path.exists('./Ext') == True:
+        for FileName in listdir('./Ext'):
+            File = path.splitext(FileName)
+            if File[-1] == '.py' or File[-1] == '.PY':
+                ModuleFileList.append(File[0])
+            #elif File[-1] == '.ini' or File[-1] == '.INI':
+        if ModuleFileList != []:
+            Auxiliary_Log(f'存在{len(ModuleFileList)}个模块 >> {ModuleFileList}')
+            for ModuleName in ModuleFileList:
+                Module = import_module(f'Ext.{ModuleName}')
+                #[[FuncName,Func],]
+                for func in Module.func(globals()):
+                    globals()[func[0]] = func[1]
+                    Auxiliary_Log(f'模块 << {func[0]}')
+    else:
+        Auxiliary_Log('不存在扩展文件夹 ./Ext')
 
 def Auxiliary_READConfig():# 读取外置Config.ini文件并更新
     global USEMODULE,HTTPPROXY,HTTPSPROXY,ALLPROXY,USEBGMAPI,USETMDBAPI,USELINK,LINKFAILSUSEMOVEFLAGS,USETITLTOEP,PRINTLOGFLAG,RMLOGSFLAG,USEBOTFLAG,TIMELAPSE,SEEPSINGLECHARACTER,JELLYFINFORMAT,HELP
@@ -334,13 +336,14 @@ def Auxiliary_WriteLog():# 写log文件
 def Auxiliary_UniformOTSTR(File):# 统一意外字符
     NewFile = convert(File,'zh-hans')# 繁化简
     NewUSTRFile = sub(r',|，| ','-',NewFile,flags=I) 
-    NewUSTRFile = sub('[^a-z0-9\s&/\-:：.\(\)（）《》\u4e00-\u9fa5\u3040-\u309F\u30A0-\u30FF\u31F0-\u31FF]','=',NewUSTRFile,flags=I)
+    NewUSTRFile = sub('[^a-z0-9\s&/:：.\-\(\)（）《》\u4e00-\u9fa5\u3040-\u309F\u30A0-\u30FF\u31F0-\u31FF]','=',NewUSTRFile,flags=I)
     #异种剧集统一
     OtEpisodesMatchData = ['第(\d{1,4})集','(\d{1,4})集','第(\d{1,4})话','(\d{1,4})END','(\d{1,4}) END','(\d{1,4})E']
     for i in OtEpisodesMatchData:
+        i = f'[^0-9]{i}[^0-9]'
         if search(i,NewUSTRFile,flags=I) != None:
             a = search(i,NewUSTRFile,flags=I)
-            NewUSTRFile = NewUSTRFile.replace(a.group(),a.group(1).strip('\u4e00-\u9fa5'))
+            NewUSTRFile = NewUSTRFile.replace(a.group(),'='+a.group(1).strip('\u4e00-\u9fa5')+'=')
     return NewUSTRFile
 
 def Auxiliary_RMOTSTR(File):# 剔除意外字符
@@ -350,9 +353,9 @@ def Auxiliary_RMOTSTR(File):# 剔除意外字符
     #精准待去除列表
     PreciseMatchData = ['仅限港澳台地区','国漫','x264','1080p','720p','4k','\(-\)','（-）']
     for i in PreciseMatchData:
-        NewPSTRFile = sub(r'%s'%i,'-',NewPSTRFile,flags=I)
+        NewPSTRFile = sub(r'%s'%i,'=',NewPSTRFile,flags=I)
     for i in FuzzyMatchData:
-        NewPSTRFile = sub(i,'-',NewPSTRFile,flags=I)
+        NewPSTRFile = sub(i,'=',NewPSTRFile,flags=I)
     return NewPSTRFile
 
 def Auxiliary_IDESE(File):# 识别剧季并截断Name
@@ -370,8 +373,7 @@ def Auxiliary_IDESE(File):# 识别剧季并截断Name
                 elif se.isnumeric() == True: # 判断数字
                     SEList.append(se)
         for i in SENamelist:# 截断Name
-            File = sub(r'%s.*'%i,'',File,flags=I).strip('-') #通过剧季截断文件名
-        SE = None
+            File = sub(r'%s.*'%i,'',File,flags=I).strip('=') #通过剧季截断文件名
         for i in range(len(SEList)):
             if SEList[i].isdecimal() == True: # 判断纯数字
                 SE = SEList[i][::-1]
@@ -388,15 +390,15 @@ def Auxiliary_IDEEP(File):# 识别剧集
         if findall(r'[^0-9a-z.\u4e00-\u9fa5\u0800-\u4e00](\d{1}\.[0-9]{1,4})[^0-9a-uw-z.\u4e00-\u9fa5\u0800-\u4e00]',File[::-1],flags=I) != []:
             Episodes = findall(r'[^0-9a-z.\u4e00-\u9fa5\u0800-\u4e00](\d{1}\.[0-9]{1,4})[^0-9a-uw-z.\u4e00-\u9fa5\u0800-\u4e00]',File[::-1],flags=I)[0][::-1].strip(" =-_eEv")
         else:
-            Episodes = findall(r'[^0-9a-z.\u4e00-\u9fa5\u0800-\u4e00][0-9]{1,4}[^0-9a-uw-z.\u4e00-\u9fa5\u0800-\u4e00]',File[::-1],flags=I)[0][::-1].strip(" =-_eEv")
+            Episodes = findall(r'[^0-9a-z.\u4e00-\u9fa5\u0800-\u4e00]([0-9]{1,4})[^0-9a-uw-z.\u4e00-\u9fa5\u0800-\u4e00]',File[::-1],flags=I)[0][::-1].strip(" =-_eEv")
     except IndexError:
         Auxiliary_Exit('未匹配出剧集,请检查(程序目前不支持电影动漫)')
     else:
-        #Auxiliary_Log(f'匹配出的剧集 ==> {Episodes}','INFO')
+        Auxiliary_Log(f'匹配出的剧集 ==> {Episodes}','INFO')
         return Episodes
 
 def Auxiliary_RMSubtitlingTeam(File):# 剔除字幕组信息
-    File = File.strip('-')
+    #File = File.strip('=')
     if File[0] == '《':# 判断有无字幕组信息
         File = sub(r'《|》','',File,flags=I) 
     else:
@@ -405,7 +407,7 @@ def Auxiliary_RMSubtitlingTeam(File):# 剔除字幕组信息
 
 def Auxiliary_IDEVDName(File,RAWEP):# 识别剧名
     #VDName = sub(r'.*%s'%RAWEP[::-1],'',File[::-1],count=0,flags=I).strip('=-=-=-')[::-1]
-    VDName = search(r'%s(.*)'%RAWEP[::-1],File[::-1],flags=I).group(1).strip('=-=-=-')[::-1]
+    VDName = search(r'[=|-]%s[=|-](.*)'%RAWEP[::-1],File[::-1],flags=I).group(1).strip('=-=-=-')[::-1]
     Auxiliary_Log(f'通过剧集截断文件名 ==> {VDName}','INFO')
     return VDName
 
@@ -465,7 +467,7 @@ def Auxiliary_ASSFileCA(ASSFile):# 字幕文件的语言分类
     SubtitleList = [['简','sc','chs','GB'],['繁','tc','cht','BIG5'],['日','jp']]
     for i in range(len(SubtitleList)):
         for ii in SubtitleList[i]:
-            if search(ii[::-1],ASSFile[::-1],flags=I) != None:
+            if search(f'[^0-9a-z]{ii[::-1]}[^0-9a-z]',ASSFile[::-1],flags=I) != None:
                 if i == 0:
                     return '.chs' if JELLYFINFORMAT == False else '.简体中文.chi'
                 elif i == 1:
@@ -526,7 +528,7 @@ def Auxiliary_Api(Name):
                     Auxiliary_Log(f'BgmApi没有检索到关于 {Name} 内容','WARNING')
                     return None
                 else:
-                    if 'BgmApiData' != None:
+                    if BgmApiData != None:
                         ApiName = unquote(BgmApiData['list'][0]['name_cn'],encoding='UTF-8',errors='replace') if unquote(BgmApiData['list'][0]['name_cn'],encoding='UTF-8',errors='replace') != '' else unquote(BgmApiData['list'][0]['name'],encoding='UTF-8',errors='replace')
                         ApiName = sub('第.*?季','',ApiName,flags=I).strip('- []【】 ')
                         Auxiliary_Log(f'{ApiName} << bgmApi查询结果')
@@ -563,8 +565,8 @@ def Auxiliary_Api(Name):
             Auxiliary_Log('没有使用TMDBApi进行检索')
             return None
 
-    if search(r'([\u4e00-\u9fa5]+)',Name.replace('-',''),flags=I) != None: # 获取匹配到的汉字
-        Name = search(r'([\u4e00-\u9fa5]+)',Name.replace('-',''),flags=I).group(1) 
+    if search(r'([\u4e00-\u9fa5]+)',Name.replace('=',''),flags=I) != None: # 获取匹配到的汉字
+        Name = search(r'([\u4e00-\u9fa5]+)',Name.replace('=',''),flags=I).group(1) 
         BGMApiName = BgmApi(Name)
         TMDBApiName = TMDBApi(BGMApiName if BGMApiName != None else Name)
                
@@ -576,7 +578,7 @@ def Auxiliary_Api(Name):
         if USEBGMAPI == True or USETMDBAPI == True:
     #        Auxiliary_Log('Api识别失败现在进行额外的API识别')
             Auxiliary_Exit('Api识别失败')
-    #        StrList = Name.split('-')
+    #        StrList = Name.split('=')
     #    else:
     #        ApiName = None
     else:
