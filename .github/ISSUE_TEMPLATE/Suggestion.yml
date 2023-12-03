@@ -1,5 +1,5 @@
 name: 对本工具的建议
-description: 提出好点子
+description: Make suggestions for this tool / 有什么好的建议都可以提喵
 labels: [enhancement]
 body:
   - type: textarea

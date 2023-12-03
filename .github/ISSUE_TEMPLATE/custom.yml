@@ -1,0 +1,9 @@
+name: 写一个自定义Issue
+description: Write a custom issue / 写一个自定义issue
+labels: [customize]
+body:
+  - type: textarea
+    attributes:
+      label: write a custom issue
+    validations:
+      required: true
