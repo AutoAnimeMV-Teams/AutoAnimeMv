@@ -1,5 +1,5 @@
 
-Versions = '0.1.0'
+Versions = '0.1.0' # 版本号
 
 def Auxiliary_RMSubtitlingTeam(File):
     if File[0] == '《':# 判断有无字幕组信息

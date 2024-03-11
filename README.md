@@ -1,4 +1,4 @@
-## | AutoAnimeMV:超轻量化快速部署看番遥遥领先！
+# **| AutoAnimeMV:超轻量化快速部署看番遥遥领先!**
 <div align="center">
   <a href="https://github.com/Abcuders/AutoAnimeMV">
     <img src="./Image/logo.png">
@@ -8,6 +8,8 @@
 
 
 **简体中文 | [English](./README_en.md)**
+
+`最后更新时间：2024.1.1-19:11`
 
 *! En-README.md 由于我精力不够所以有太多落后未更新的地方,如果您感兴趣并且有时间的希望您能帮助一下我✊*
 
@@ -21,10 +23,10 @@
 
 > **🚀点击左上角打开目录，选择您要阅读的部分**
 
-<big>_**`工具进行了与前代有不兼容的 配置/API 修改，请及时阅读Docs`**_</big>
+<big>_`工具进行了与前代有不兼容的 配置/API 修改，请及时阅读Docs`_</big>
 
-`最后更新时间：2024.1.1-19:11` 
-## 💡 功能说明
+ 
+# 💡 功能说明
 * **部署快速,使用方便的番剧视频/字幕重命名+整理工具**
   >   
       动漫(分类)
@@ -67,9 +69,9 @@
     - [x] 清理过时日志
     - [x] 🔥 彩蛋
 
-## 🚀 快速开始
+# 🚀 快速开始
 
-### 🏕️ 环境支持
+## 🏕️ 环境支持
 要使用本工具您必须需要 `🐍Python3环境` 支持,我们建议您搭配 `🔵qBittorrent` 下载工具和 `🟩Emby` / `🎶Jellyfin` 等媒体库使用
 >  🐍Python使用的依赖库:`sys` `os` `time` `datetime` `re` `ast` `shutil`  `requests` `zhconv`
 
@@ -91,14 +93,14 @@ python3 -m pip install zhconv
 **更多解释请参考 [详细文档](#-📝-详细的文档)**
 
 
-### 使用介绍
+## 使用介绍
 
 * `AutoAnimeMv.py`是核心处理程序，它有两种核心处理方式
 * 工具自己拥有一些可配置项，详情见 [详细文档](#-📝-详细的文档)
 * 如果你有一些奇奇怪怪的想法，你可以使用工具的`模块`功能解决 详情见 [详细文档](#-📝-详细的文档)
 
 
-    #### QB下载模式
+    ### QB下载模式
     > 在此模式下`AutoAnimeMv.py`支持 3~4 个参数,`下载路径` `下载文件名` `下载文件数` `文件分类`(可选) 
     
     > `--filepath` 下载路径 `--filename` 下载文件名 `--number` 下载文件数 `--categoryname` 文件分类
@@ -118,7 +120,7 @@ python3 -m pip install zhconv
 
      5.取消做种，修改qb配置: 将`🔵qBittorrent `的`做种限制`改成`当分享率达到0当做种时间达到0分钟然后暂停torrent`
 
-    #### 批处理模式
+    ### 批处理模式
     > 在此模式下`AutoAnimeMv.py`支持 1~2 个参数,`需要整理的番剧所在路径` `文件分类`(可选) 
 
     > `--filepath` 需要整理的番剧所在路径 `--categoryname` 文件分类
@@ -127,7 +129,7 @@ python3 -m pip install zhconv
     ```
     python3 AutoAnimeMv.py --filepath "需要整理的番剧所在路径" --categoryname "文件分类(可选)"
     ```  
-    #### Help模式
+    ### Help模式
     ```
     python3 AutoAnimeMv.py help
     ```
@@ -145,13 +147,13 @@ python3 -m pip install zhconv
       * Github URL：https://github.com/Abcuders/AutoAnimeMv
     ```
 
-## 📝 详细的文档
+# 📝 详细的文档
 * AAM项目的全部文档已经搬至 [AAM-DOCS](https://github.com/Abcuders/AAM-DOCS) 仓库了
-## 相关群组
+# 相关群组
 
 交流/工作群: [Telegram](https://t.me/AutoAnimeMv)
 
-## ⭐ 贡献者 ✨
+# ⭐ 贡献者 ✨
 
 **感谢这些有趣又很棒的人！！！**
 > 如果您也想要为这个项目添砖加瓦,可以直接来[Issues](https://github.com/Abcuders/AutoAnimeMv/issues)提出您宝贵的建议或者@我问一下能做些什么
@@ -175,7 +177,7 @@ python3 -m pip install zhconv
 <img src="https://avatars.githubusercontent.com/u/40908389?v=4"  width="80px" height="80px">
 </a>
 
-## Star History
+# Star History
 <a href="https://star-history.com/##Abcuders/AutoAnimeMv">
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=Abcuders/AutoAnimeMv&type=Date&theme=dark" />
@@ -184,7 +186,7 @@ python3 -m pip install zhconv
   </picture>
 </a>
 
-## 🛑 暂缓更新公告
+# 🛑 暂缓更新公告
 * **AutoAnimeMv（下称“本仓库”）因为某些不可控原因将暂缓更新并非跑路**
 
 * **在本仓库暂缓更新期间，欢迎各位pr新功能以及继续在群内讨论本工具问题，本仓库不会删库或archived**
